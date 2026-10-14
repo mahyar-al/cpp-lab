@@ -275,10 +275,13 @@ export function getIranianDayOfWeek(dateInput: string | Date = new Date()): numb
 }
 
 /**
- * Returns Iranian day of week name
+ * Returns Iranian day of week name (accepts day index 0-6 or Date or date string)
  */
-export function getIranianDayName(dateInput: string | Date = new Date()): string {
-  const idx = getIranianDayOfWeek(dateInput);
+export function getIranianDayName(dateOrIndex: string | Date | number = new Date()): string {
+  if (typeof dateOrIndex === 'number' && dateOrIndex >= 0 && dateOrIndex <= 6) {
+    return PERSIAN_WEEK_DAYS[dateOrIndex];
+  }
+  const idx = getIranianDayOfWeek(dateOrIndex as string | Date);
   return PERSIAN_WEEK_DAYS[idx];
 }
 

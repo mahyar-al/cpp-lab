@@ -13,10 +13,12 @@ import {
   Sun,
   Moon,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits } from '../../utils/jalali';
 import { SchoolBellTime } from '../../types';
+import { AVATAR_OPTIONS, getAvatarOption } from '../../utils/avatars';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -29,17 +31,22 @@ export const SettingsView: React.FC = () => {
 
   const [name, setName] = useState(profile.name);
   const [gradeOrField, setGradeOrField] = useState(profile.gradeOrField);
+  const [selectedAvatar, setSelectedAvatar] = useState(profile.avatarSeed || 'cyber-neon');
   const [bellTimes, setBellTimes] = useState<SchoolBellTime[]>(profile.bellTimes || []);
   const [importJson, setImportJson] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [importError, setImportError] = useState(false);
   const [importSuccess, setImportSuccess] = useState(false);
 
+  const activeAvatarObj = getAvatarOption(selectedAvatar);
+  const ActiveIcon = activeAvatarObj.icon;
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     updateProfile({
       name: name.trim(),
       gradeOrField: gradeOrField.trim(),
+      avatarSeed: selectedAvatar,
       bellTimes,
     });
     setSaveSuccess(true);
@@ -70,24 +77,24 @@ export const SettingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <span className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          <span className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.25)]">
             <SettingsIcon className="w-6 h-6" />
           </span>
           تنظیمات سامانه و مدیریت اطلاعات
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          پیکربندی حساب کاربری، ساعت زنگ‌های مدرسه، پوسته و پشتیبان‌گیری
+          پیکربندی حساب کاربری، آیکون پروفایل، ساعت زنگ‌های مدرسه، پوسته و پشتیبان‌گیری
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Section 1: User Profile & Theme */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+        <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-5">
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <User className="w-4 h-4 text-blue-600" />
-            اطلاعات حساب و ظاهر
+            <User className="w-4 h-4 text-cyan-500" />
+            اطلاعات حساب، آیکون و ظاهر
           </h2>
 
           <form onSubmit={handleSaveProfile} className="space-y-4 text-xs">
@@ -100,7 +107,7 @@ export const SettingsView: React.FC = () => {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-sm focus:border-cyan-400 focus:outline-hidden"
               />
             </div>
 
@@ -114,8 +121,43 @@ export const SettingsView: React.FC = () => {
                 value={gradeOrField}
                 onChange={(e) => setGradeOrField(e.target.value)}
                 placeholder="مثلاً: پایه یازدهم ریاضی فیزیک"
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-sm focus:border-cyan-400 focus:outline-hidden"
               />
+            </div>
+
+            {/* Avatar Selector */}
+            <div>
+              <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                آیکون پروفایل (آواتار):
+              </label>
+              <div className="grid grid-cols-4 gap-2.5">
+                {AVATAR_OPTIONS.map((opt) => {
+                  const Icon = opt.icon;
+                  const isSelected = selectedAvatar === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedAvatar(opt.id);
+                        updateProfile({ avatarSeed: opt.id });
+                      }}
+                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-cyan-400 bg-cyan-500/10 dark:bg-[#172033] ring-2 ring-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
+                          : 'border-slate-200 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/60'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center ${isSelected ? opt.glowColor : ''}`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className={`text-[10px] mt-1.5 font-medium ${isSelected ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-400'}`}>
+                        {opt.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Theme Toggle */}
@@ -127,53 +169,53 @@ export const SettingsView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => updateProfile({ theme: 'light' })}
-                  className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all ${
+                  className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all cursor-pointer ${
                     profile.theme === 'light'
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-600'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-600'
+                      ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 shadow-xs'
+                      : 'border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#172033]'
                   }`}
                 >
-                  <Sun className="w-4 h-4" />
+                  <Sun className="w-4 h-4 text-amber-500" />
                   حالت روشن (Light)
                 </button>
                 <button
                   type="button"
                   onClick={() => updateProfile({ theme: 'dark' })}
-                  className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all ${
+                  className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all cursor-pointer ${
                     profile.theme === 'dark'
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-600'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-600'
+                      ? 'border-cyan-500 bg-cyan-500/10 dark:bg-[#172033] text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
+                      : 'border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#172033]'
                   }`}
                 >
-                  <Moon className="w-4 h-4" />
-                  حالت تیره (Dark)
+                  <Moon className="w-4 h-4 text-cyan-400" />
+                  حالت تاریک نئونی (Dark)
                 </button>
               </div>
             </div>
 
             <div className="flex items-center justify-between pt-2">
               {saveSuccess && (
-                <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                  <Check className="w-4 h-4" /> تغییرات ذخیره شد
+                <span className="text-emerald-500 flex items-center gap-1 font-bold">
+                  <Check className="w-4 h-4" /> تغییرات با موفقیت ذخیره شد
                 </span>
               )}
               <button
                 type="submit"
-                className="mr-auto px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold"
+                className="mr-auto px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 rounded-xl font-bold shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer active:scale-95"
               >
-                ذخیره پروفایل
+                ذخیره تغییرات پروفایل
               </button>
             </div>
           </form>
         </div>
 
         {/* Section 2: School Bell Times */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-4">
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Clock className="w-4 h-4 text-indigo-600" />
+            <Clock className="w-4 h-4 text-cyan-500" />
             ساعت شروع و پایان زنگ‌های مدرسه
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             ساعات زنگ‌ها به صورت خودکار در جدول برنامه هفتگی مدرسه منعکس می‌شوند.
           </p>
 
@@ -181,7 +223,7 @@ export const SettingsView: React.FC = () => {
             {bellTimes.map((bell, idx) => (
               <div
                 key={bell.period}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 text-xs"
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] text-xs"
               >
                 <span className="font-bold text-slate-800 dark:text-slate-200 w-24">
                   {bell.title}
@@ -192,14 +234,14 @@ export const SettingsView: React.FC = () => {
                     type="time"
                     value={bell.startTime}
                     onChange={(e) => handleBellTimeChange(idx, 'startTime', e.target.value)}
-                    className="px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                    className="px-2 py-1 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] rounded-lg text-xs"
                   />
                   <span className="text-slate-400">تا</span>
                   <input
                     type="time"
                     value={bell.endTime}
                     onChange={(e) => handleBellTimeChange(idx, 'endTime', e.target.value)}
-                    className="px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs"
+                    className="px-2 py-1 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] rounded-lg text-xs"
                   />
                 </div>
               </div>
@@ -208,7 +250,7 @@ export const SettingsView: React.FC = () => {
 
           <button
             onClick={handleSaveProfile}
-            className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl"
+            className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl shadow-[0_0_12px_rgba(0,245,255,0.2)] transition-all cursor-pointer"
           >
             ذخیره زمان‌بندی زنگ‌ها
           </button>
@@ -216,27 +258,27 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Section 3: Backup & Restore */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+      <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-5">
         <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <ShieldCheck className="w-4 h-4 text-[#39FF88]" />
           پشتیبان‌گیری، بازیابی و ایمنی داده‌ها
         </h2>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           تمام اطلاعات شما به شکل محلی در مرورگر ذخیره شده است. برای حفظ داده‌ها در دستگاه‌های دیگر یا جلوگیری از پاک‌شدن، از فایل پشتیبان JSON استفاده کنید.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           {/* Action 1: Export */}
-          <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-3 text-xs">
+          <div className="p-4 rounded-xl border border-slate-200 dark:border-[#263247] bg-slate-50/50 dark:bg-[#0D1220]/60 space-y-3 text-xs">
             <span className="font-bold text-slate-800 dark:text-slate-200 block">
               خروجی گرفتن (Export)
             </span>
-            <p className="text-slate-500 text-[11px] leading-relaxed">
+            <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
               دانلود یک فایل حاوی کل برنامه‌ها، نمرات، مهارت‌ها و وظایف.
             </p>
             <button
               onClick={exportBackup}
-              className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center justify-center gap-1.5"
+              className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               دانلود فایل پشتیبان JSON
@@ -244,7 +286,7 @@ export const SettingsView: React.FC = () => {
           </div>
 
           {/* Action 2: Import */}
-          <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-2 text-xs md:col-span-2">
+          <div className="p-4 rounded-xl border border-slate-200 dark:border-[#263247] bg-slate-50/50 dark:bg-[#0D1220]/60 space-y-2 text-xs md:col-span-2">
             <span className="font-bold text-slate-800 dark:text-slate-200 block">
               بازیابی از فایل پشتیبان (Import)
             </span>
@@ -254,22 +296,22 @@ export const SettingsView: React.FC = () => {
                 value={importJson}
                 onChange={(e) => setImportJson(e.target.value)}
                 placeholder="محتوای متنی فایل JSON را اینجا قرار دهید..."
-                className="w-full p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono"
+                className="w-full p-2.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] rounded-xl text-xs font-mono focus:border-cyan-400 focus:outline-hidden"
               />
               <div className="flex items-center justify-between">
                 {importSuccess && (
-                  <span className="text-emerald-600 font-bold flex items-center gap-1 text-xs">
+                  <span className="text-emerald-500 font-bold flex items-center gap-1 text-xs">
                     <Check className="w-4 h-4" /> داده‌ها با موفقیت بازیابی شدند
                   </span>
                 )}
                 {importError && (
-                  <span className="text-red-500 font-bold flex items-center gap-1 text-xs">
+                  <span className="text-rose-500 font-bold flex items-center gap-1 text-xs">
                     <AlertTriangle className="w-4 h-4" /> ساختار JSON نامعتبر است!
                   </span>
                 )}
                 <button
                   type="submit"
-                  className="mr-auto px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center gap-1"
+                  className="mr-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl flex items-center gap-1 shadow-[0_0_12px_rgba(0,245,255,0.2)] transition-all cursor-pointer"
                 >
                   <Upload className="w-4 h-4" />
                   بازیابی اطلاعات
@@ -280,21 +322,21 @@ export const SettingsView: React.FC = () => {
         </div>
 
         {/* Action 3: Reset to Default */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="pt-4 border-t border-slate-100 dark:border-[#263247] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div>
-            <span className="font-bold text-red-600 block">بازنشانی کامل سامانه</span>
-            <span className="text-slate-400">بازگرداندن تمام داده‌ها به نمونه اولیه پیش‌فرض</span>
+            <span className="font-bold text-rose-500 block">پاکسازی یا بازنشانی داده‌ها</span>
+            <span className="text-slate-400">شروع از ابتدا با پاک‌سازی کامل تمام اطلاعات سامانه</span>
           </div>
           <button
             onClick={() => {
-              if (confirm('آیا مطمئن هستید؟ تمام تغییرات شما پاک شده و نمونه داده اولیه بارگذاری می‌شود.')) {
+              if (confirm('آیا مطمئن هستید؟ تمام تغییرات شما پاک خواهد شد.')) {
                 resetToDefault();
               }
             }}
-            className="px-4 py-2 border border-red-200 dark:border-red-900/60 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl font-bold flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2 border border-rose-500/30 text-rose-500 hover:bg-rose-500/10 rounded-xl font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            بازنشانی به حالت پیش‌فرض
+            پاکسازی و بازنشانی
           </button>
         </div>
       </div>

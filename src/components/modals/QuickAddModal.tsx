@@ -116,23 +116,23 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263247] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-[#263247] shrink-0">
           <span className="text-sm font-bold text-slate-900 dark:text-white">
             ثبت سریع در سامانه
           </span>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033] cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab selection */}
-        <div className="flex p-2 gap-1.5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 overflow-x-auto">
+        <div className="flex p-2 gap-1.5 bg-slate-50 dark:bg-[#0D1220] border-b border-slate-200 dark:border-[#263247] overflow-x-auto shrink-0">
           {[
             { id: 'task', label: 'تکلیف / کار', icon: GraduationCap },
             { id: 'event', label: 'رویداد تقویم', icon: CalendarDays },
@@ -147,13 +147,13 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                 key={tab.id}
                 type="button"
                 onClick={() => setAddType(tab.id as AddType)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer shrink-0 sm:shrink ${
                   active
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'
+                    ? 'bg-white dark:bg-[#172033] text-cyan-600 dark:text-[#00F5FF] shadow-xs border border-slate-200 dark:border-cyan-500/40'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3.5 h-3.5 shrink-0" />
                 <span>{tab.label}</span>
               </button>
             );
@@ -161,7 +161,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
           {addType === 'task' && (
             <>
               <div>
@@ -189,11 +189,15 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                     onChange={(e) => setSelectedSubjectId(e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none"
                   >
-                    {subjects.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name}
-                      </option>
-                    ))}
+                    {subjects.length === 0 ? (
+                      <option value="">عمومی / بدون درس</option>
+                    ) : (
+                      subjects.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
 
@@ -505,19 +509,19 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200 dark:border-[#263247]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+              className="px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033] rounded-xl cursor-pointer"
             >
               انصراف
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 text-xs font-bold rounded-xl shadow-[0_0_12px_rgba(0,245,255,0.35)] cursor-pointer"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4 stroke-[2.5]" />
               <span>ذخیره اطلاعات</span>
             </button>
           </div>

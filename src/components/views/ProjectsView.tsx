@@ -188,9 +188,10 @@ export const ProjectsView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Project Sidebar */}
           <div className="lg:col-span-4 space-y-3">
-            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
+            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
               پروژه‌ها ({toPersianDigits(projects.length)})
             </h2>
+            <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto cyber-scrollbar pr-0.5">
             {projects.map((proj) => {
               const isSelected = activeProject && activeProject.id === proj.id;
               const { est, actual } = calculateProjectHours(proj);
@@ -260,6 +261,7 @@ export const ProjectsView: React.FC = () => {
                 </div>
               );
             })}
+            </div>
           </div>
 
           {/* Active Project Workspace */}

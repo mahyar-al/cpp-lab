@@ -201,10 +201,10 @@ export const SkillsView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Skill Selector Sidebar */}
           <div className="lg:col-span-4 space-y-4">
-            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
+            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
               فهرست مهارت‌ها ({toPersianDigits(skills.length)})
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto cyber-scrollbar pr-0.5">
               {skills.map((skill) => {
                 const isSelected = activeSkill && activeSkill.id === skill.id;
                 const mastery = calculateMastery(skill);

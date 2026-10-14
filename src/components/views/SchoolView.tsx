@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Sparkles,
   ChevronLeft,
+  GraduationCap,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -133,7 +134,7 @@ export const SchoolView: React.FC = () => {
   const [pomodoroRemaining, setPomodoroRemaining] = useState<number>(25 * 60);
   const [pomodoroRunning, setPomodoroRunning] = useState<boolean>(false);
   const [pomodoroTopic, setPomodoroTopic] = useState<string>('حل تمرین و مطالعه عمیق');
-  const [pomodoroSubjectName, setPomodoroSubjectName] = useState<string>(subjects[0]?.name || 'حسابان');
+  const [pomodoroSubjectName, setPomodoroSubjectName] = useState<string>(subjects[0]?.name || 'مطالعه و تمرین');
   const [pomodoroFocusScore, setPomodoroFocusScore] = useState<number>(5);
   const [pomodoroOutcomeNotes, setPomodoroOutcomeNotes] = useState<string>('');
 
@@ -336,22 +337,22 @@ export const SchoolView: React.FC = () => {
       {/* TAB 1: WEEKLY TIMETABLE (5 DAYS X 5 PERIODS = 25 CELLS) */}
       {activeTab === 'timetable' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <span className="text-xs text-slate-500 dark:text-slate-400">
               روی هر خانه کلیک کنید تا درس، ساعت، نام معلم و کلاس را ویرایش کنید.
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setShowBellSettings(true)}
-                className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
                 <span>ساعات زنگ‌ها</span>
               </button>
               <button
                 onClick={() => window.print()}
-                className="px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-900 rounded-lg hover:bg-indigo-100 transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-900 rounded-lg hover:bg-indigo-100 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>چاپ برنامه هفتگی</span>
@@ -794,11 +795,15 @@ export const SchoolView: React.FC = () => {
                       onChange={(e) => setNewHwSubjectId(e.target.value)}
                       className="flex-1 px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none"
                     >
-                      {subjects.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name}
-                        </option>
-                      ))}
+                      {subjects.length === 0 ? (
+                        <option value="">(درسی تعریف نشده)</option>
+                      ) : (
+                        subjects.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))
+                      )}
                     </select>
                     <input
                       type="date"
@@ -887,71 +892,89 @@ export const SchoolView: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subjects.map((sub) => {
-              const subGrades = grades.filter((g) => g.subjectId === sub.id);
-              const subAvg =
-                subGrades.length > 0
-                  ? (
-                      subGrades.reduce((acc, g) => acc + g.score, 0) / subGrades.length
-                    ).toFixed(2)
-                  : null;
+          {subjects.length === 0 ? (
+            <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+              <GraduationCap className="w-10 h-10 text-indigo-500 mx-auto opacity-70" />
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                هنوز درسی تعریف نشده است
+              </h4>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                برای شروع برنامه‌ریزی هفتگی، ثبت نمرات و تکالیف، دروس تحصیلی خود را تعریف کنید.
+              </p>
+              <button
+                onClick={() => setShowAddSubject(true)}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-all"
+              >
+                + تعریف اولین درس
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {subjects.map((sub) => {
+                const subGrades = grades.filter((g) => g.subjectId === sub.id);
+                const subAvg =
+                  subGrades.length > 0
+                    ? (
+                        subGrades.reduce((acc, g) => acc + g.score, 0) / subGrades.length
+                      ).toFixed(2)
+                    : null;
 
-              return (
-                <div
-                  key={sub.id}
-                  className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3"
-                  style={{ borderTopColor: sub.color, borderTopWidth: '4px' }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">
-                        {sub.name}
-                      </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        {sub.teacher || 'بدون استاد'} · {sub.room || 'کلاس'}
-                      </p>
+                return (
+                  <div
+                    key={sub.id}
+                    className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3"
+                    style={{ borderTopColor: sub.color, borderTopWidth: '4px' }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                          {sub.name}
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {sub.teacher || 'بدون استاد'} · {sub.room || 'کلاس'}
+                        </p>
+                      </div>
+
+                      <div className="text-left font-mono">
+                        <span className="text-xs text-slate-400 block">میانگین</span>
+                        <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+                          {subAvg ? toPersianDigits(subAvg) : '—'}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="text-left font-mono">
-                      <span className="text-xs text-slate-400 block">میانگین</span>
-                      <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                        {subAvg ? toPersianDigits(subAvg) : '—'}
-                      </span>
+                    {sub.studyRange && (
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 text-[11px] text-slate-600 dark:text-slate-400">
+                        <span className="font-semibold block text-slate-700 dark:text-slate-300">
+                          محدوده مطالعه:
+                        </span>
+                        <span>{sub.studyRange}</span>
+                      </div>
+                    )}
+
+                    {sub.reviewSchedule && (
+                      <div className="text-[11px] text-slate-500 flex items-center justify-between">
+                        <span>برنامه مرور:</span>
+                        <span className="font-medium text-slate-700 dark:text-slate-300">
+                          {sub.reviewSchedule}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <button
+                        onClick={() => deleteSubject(sub.id)}
+                        className="text-slate-400 hover:text-rose-500 p-1 rounded"
+                        title="حذف درس"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
-
-                  {sub.studyRange && (
-                    <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 text-[11px] text-slate-600 dark:text-slate-400">
-                      <span className="font-semibold block text-slate-700 dark:text-slate-300">
-                        محدوده مطالعه:
-                      </span>
-                      <span>{sub.studyRange}</span>
-                    </div>
-                  )}
-
-                  {sub.reviewSchedule && (
-                    <div className="text-[11px] text-slate-500 flex items-center justify-between">
-                      <span>برنامه مرور:</span>
-                      <span className="font-medium text-slate-700 dark:text-slate-300">
-                        {sub.reviewSchedule}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <button
-                      onClick={() => deleteSubject(sub.id)}
-                      className="text-slate-400 hover:text-rose-500 p-1 rounded"
-                      title="حذف درس"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Grade Trend & Analytics Chart */}
           {grades.length > 0 && (
@@ -1218,11 +1241,15 @@ export const SchoolView: React.FC = () => {
                   }}
                   className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none"
                 >
-                  {subjects.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
+                  {subjects.length === 0 ? (
+                    <option value="">(درسی تعریف نشده - ابتدا درس بسازید)</option>
+                  ) : (
+                    subjects.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 
@@ -1452,11 +1479,15 @@ export const SchoolView: React.FC = () => {
                   onChange={(e) => setGradeSubjectId(e.target.value)}
                   className="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg"
                 >
-                  {subjects.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
+                  {subjects.length === 0 ? (
+                    <option value="">(درسی تعریف نشده - ابتدا درس بسازید)</option>
+                  ) : (
+                    subjects.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 

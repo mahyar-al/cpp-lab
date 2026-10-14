@@ -1,15 +1,273 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   Vazirmatn Persian Typography — Local Font Definitions
+   ========================================================================== */
+
+/* Static WOFF2 font definitions for absolute reliability & offline support */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-ExtraLight.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Variable font configuration for modern browsers */
+@supports (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Vazirmatn';
+    src: url('/fonts/Vazirmatn[wght].woff2') format('woff2-variations'),
+         url('/fonts/Vazirmatn[wght].woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@theme {
+  --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Vazirmatn', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 @layer base {
   :root {
-    --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Vazirmatn', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    direction: rtl;
+    letter-spacing: normal;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     font-family: var(--font-sans);
     direction: rtl;
+    line-height: 1.65;
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+
+  /* Universal font inheritance for form elements and interactive controls */
+  input,
+  textarea,
+  select,
+  button,
+  optgroup,
+  option,
+  label {
+    font-family: inherit;
+    font-feature-settings: inherit;
+    letter-spacing: normal;
+  }
+
+  /* Standard Persian line-height and typographic hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: normal;
+    line-height: 1.45;
+  }
+
+  p, span, li, a, td, th {
+    letter-spacing: normal;
+  }
+
+  /* Reset letter-spacing on Persian text to preserve glyph connections */
+  *,
+  *::before,
+  *::after {
+    letter-spacing: normal;
+  }
+
+  /* Persian numerical and currency figures */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Code and monospace block treatment */
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  /* Mixed language alignment utilities */
+  .ltr,
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+    unicode-bidi: embed;
+  }
+
+  .rtl,
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+}
+
+/* ==========================================================================
+   Cyberpunk / Neon Futuristic Dashboard Utility Classes
+   ========================================================================== */
+
+/* Subtle ambient tech grid background */
+.cyber-grid {
+  background-image: 
+    linear-gradient(to right, rgba(38, 50, 71, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(38, 50, 71, 0.25) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Glassmorphism card surfaces */
+.glass-panel {
+  background-color: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #263247;
+}
+
+:root:not(.dark) .glass-panel {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #e2e8f0;
+}
+
+/* Refined neon glow classes (controlled, non-distracting) */
+.neon-glow-cyan {
+  box-shadow: 0 0 20px -3px rgba(0, 245, 255, 0.25);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 20px -3px rgba(168, 85, 247, 0.25);
+}
+
+.neon-glow-green {
+  box-shadow: 0 0 20px -3px rgba(57, 255, 136, 0.25);
+}
+
+.neon-glow-pink {
+  box-shadow: 0 0 20px -3px rgba(255, 79, 216, 0.25);
+}
+
+.neon-glow-blue {
+  box-shadow: 0 0 20px -3px rgba(59, 130, 246, 0.25);
+}
+
+/* Hairline Neon Borders */
+.neon-border-cyan {
+  border-color: rgba(0, 245, 255, 0.45);
+}
+
+.neon-border-purple {
+  border-color: rgba(168, 85, 247, 0.45);
+}
+
+.neon-border-green {
+  border-color: rgba(57, 255, 136, 0.45);
+}
+
+.neon-border-pink {
+  border-color: rgba(255, 79, 216, 0.45);
+}
+
+.neon-border-blue {
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+/* Subtle glow text accents (strictly for key highlights) */
+.neon-text-cyan {
+  color: #00f5ff;
+  text-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+}
+
+.neon-text-purple {
+  color: #c084fc;
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+}
+
+.neon-text-green {
+  color: #39ff88;
+  text-shadow: 0 0 12px rgba(57, 255, 136, 0.5);
+}
+
+.neon-text-pink {
+  color: #ff4fd8;
+  text-shadow: 0 0 12px rgba(255, 79, 216, 0.5);
 }
 
 /* Custom modern scrollbar */
@@ -46,6 +304,7 @@
     color: black !important;
     padding: 0 !important;
     margin: 0 !important;
+    font-family: 'Vazirmatn', sans-serif !important;
   }
 
   main {
@@ -62,6 +321,7 @@
     width: 100% !important;
     border-collapse: collapse !important;
     page-break-inside: avoid;
+    font-family: 'Vazirmatn', sans-serif !important;
   }
 
   .print-table th,
@@ -71,3 +331,46 @@
     color: black !important;
   }
 }
+
+/* ==========================================================================
+   Responsive & Mobile Ergonomics Optimization
+   ========================================================================== */
+
+/* Prevent accidental horizontal overflow on document root */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth momentum scrolling for internal horizontal and vertical scroll areas */
+.overflow-x-auto,
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent unwanted iOS Safari auto-zoom on form controls */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Optimize touch interactions on mobile screens */
+@media screen and (max-width: 640px) {
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    touch-action: manipulation;
+  }
+}
+

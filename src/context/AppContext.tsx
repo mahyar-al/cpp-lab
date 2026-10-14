@@ -23,6 +23,12 @@ import {
   SectionType,
   Habit,
   DashboardWidgetConfig,
+  SpacedReviewItem,
+  KnowledgeResource,
+  QuickInboxItem,
+  TaskItem,
+  TaskSubtask,
+  ReviewLogEntry,
 } from '../types';
 import {
   initialProfile,
@@ -44,9 +50,13 @@ import {
   initialNotifications,
   initialHabits,
   initialWidgetConfig,
+  initialReviews,
+  initialResources,
+  initialInboxItems,
 } from '../utils/initialData';
+import { toPersianDigits } from '../utils/jalali';
 
-const STORAGE_KEY = 'pathly_app_data_v2_clean';
+const STORAGE_KEY = 'pathly_app_data_v3_clean';
 
 export interface AppContextType {
   profile: UserProfile;
@@ -172,6 +182,35 @@ export interface AppContextType {
   deleteHabit: (habitId: string) => void;
   updateHabit: (habitId: string, updates: Partial<Habit>) => void;
 
+  // Spaced Repetition & Reviews
+  reviews: SpacedReviewItem[];
+  addReviewItem: (item: Omit<SpacedReviewItem, 'id' | 'intervalDays' | 'repetitionCount' | 'reviewLogs'>) => void;
+  updateReviewItem: (id: string, updates: Partial<SpacedReviewItem>) => void;
+  deleteReviewItem: (id: string) => void;
+  submitReviewOutcome: (id: string, rating: 'easy' | 'good' | 'hard' | 'forgotten', notes?: string) => void;
+
+  // Knowledge & Resource Library
+  resources: KnowledgeResource[];
+  addResource: (res: Omit<KnowledgeResource, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  updateResource: (id: string, updates: Partial<KnowledgeResource>) => void;
+  deleteResource: (id: string) => void;
+  toggleResourcePinned: (id: string) => void;
+
+  // Quick Notes & Brain Inbox
+  inboxItems: QuickInboxItem[];
+  addInboxItem: (content: string, title?: string, priority?: Priority, category?: SectionType, dueDate?: string) => void;
+  updateInboxItem: (id: string, updates: Partial<QuickInboxItem>) => void;
+  deleteInboxItem: (id: string) => void;
+  convertInboxToTask: (inboxId: string, targetType: 'task' | 'homework' | 'project_task' | 'goal' | 'note', targetData?: any) => void;
+
+  // Advanced Daily Planning & Subtasks
+  addPlannedTask: (task: Omit<TaskItem, 'id'>, dayIndex?: number) => void;
+  updatePlannedTask: (taskId: string, dayIndex: number, updates: Partial<TaskItem>) => void;
+  deletePlannedTask: (taskId: string, dayIndex: number) => void;
+  toggleTaskSubtask: (dayIndex: number, taskId: string, subtaskId: string) => void;
+  addTaskSubtask: (dayIndex: number, taskId: string, title: string) => void;
+  rescheduleTask: (taskId: string, fromDayIndex: number, toDayIndex: number, newTime?: string) => void;
+
   // Widget Customization
   widgetConfig: DashboardWidgetConfig;
   updateWidgetConfig: (updates: Partial<DashboardWidgetConfig>) => void;
@@ -183,9 +222,14 @@ export interface AppContextType {
   toastMessage: string | null;
   showToast: (msg: string) => void;
 
-  // System
+  // System & Export
   exportBackup: () => void;
   importBackup: (jsonData: string) => boolean;
+  validateBackupData: (jsonData: string) => { valid: boolean; summary?: Record<string, number>; error?: string };
+  exportTasksCSV: () => void;
+  exportStudySessionsCSV: () => void;
+  exportGradesCSV: () => void;
+  exportSkillsCSV: () => void;
   resetToDefault: () => void;
   clearAllData: () => void;
 }
@@ -196,6 +240,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const loadInitialData = () => {
     try {
       localStorage.removeItem('pathly_app_data_v1');
+      localStorage.removeItem('pathly_app_data_v2_clean');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -218,6 +263,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           activityLogs: parsed.activityLogs ?? initialActivityLogs,
           notifications: parsed.notifications ?? initialNotifications,
           habits: parsed.habits ?? initialHabits,
+          reviews: parsed.reviews ?? initialReviews,
+          resources: parsed.resources ?? initialResources,
+          inboxItems: parsed.inboxItems ?? initialInboxItems,
           widgetConfig: parsed.widgetConfig ? { ...initialWidgetConfig, ...parsed.widgetConfig } : initialWidgetConfig,
         };
       }
@@ -243,6 +291,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       activityLogs: initialActivityLogs,
       notifications: initialNotifications,
       habits: initialHabits,
+      reviews: initialReviews,
+      resources: initialResources,
+      inboxItems: initialInboxItems,
       widgetConfig: initialWidgetConfig,
     };
   };
@@ -1300,9 +1351,519 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  // Spaced Repetition & Reviews
+  const addReviewItem = (item: Omit<SpacedReviewItem, 'id' | 'intervalDays' | 'repetitionCount' | 'reviewLogs'>) => {
+    const newItem: SpacedReviewItem = {
+      ...item,
+      id: `rev-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      intervalDays: 1,
+      repetitionCount: 0,
+      reviewLogs: [],
+    };
+    setState((prev: any) => ({
+      ...prev,
+      reviews: [newItem, ...(prev.reviews || [])],
+    }));
+    addActivityLog(item.section || 'school', `مبحث «${item.title}» برای مرور دوره‌ای ثبت شد.`);
+    showToast(`مبحث «${item.title}» برای مرور هوشمند ثبت شد.`);
+  };
+
+  const updateReviewItem = (id: string, updates: Partial<SpacedReviewItem>) => {
+    setState((prev: any) => ({
+      ...prev,
+      reviews: (prev.reviews || []).map((r: SpacedReviewItem) => (r.id === id ? { ...r, ...updates } : r)),
+    }));
+    showToast('اطلاعات مرور به‌روز شد.');
+  };
+
+  const deleteReviewItem = (id: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      reviews: (prev.reviews || []).filter((r: SpacedReviewItem) => r.id !== id),
+    }));
+    showToast('مبحث از فهرست مرور حذف شد.');
+  };
+
+  const submitReviewOutcome = (id: string, rating: 'easy' | 'good' | 'hard' | 'forgotten', notes?: string) => {
+    const today = new Date();
+    const todayIso = today.toISOString().slice(0, 10);
+    setState((prev: any) => {
+      const updatedReviews = (prev.reviews || []).map((rev: SpacedReviewItem) => {
+        if (rev.id !== id) return rev;
+        let nextInterval = rev.intervalDays || 1;
+        let newRep = (rev.repetitionCount || 0) + 1;
+        let newMastery = rev.masteryLevel || 1;
+        let isDiff = rev.isDifficult;
+
+        if (rating === 'forgotten') {
+          nextInterval = 1;
+          newMastery = Math.max(1, newMastery - 1);
+          isDiff = true;
+        } else if (rating === 'hard') {
+          nextInterval = Math.max(1, Math.round(nextInterval * 1.3));
+          isDiff = true;
+        } else if (rating === 'good') {
+          nextInterval = Math.max(2, Math.round(nextInterval * 2.0));
+          newMastery = Math.min(5, newMastery + 1);
+        } else if (rating === 'easy') {
+          nextInterval = Math.max(3, Math.round(nextInterval * 2.6));
+          newMastery = Math.min(5, newMastery + 1);
+          if (newMastery >= 4) isDiff = false;
+        }
+
+        const nextDateObj = new Date(today.getTime() + nextInterval * 24 * 60 * 60 * 1000);
+        const nextReviewDate = nextDateObj.toISOString().slice(0, 10);
+
+        const logEntry: ReviewLogEntry = {
+          id: `rl-${Date.now()}`,
+          date: todayIso,
+          rating,
+          notes,
+        };
+
+        return {
+          ...rev,
+          lastReviewedDate: todayIso,
+          nextReviewDate,
+          intervalDays: nextInterval,
+          repetitionCount: newRep,
+          masteryLevel: newMastery,
+          isDifficult: isDiff,
+          reviewLogs: [logEntry, ...(rev.reviewLogs || [])],
+        };
+      });
+
+      return { ...prev, reviews: updatedReviews };
+    });
+    addActivityLog('general', 'یک جلسه مرور هوشمند ثبت شد.');
+    showToast('نتیجه مرور ثبت و زمان مرور بعدی زمان‌بندی گردید.');
+  };
+
+  // Knowledge Resources
+  const addResource = (res: Omit<KnowledgeResource, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newRes: KnowledgeResource = {
+      ...res,
+      id: `res-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setState((prev: any) => ({
+      ...prev,
+      resources: [newRes, ...(prev.resources || [])],
+    }));
+    addActivityLog(res.section, `منبع جدید «${res.title}» به کتابخانه افزوده شد.`);
+    showToast(`منبع «${res.title}» ذخیره شد.`);
+  };
+
+  const updateResource = (id: string, updates: Partial<KnowledgeResource>) => {
+    setState((prev: any) => ({
+      ...prev,
+      resources: (prev.resources || []).map((r: KnowledgeResource) =>
+        r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString() } : r
+      ),
+    }));
+    showToast('منبع به‌روزرسانی شد.');
+  };
+
+  const deleteResource = (id: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      resources: (prev.resources || []).filter((r: KnowledgeResource) => r.id !== id),
+    }));
+    showToast('منبع حذف شد.');
+  };
+
+  const toggleResourcePinned = (id: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      resources: (prev.resources || []).map((r: KnowledgeResource) =>
+        r.id === id ? { ...r, pinned: !r.pinned, updatedAt: new Date().toISOString() } : r
+      ),
+    }));
+  };
+
+  // Quick Inbox Items
+  const addInboxItem = (
+    content: string,
+    title?: string,
+    priority: Priority = 'medium',
+    category: SectionType = 'general',
+    dueDate?: string
+  ) => {
+    const newItem: QuickInboxItem = {
+      id: `inbox-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      content: content.trim(),
+      title: title?.trim(),
+      priority,
+      createdAt: new Date().toISOString(),
+      dueDate,
+      category,
+      archived: false,
+    };
+    setState((prev: any) => ({
+      ...prev,
+      inboxItems: [newItem, ...(prev.inboxItems || [])],
+    }));
+    showToast('ایده به صندوق ورودی افزوده شد.');
+  };
+
+  const updateInboxItem = (id: string, updates: Partial<QuickInboxItem>) => {
+    setState((prev: any) => ({
+      ...prev,
+      inboxItems: (prev.inboxItems || []).map((i: QuickInboxItem) => (i.id === id ? { ...i, ...updates } : i)),
+    }));
+  };
+
+  const deleteInboxItem = (id: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      inboxItems: (prev.inboxItems || []).filter((i: QuickInboxItem) => i.id !== id),
+    }));
+    showToast('یادداشت حذف شد.');
+  };
+
+  const convertInboxToTask = (
+    inboxId: string,
+    targetType: 'task' | 'homework' | 'project_task' | 'goal' | 'note',
+    targetData?: any
+  ) => {
+    const item = (state.inboxItems || []).find((i: QuickInboxItem) => i.id === inboxId);
+    if (!item) return;
+
+    if (targetType === 'task') {
+      const today = new Date();
+      const dayIdx = Math.min(4, Math.max(0, (today.getDay() + 1) % 7));
+      addPostSchoolTask(dayIdx, item.title || item.content, item.priority, item.dueDate);
+    } else if (targetType === 'homework' && targetData?.subjectId) {
+      addHomework({
+        dayIndex: 0,
+        subjectId: targetData.subjectId,
+        subjectName: targetData.subjectName || 'درس عمومی',
+        title: item.title || item.content,
+        completed: false,
+        dueDate: item.dueDate || new Date().toISOString().slice(0, 10),
+        priority: item.priority,
+      });
+    } else if (targetType === 'note') {
+      addNote({
+        title: item.title || item.content.slice(0, 30),
+        content: item.content,
+        category: item.category || 'general',
+        tags: ['صندوق_ورودی'],
+        pinned: false,
+      });
+    }
+
+    updateInboxItem(inboxId, {
+      archived: true,
+      convertedTo: { type: targetType, targetId: `conv-${Date.now()}` },
+    });
+    showToast(`مورد صندوق ورودی با موفقیت تبدیل به ${targetType === 'task' ? 'وظیفه' : targetType === 'homework' ? 'تکلیف' : 'یادداشت'} شد.`);
+  };
+
+  // Advanced Daily Planning
+  const addPlannedTask = (taskData: Omit<TaskItem, 'id'>, targetDayIdx: number = 0) => {
+    const newTask: TaskItem = {
+      ...taskData,
+      id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      subtasks: taskData.subtasks || [],
+      date: taskData.date || new Date().toISOString().slice(0, 10),
+    };
+    setState((prev: any) => {
+      const day = prev.dayData[targetDayIdx] || {
+        dayIndex: targetDayIdx,
+        overallRating: null,
+        preSchoolTasks: [],
+        postSchoolTasks: [],
+        notes: '',
+        reflectionReport: '',
+      };
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [targetDayIdx]: {
+            ...day,
+            postSchoolTasks: [...(day.postSchoolTasks || []), newTask],
+          },
+        },
+      };
+    });
+    showToast(`وظیفه «${taskData.title}» برنامه‌ریزی شد.`);
+  };
+
+  const updatePlannedTask = (taskId: string, dayIndex: number, updates: Partial<TaskItem>) => {
+    setState((prev: any) => {
+      const day = prev.dayData[dayIndex];
+      if (!day) return prev;
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [dayIndex]: {
+            ...day,
+            postSchoolTasks: (day.postSchoolTasks || []).map((t: TaskItem) =>
+              t.id === taskId ? { ...t, ...updates } : t
+            ),
+          },
+        },
+      };
+    });
+  };
+
+  const deletePlannedTask = (taskId: string, dayIndex: number) => {
+    setState((prev: any) => {
+      const day = prev.dayData[dayIndex];
+      if (!day) return prev;
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [dayIndex]: {
+            ...day,
+            postSchoolTasks: (day.postSchoolTasks || []).filter((t: TaskItem) => t.id !== taskId),
+          },
+        },
+      };
+    });
+    showToast('وظیفه حذف شد.');
+  };
+
+  const toggleTaskSubtask = (dayIndex: number, taskId: string, subtaskId: string) => {
+    setState((prev: any) => {
+      const day = prev.dayData[dayIndex];
+      if (!day) return prev;
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [dayIndex]: {
+            ...day,
+            postSchoolTasks: (day.postSchoolTasks || []).map((t: TaskItem) => {
+              if (t.id !== taskId) return t;
+              const updatedSubtasks = (t.subtasks || []).map((st: TaskSubtask) =>
+                st.id === subtaskId ? { ...st, completed: !st.completed } : st
+              );
+              return { ...t, subtasks: updatedSubtasks };
+            }),
+          },
+        },
+      };
+    });
+  };
+
+  const addTaskSubtask = (dayIndex: number, taskId: string, title: string) => {
+    if (!title.trim()) return;
+    const newSub: TaskSubtask = {
+      id: `st-${Date.now()}`,
+      title: title.trim(),
+      completed: false,
+    };
+    setState((prev: any) => {
+      const day = prev.dayData[dayIndex];
+      if (!day) return prev;
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [dayIndex]: {
+            ...day,
+            postSchoolTasks: (day.postSchoolTasks || []).map((t: TaskItem) => {
+              if (t.id !== taskId) return t;
+              return { ...t, subtasks: [...(t.subtasks || []), newSub] };
+            }),
+          },
+        },
+      };
+    });
+  };
+
+  const rescheduleTask = (taskId: string, fromDayIndex: number, toDayIndex: number, newTime?: string) => {
+    setState((prev: any) => {
+      const fromDay = prev.dayData[fromDayIndex];
+      const targetTask = fromDay?.postSchoolTasks?.find((t: TaskItem) => t.id === taskId);
+      if (!targetTask) return prev;
+
+      const updatedFromTasks = (fromDay.postSchoolTasks || []).filter((t: TaskItem) => t.id !== taskId);
+      const toDay = prev.dayData[toDayIndex] || {
+        dayIndex: toDayIndex,
+        overallRating: null,
+        preSchoolTasks: [],
+        postSchoolTasks: [],
+        notes: '',
+        reflectionReport: '',
+      };
+
+      const movedTask: TaskItem = {
+        ...targetTask,
+        dueTime: newTime || targetTask.dueTime,
+        startTime: newTime || targetTask.startTime,
+        isRollover: true,
+      };
+
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [fromDayIndex]: { ...fromDay, postSchoolTasks: updatedFromTasks },
+          [toDayIndex]: { ...toDay, postSchoolTasks: [...(toDay.postSchoolTasks || []), movedTask] },
+        },
+      };
+    });
+    showToast('وظیفه با موفقیت زمان‌بندی مجدد شد.');
+  };
+
+  // CSV Exports
+  const exportTasksCSV = () => {
+    const rows = [
+      ['عنوان وظیفه', 'بخش', 'اولویت', 'وضعیت', 'ساعت / مهلت', 'زمان تخمینی (دقیقه)', 'زمان واقعی (دقیقه)'],
+    ];
+    Object.values(state.dayData || {}).forEach((d: any) => {
+      (d.postSchoolTasks || []).forEach((t: TaskItem) => {
+        rows.push([
+          `"${(t.title || '').replace(/"/g, '""')}"`,
+          t.section || 'مدرسه',
+          t.priority || 'medium',
+          t.completed ? 'تکمیل‌شده' : 'در انتظار',
+          t.dueTime || t.startTime || '-',
+          String(t.estimatedMinutes || 0),
+          String(t.actualMinutes || 0),
+        ]);
+      });
+    });
+    (state.homeworks || []).forEach((h: SchoolHomework) => {
+      rows.push([
+        `"${(h.title || '').replace(/"/g, '""')}"`,
+        'تکلیف مدرسه',
+        h.priority || 'medium',
+        h.completed ? 'تکمیل‌شده' : 'در انتظار',
+        h.dueDate || '-',
+        String(h.estimatedMinutes || 0),
+        '-',
+      ]);
+    });
+
+    const csvContent = '\uFEFF' + rows.map((e) => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pathly-tasks-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showToast('فایل CSV وظایف دانلود شد.');
+  };
+
+  const exportStudySessionsCSV = () => {
+    const rows = [
+      ['موضوع مطالعه', 'درس / مهارت', 'تاریخ', 'ساعت شروع', 'مدت پیش‌بینی (دقیقه)', 'مدت واقعی (دقیقه)', 'نمره تمرکز (۱ تا ۵)', 'یادداشت پایان جلسه'],
+    ];
+    (state.studySessions || []).forEach((s: StudySession) => {
+      rows.push([
+        `"${(s.topic || '').replace(/"/g, '""')}"`,
+        `"${(s.subjectName || '').replace(/"/g, '""')}"`,
+        s.date,
+        s.startTime,
+        String(s.expectedDurationMin || 0),
+        String(s.actualDurationMin || 0),
+        String(s.focusScore || 5),
+        `"${(s.outcomeNotes || '').replace(/"/g, '""')}"`,
+      ]);
+    });
+    const csvContent = '\uFEFF' + rows.map((e) => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pathly-study-sessions-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showToast('فایل CSV جلسات مطالعه و تمرکز دانلود شد.');
+  };
+
+  const exportGradesCSV = () => {
+    const rows = [
+      ['درس', 'عنوان آزمون / پرسش', 'نمره کسب‌شده', 'نمره کامل', 'تاریخ', 'توضیحات'],
+    ];
+    (state.grades || []).forEach((g: SubjectGrade) => {
+      const sub = (state.subjects || []).find((s: SchoolSubject) => s.id === g.subjectId);
+      rows.push([
+        `"${(sub?.name || 'نامشخص').replace(/"/g, '""')}"`,
+        `"${(g.title || '').replace(/"/g, '""')}"`,
+        String(g.score),
+        String(g.maxScore),
+        g.date,
+        `"${(g.notes || '').replace(/"/g, '""')}"`,
+      ]);
+    });
+    const csvContent = '\uFEFF' + rows.map((e) => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pathly-grades-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showToast('فایل CSV نمرات دانلود شد.');
+  };
+
+  const exportSkillsCSV = () => {
+    const rows = [
+      ['نام مهارت', 'دسته‌بندی', 'سطح فعلی', 'سطح هدف', 'هدف روزانه (دقیقه)', 'استریک (روز)', 'تعداد تمرین‌ها'],
+    ];
+    (state.skills || []).forEach((sk: Skill) => {
+      rows.push([
+        `"${(sk.name || '').replace(/"/g, '""')}"`,
+        sk.category,
+        sk.currentLevel,
+        sk.targetLevel,
+        String(sk.dailyTargetMin || 0),
+        String(sk.streak || 0),
+        String((sk.practiceLogs || []).length),
+      ]);
+    });
+    const csvContent = '\uFEFF' + rows.map((e) => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pathly-skills-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showToast('فایل CSV مهارت‌ها دانلود شد.');
+  };
+
+  const validateBackupData = (jsonData: string) => {
+    try {
+      const parsed = JSON.parse(jsonData);
+      if (!parsed || typeof parsed !== 'object') {
+        return { valid: false, error: 'ساختار فایل نامعتبر است.' };
+      }
+      const summary: Record<string, number> = {
+        subjects: Array.isArray(parsed.subjects) ? parsed.subjects.length : 0,
+        homeworks: Array.isArray(parsed.homeworks) ? parsed.homeworks.length : 0,
+        skills: Array.isArray(parsed.skills) ? parsed.skills.length : 0,
+        projects: Array.isArray(parsed.projects) ? parsed.projects.length : 0,
+        competitions: Array.isArray(parsed.competitions) ? parsed.competitions.length : 0,
+        habits: Array.isArray(parsed.habits) ? parsed.habits.length : 0,
+        reviews: Array.isArray(parsed.reviews) ? parsed.reviews.length : 0,
+        resources: Array.isArray(parsed.resources) ? parsed.resources.length : 0,
+        inboxItems: Array.isArray(parsed.inboxItems) ? parsed.inboxItems.length : 0,
+      };
+      return { valid: true, summary };
+    } catch (err: any) {
+      return { valid: false, error: err?.message || 'خطا در خواندن فایل JSON' };
+    }
+  };
+
   const resetToDefault = () => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('pathly_app_data_v1');
+    localStorage.removeItem('pathly_app_data_v2_clean');
     setState({
       profile: initialProfile,
       subjects: initialSubjects,
@@ -1322,6 +1883,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       activityLogs: initialActivityLogs,
       notifications: initialNotifications,
       habits: initialHabits,
+      reviews: initialReviews,
+      resources: initialResources,
+      inboxItems: initialInboxItems,
       widgetConfig: initialWidgetConfig,
     });
     showToast('داده‌ها به حالت اولیه پیش‌فرض بازنشانی شدند.');
@@ -1353,6 +1917,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       activityLogs: [],
       notifications: [],
       habits: [],
+      reviews: [],
+      resources: [],
+      inboxItems: [],
       widgetConfig: initialWidgetConfig,
     });
     showToast('تمامی اطلاعات با موفقیت پاکسازی شدند.');
@@ -1362,6 +1929,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     <AppContext.Provider
       value={{
         ...state,
+        reviews: state.reviews || [],
+        resources: state.resources || [],
+        inboxItems: state.inboxItems || [],
+        addReviewItem,
+        updateReviewItem,
+        deleteReviewItem,
+        submitReviewOutcome,
+        addResource,
+        updateResource,
+        deleteResource,
+        toggleResourcePinned,
+        addInboxItem,
+        updateInboxItem,
+        deleteInboxItem,
+        convertInboxToTask,
+        addPlannedTask,
+        updatePlannedTask,
+        deletePlannedTask,
+        toggleTaskSubtask,
+        addTaskSubtask,
+        rescheduleTask,
+        exportTasksCSV,
+        exportStudySessionsCSV,
+        exportGradesCSV,
+        exportSkillsCSV,
+        validateBackupData,
         updateProfile,
         addSubject,
         updateSubject,

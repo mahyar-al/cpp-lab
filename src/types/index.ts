@@ -43,13 +43,28 @@ export interface WeeklyTimetableCell {
   notes?: string;
 }
 
+export interface TaskSubtask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface TaskItem {
   id: string;
   title: string;
   completed: boolean;
   priority: Priority;
   dueTime?: string;
+  startTime?: string; // HH:mm
+  endTime?: string;   // HH:mm
+  estimatedMinutes?: number;
+  actualMinutes?: number;
+  section?: SectionType;
   notes?: string;
+  subtasks?: TaskSubtask[];
+  date?: string; // YYYY-MM-DD
+  isRollover?: boolean;
+  tags?: string[];
 }
 
 export interface SchoolHomework {
@@ -75,6 +90,7 @@ export interface SchoolExamItem {
   date: string;
   time?: string;
   chapters?: string;
+  reviewSchedule?: string;
   completed: boolean;
   priority: Priority;
   notes?: string;
@@ -100,7 +116,7 @@ export interface StudySession {
   actualDurationMin: number;
   focusScore: number; // 1 to 5
   outcomeNotes: string;
-  type?: 'school' | 'skill' | 'competition' | 'general';
+  type?: SectionType;
 }
 
 export interface SkillRoadmapStep {
@@ -315,6 +331,76 @@ export interface Habit {
   icon?: string;
   notes?: string;
   color?: string;
+  paused?: boolean;
+  plannedRestDates?: string[]; // استراحت برنامه‌ریزی‌شده
+}
+
+export interface ReviewLogEntry {
+  id: string;
+  date: string;
+  rating: 'easy' | 'good' | 'hard' | 'forgotten';
+  notes?: string;
+}
+
+export interface SpacedReviewItem {
+  id: string;
+  title: string;
+  topic: string;
+  section: SectionType;
+  linkedEntityId?: string;
+  linkedEntityName?: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  isDifficult: boolean;
+  masteryLevel: number; // 1 to 5
+  lastReviewedDate?: string;
+  nextReviewDate: string; // YYYY-MM-DD
+  intervalDays: number;
+  repetitionCount: number;
+  notes?: string;
+  reviewLogs: ReviewLogEntry[];
+}
+
+export interface KnowledgeResource {
+  id: string;
+  title: string;
+  type: 'book' | 'course' | 'video' | 'article' | 'documentation' | 'cheatsheet' | 'other';
+  authorOrInstructor?: string;
+  url?: string;
+  section: SectionType;
+  linkedEntityId?: string;
+  linkedEntityName?: string;
+  status: 'not_started' | 'in_progress' | 'completed' | 'archived';
+  progressPercentage: number;
+  pinned: boolean;
+  tags: string[];
+  notes: string;
+  keyTakeaways: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface QuickInboxItem {
+  id: string;
+  content: string;
+  title?: string;
+  priority: Priority;
+  createdAt: string;
+  dueDate?: string;
+  category?: SectionType;
+  archived: boolean;
+  convertedTo?: {
+    type: 'task' | 'homework' | 'project_task' | 'goal' | 'note';
+    targetId: string;
+  };
+}
+
+export interface FocusTimerSettings {
+  workMinutes: number;
+  shortBreakMinutes: number;
+  longBreakMinutes: number;
+  sessionsBeforeLongBreak: number;
+  soundEnabled: boolean;
+  autoLogSessions: boolean;
 }
 
 export interface DashboardWidgetConfig {
@@ -325,6 +411,10 @@ export interface DashboardWidgetConfig {
   showSectionProgress: boolean;
   showHabits: boolean;
   showRecentActivity: boolean;
+  showTomorrowSchedule?: boolean;
+  showFocusWidget?: boolean;
+  showReviewsDue?: boolean;
+  showFreeTimeMetric?: boolean;
 }
 
 export interface Note {
@@ -365,4 +455,5 @@ export interface UserProfile {
   bellTimes: SchoolBellTime[];
   widgetConfig?: DashboardWidgetConfig;
   studyTargetDailyHours?: number;
+  focusSettings?: FocusTimerSettings;
 }

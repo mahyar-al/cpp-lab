@@ -3,49 +3,38 @@ import {
   Search,
   X,
   ArrowLeft,
-  BookOpen,
-  CheckSquare,
+  GraduationCap,
   Sparkles,
   FolderGit2,
   Trophy,
   Target,
   FileText,
   Calendar,
+  Flame,
+  RotateCcw,
+  BookOpen,
+  Zap,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { NavItemKey } from '../layout/Sidebar';
+import { NavTab } from '../layout/Sidebar';
 import { SectionType } from '../../types';
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigateToTab?: (tab: NavItemKey) => void;
-  onNavigate?: (tab: NavItemKey) => void;
+  onNavigateToTab?: (tab: NavTab) => void;
+  onNavigate?: (tab: NavTab) => void;
 }
 
 interface SearchItem {
   id: string;
   title: string;
   type: string;
-  section: SectionType;
+  targetTab: NavTab;
+  icon: React.ElementType;
   snippet?: string;
+  colorClass?: string;
 }
-
-const SECTION_ICON_MAP: Record<SectionType, React.ElementType> = {
-  school: BookOpen,
-  skill: Sparkles,
-  project: FolderGit2,
-  competition: Trophy,
-  general: FileText,
-};
-
-const SECTION_TAB_MAP: Record<SectionType, NavItemKey> = {
-  school: 'school',
-  skill: 'skills',
-  project: 'projects',
-  competition: 'competitions',
-  general: 'notes',
-};
 
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   isOpen,
@@ -62,6 +51,9 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     goals,
     notes,
     calendarEvents,
+    habits,
+    reviews,
+    resources,
   } = useApp();
 
   const [query, setQuery] = useState('');
@@ -97,57 +89,100 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       id: `subj-${s.id}`,
       title: s.name,
       type: 'درس مدرسه',
-      section: 'school' as SectionType,
+      targetTab: 'school' as NavTab,
+      icon: GraduationCap,
+      colorClass: 'text-blue-500',
       snippet: s.teacher ? `معلم: ${s.teacher}` : undefined,
     })),
     ...homeworks.map((h) => ({
       id: `hw-${h.id}`,
       title: h.title,
       type: 'تکلیف مدرسه',
-      section: 'school' as SectionType,
-      snippet: `درس: ${h.subjectName}`,
+      targetTab: 'school' as NavTab,
+      icon: GraduationCap,
+      colorClass: 'text-blue-500',
+      snippet: `درس: ${h.subjectName} · موعد: ${h.dueDate}`,
     })),
     ...skills.map((s) => ({
       id: `sk-${s.id}`,
       title: s.name,
       type: 'مهارت',
-      section: 'skill' as SectionType,
-      snippet: `سطح: ${s.currentLevel} ← ${s.targetLevel}`,
+      targetTab: 'skills' as NavTab,
+      icon: Sparkles,
+      colorClass: 'text-[#39FF88]',
+      snippet: `سطح: ${s.currentLevel} ← هدف: ${s.targetLevel}`,
     })),
     ...projects.map((p) => ({
       id: `proj-${p.id}`,
       title: p.title,
       type: 'پروژه',
-      section: 'project' as SectionType,
+      targetTab: 'projects' as NavTab,
+      icon: FolderGit2,
+      colorClass: 'text-[#C084FC]',
       snippet: p.description,
     })),
     ...competitions.map((c) => ({
       id: `comp-${c.id}`,
       title: c.title,
       type: 'مسابقه / المپیاد',
-      section: 'competition' as SectionType,
+      targetTab: 'competitions' as NavTab,
+      icon: Trophy,
+      colorClass: 'text-[#FF4FD8]',
       snippet: `برگزارکننده: ${c.organizer}`,
+    })),
+    ...habits.map((h) => ({
+      id: `habit-${h.id}`,
+      title: h.title,
+      type: 'عادت روزانه',
+      targetTab: 'habits' as NavTab,
+      icon: Flame,
+      colorClass: 'text-amber-500',
+      snippet: `استمرار: ${h.streak} روز`,
+    })),
+    ...reviews.map((r) => ({
+      id: `rev-${r.id}`,
+      title: r.title,
+      type: 'مرور فاصله‌دار',
+      targetTab: 'reviews' as NavTab,
+      icon: RotateCcw,
+      colorClass: 'text-indigo-400',
+      snippet: `مبحث: ${r.topic} · مرحله: ${r.intervalDays} روزه`,
+    })),
+    ...resources.map((res) => ({
+      id: `res-${res.id}`,
+      title: res.title,
+      type: 'منبع یادگیری',
+      targetTab: 'resources' as NavTab,
+      icon: BookOpen,
+      colorClass: 'text-teal-400',
+      snippet: res.authorOrInstructor ? `مؤلف: ${res.authorOrInstructor}` : res.section,
     })),
     ...goals.map((g) => ({
       id: `goal-${g.id}`,
       title: g.title,
       type: 'هدف',
-      section: g.category,
+      targetTab: 'goals' as NavTab,
+      icon: Target,
+      colorClass: 'text-emerald-400',
       snippet: g.description,
     })),
     ...notes.map((n) => ({
       id: `note-${n.id}`,
       title: n.title,
       type: 'یادداشت',
-      section: n.category,
+      targetTab: 'notes' as NavTab,
+      icon: FileText,
+      colorClass: 'text-cyan-400',
       snippet: n.content,
     })),
     ...calendarEvents.map((ev) => ({
       id: `cal-${ev.id}`,
       title: ev.title,
       type: 'رویداد تقویم',
-      section: ev.section,
-      snippet: ev.date,
+      targetTab: 'calendar' as NavTab,
+      icon: Calendar,
+      colorClass: 'text-cyan-400',
+      snippet: `${ev.date}${ev.startTime ? ` ساعت ${ev.startTime}` : ''}`,
     })),
   ];
 
@@ -162,8 +197,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       })
     : [];
 
-  const handleSelectResult = (section: SectionType) => {
-    const targetTab = SECTION_TAB_MAP[section] || 'dashboard';
+  const handleSelectResult = (targetTab: NavTab) => {
     if (navigateFn) {
       navigateFn(targetTab);
     }
@@ -171,67 +205,67 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-900/50 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-xs">
       <div
-        className="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[80vh] text-right"
+        className="w-full max-w-xl rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] text-right"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-          <Search className="w-5 h-5 text-slate-400 shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-[#263247]">
+          <Search className="w-5 h-5 text-cyan-500 shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="جستجو در درس‌ها، تکالیف، مهارت‌ها، پروژه‌ها، مسابقات و یادداشت‌ها..."
-            className="flex-1 bg-transparent text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-hidden"
+            placeholder="جستجو در درس‌ها، تکالیف، مهارت‌ها، پروژه‌ها، مسابقات، عادت‌ها و منابع..."
+            className="flex-1 bg-transparent text-sm text-slate-800 dark:text-[#F1F5F9] placeholder:text-slate-400 focus:outline-none"
           />
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           )}
           <button
             onClick={onClose}
-            className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1 rounded border border-slate-200 dark:border-slate-700"
+            className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1 rounded-lg border border-slate-200 dark:border-[#263247] cursor-pointer"
           >
             Esc
           </button>
         </div>
 
         {/* Results List */}
-        <div className="flex-1 overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-slate-800/60">
+        <div className="flex-1 overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-[#263247]/60 cyber-scrollbar">
           {query.trim() === '' ? (
-            <div className="p-8 text-center text-xs text-slate-400">
-              عنوان درس، پروژه، مهارت، مسابقه یا یادداشت موردنظر را تایپ کنید.
+            <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">
+              عنوان درس، پروژه، مهارت، مسابقه، عادت، منبع یا یادداشت موردنظر را تایپ کنید.
             </div>
           ) : searchResults.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-400">
+            <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">
               هیچ موردی با عبارت «{query}» یافت نشد.
             </div>
           ) : (
             searchResults.map((item) => {
-              const Icon = SECTION_ICON_MAP[item.section] || CheckSquare;
+              const Icon = item.icon;
               return (
                 <div
                   key={item.id}
-                  onClick={() => handleSelectResult(item.section)}
-                  className="p-3 flex items-center justify-between rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-colors group"
+                  onClick={() => handleSelectResult(item.targetTab)}
+                  className="p-3 flex items-center justify-between rounded-xl hover:bg-slate-50 dark:hover:bg-[#172033] cursor-pointer transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] flex items-center justify-center shrink-0">
+                      <Icon className={`w-4 h-4 ${item.colorClass || 'text-cyan-500'}`} />
                     </div>
                     <div className="truncate">
-                      <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">
+                      <div className="text-xs font-semibold text-slate-800 dark:text-[#F1F5F9] truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">
                         {item.title}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 truncate mt-0.5">
-                        <span className="font-medium text-indigo-600 dark:text-indigo-400">{item.type}</span>
+                        <span className="font-medium text-cyan-600 dark:text-cyan-400">{item.type}</span>
                         {item.snippet && (
                           <>
                             <span aria-hidden="true">·</span>
@@ -241,7 +275,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                       </div>
                     </div>
                   </div>
-                  <ArrowLeft className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors shrink-0" />
+                  <ArrowLeft className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF] transition-colors shrink-0" />
                 </div>
               );
             })

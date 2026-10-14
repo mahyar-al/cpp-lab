@@ -9,11 +9,33 @@
     <meta property="og:description" content="سامانه جامع و یکپارچه برنامه‌ریزی تحصیلی، مدیریت پروژه‌ها، توسعه مهارت‌ها و آمادگی مسابقات با تقویم شمسی" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- Preload core local Vazirmatn font files for instant, offline-capable render -->
+    <link rel="preload" href="/fonts/Vazirmatn-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Vazirmatn-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Vazirmatn-Bold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Monospace font for code/debug blocks -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('pathly_app_data_v3_clean');
+          if (saved) {
+            var data = JSON.parse(saved);
+            if (data && data.profile && data.profile.theme === 'light') {
+              document.documentElement.classList.remove('dark');
+              return;
+            }
+          }
+          document.documentElement.classList.add('dark');
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased font-sans selection:bg-indigo-500 selection:text-white">
+  <body class="bg-slate-50 text-slate-900 dark:bg-[#080B14] dark:text-[#F1F5F9] antialiased font-sans selection:bg-cyan-500 selection:text-slate-950">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

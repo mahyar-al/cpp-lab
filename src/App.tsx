@@ -3,10 +3,15 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Sidebar, NavTab } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DashboardView } from './components/views/DashboardView';
+import { DailyPlannerView } from './components/views/DailyPlannerView';
 import { SchoolView } from './components/views/SchoolView';
 import { SkillsView } from './components/views/SkillsView';
 import { ProjectsView } from './components/views/ProjectsView';
 import { CompetitionsView } from './components/views/CompetitionsView';
+import { HabitsView } from './components/views/HabitsView';
+import { ReviewsView } from './components/views/ReviewsView';
+import { FocusTimerView } from './components/views/FocusTimerView';
+import { ResourceLibraryView } from './components/views/ResourceLibraryView';
 import { CalendarView } from './components/views/CalendarView';
 import { GoalsView } from './components/views/GoalsView';
 import { NotesView } from './components/views/NotesView';
@@ -14,18 +19,24 @@ import { AnalyticsView } from './components/views/AnalyticsView';
 import { SettingsView } from './components/views/SettingsView';
 import { GlobalSearchModal } from './components/modals/GlobalSearchModal';
 import { QuickAddModal } from './components/modals/QuickAddModal';
+import { BottomNav } from './components/layout/BottomNav';
 
 const TAB_TITLES: Record<NavTab, string> = {
-  dashboard: 'داشبورد اصلی',
+  dashboard: 'داشبورد اصلی و مرکز کنترل',
+  daily_planner: 'برنامه‌ریز هوشمند روزانه',
   school: 'مدرسه و برنامه هفتگی',
-  skills: 'توسعه مهارت‌ها',
-  projects: 'مدیریت پروژه‌ها',
-  competitions: 'آمادگی برای مسابقات',
-  calendar: 'تقویم و رویدادها',
+  skills: 'توسعه مهارت‌ها و نقشه‌راه',
+  projects: 'مدیریت پروژه‌ها و کانبان',
+  competitions: 'آمادگی برای مسابقات و المپیاد',
+  habits: 'سیستم عادت‌ها و استمرار روزانه',
+  reviews: 'مرور و تکرار فاصله‌دار (Spaced Repetition)',
+  focus_timer: 'تایمر تمرکز و پومودورو',
+  resources: 'کتابخانه منابع و یادگیری',
+  calendar: 'تقویم جامع رویدادها',
   goals: 'اهداف و مرور هفتگی',
   notes: 'یادداشت‌ها و وقایع',
-  analytics: 'آمار و گزارش عملکرد',
-  settings: 'تنظیمات و پشتیبان‌گیری',
+  analytics: 'آمار و گزارش عملکرد تحلیلی',
+  settings: 'تنظیمات، نمایه و پشتیبان‌گیری',
 };
 
 const MainContent: React.FC = () => {
@@ -62,7 +73,13 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-200" dir="rtl">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#080B14] text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950 font-sans" dir="rtl">
+      {/* Background Ambient Lighting Orbs & Tech Grid */}
+      <div className="pointer-events-none fixed inset-0 cyber-grid opacity-30 dark:opacity-20 z-0" aria-hidden="true" />
+      <div className="pointer-events-none fixed top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 dark:bg-cyan-500/8 rounded-full blur-[140px] z-0" aria-hidden="true" />
+      <div className="pointer-events-none fixed bottom-0 left-0 w-[600px] h-[600px] bg-purple-500/5 dark:bg-purple-600/7 rounded-full blur-[160px] z-0" aria-hidden="true" />
+      <div className="pointer-events-none fixed top-1/3 left-1/4 w-[400px] h-[400px] bg-blue-500/4 dark:bg-blue-600/5 rounded-full blur-[130px] z-0" aria-hidden="true" />
+
       {/* Sidebar Navigation */}
       <Sidebar
         currentTab={currentTab}
@@ -77,25 +94,33 @@ const MainContent: React.FC = () => {
       />
 
       {/* Main App Container */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <div className={`flex-1 flex flex-col min-w-0 min-h-screen transition-all duration-300 ease-in-out relative z-10 ${
+        isCollapsed ? 'lg:mr-20' : 'lg:mr-64'
+      }`}>
         <Header
           activeSectionTitle={TAB_TITLES[currentTab]}
           onToggleSidebar={() => setIsOpenMobile((prev) => !prev)}
           onOpenQuickAdd={() => setIsQuickAddOpen(true)}
           onOpenSearch={() => setIsSearchOpen(true)}
+          onSelectTab={(tab) => setCurrentTab(tab)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto relative z-10 pb-24 lg:pb-8">
           {currentTab === 'dashboard' && (
             <DashboardView
               onNavigate={(tab) => setCurrentTab(tab)}
               onOpenQuickAdd={() => setIsQuickAddOpen(true)}
             />
           )}
+          {currentTab === 'daily_planner' && <DailyPlannerView />}
           {currentTab === 'school' && <SchoolView />}
           {currentTab === 'skills' && <SkillsView />}
           {currentTab === 'projects' && <ProjectsView />}
           {currentTab === 'competitions' && <CompetitionsView />}
+          {currentTab === 'habits' && <HabitsView />}
+          {currentTab === 'reviews' && <ReviewsView />}
+          {currentTab === 'focus_timer' && <FocusTimerView />}
+          {currentTab === 'resources' && <ResourceLibraryView />}
           {currentTab === 'calendar' && <CalendarView />}
           {currentTab === 'goals' && <GoalsView />}
           {currentTab === 'notes' && <NotesView />}
@@ -103,6 +128,16 @@ const MainContent: React.FC = () => {
           {currentTab === 'settings' && <SettingsView />}
         </main>
       </div>
+
+      {/* Mobile/Tablet Ergonomic Bottom Navigation */}
+      <BottomNav
+        currentTab={currentTab}
+        onSelectTab={(tab) => {
+          setCurrentTab(tab);
+          setIsOpenMobile(false);
+        }}
+        onOpenMenu={() => setIsOpenMobile(true)}
+      />
 
       {/* Modals */}
       <GlobalSearchModal

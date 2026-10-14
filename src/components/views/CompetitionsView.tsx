@@ -157,9 +157,10 @@ export const CompetitionsView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Competitions Sidebar */}
           <div className="lg:col-span-4 space-y-3">
-            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
+            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
               مسابقات من ({toPersianDigits(competitions.length)})
             </h2>
+            <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto cyber-scrollbar pr-0.5">
             {competitions.map((comp) => {
               const isSelected = activeComp && activeComp.id === comp.id;
               const daysLeft = getDaysRemaining(comp.registrationDeadline);
@@ -213,6 +214,7 @@ export const CompetitionsView: React.FC = () => {
                 </div>
               );
             })}
+            </div>
           </div>
 
           {/* Active Competition Detail */}

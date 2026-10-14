@@ -372,25 +372,25 @@ export const CalendarView: React.FC = () => {
 
       {/* VIEW MODES */}
       {viewMode === 'month' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Calendar Matrix (8 cols on desktop) */}
-          <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+          <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-3 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4">
             {/* Weekday headers */}
-            <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
-              <div>شنبه</div>
-              <div>یکشنبه</div>
-              <div>دوشنبه</div>
-              <div>سه‌شنبه</div>
-              <div>چهارشنبه</div>
-              <div>پنجشنبه</div>
-              <div className="text-rose-500">جمعه</div>
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
+              <div><span className="hidden sm:inline">شنبه</span><span className="sm:hidden text-[11px]">ش</span></div>
+              <div><span className="hidden sm:inline">یکشنبه</span><span className="sm:hidden text-[11px]">ی</span></div>
+              <div><span className="hidden sm:inline">دوشنبه</span><span className="sm:hidden text-[11px]">د</span></div>
+              <div><span className="hidden sm:inline">سه‌شنبه</span><span className="sm:hidden text-[11px]">س</span></div>
+              <div><span className="hidden sm:inline">چهارشنبه</span><span className="sm:hidden text-[11px]">چ</span></div>
+              <div><span className="hidden sm:inline">پنجشنبه</span><span className="sm:hidden text-[11px]">پ</span></div>
+              <div className="text-rose-500"><span className="hidden sm:inline">جمعه</span><span className="sm:hidden text-[11px]">ج</span></div>
             </div>
 
             {/* Days Grid */}
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {/* Empty leading cells */}
               {Array.from({ length: firstDayIranian }).map((_, i) => (
-                <div key={`empty-${i}`} className="h-20 sm:h-24 p-1 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 opacity-30" />
+                <div key={`empty-${i}`} className="h-16 sm:h-24 p-1 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 opacity-30" />
               ))}
 
               {/* Days in Month */}
@@ -411,7 +411,7 @@ export const CalendarView: React.FC = () => {
                   <div
                     key={dayNum}
                     onClick={() => setSelectedDateIso(dayIso)}
-                    className={`h-20 sm:h-24 p-1.5 rounded-xl border flex flex-col justify-between cursor-pointer transition-all ${
+                    className={`h-16 sm:h-24 p-1 sm:p-1.5 rounded-xl border flex flex-col justify-between cursor-pointer transition-all ${
                       isSelected
                         ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/20 ring-2 ring-indigo-500/20'
                         : isToday
