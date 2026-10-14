@@ -99,8 +99,9 @@ export const ReviewsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-cyan-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.2)]">
@@ -139,7 +140,7 @@ export const ReviewsView: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center justify-between gap-3 flex-wrap mt-5 pt-4 border-t border-slate-100 dark:border-[#263247] text-xs">
+        <div className="flex items-center justify-between gap-3 flex-wrap mt-5 pt-4 border-t border-slate-100 dark:border-slate-800/80 text-xs relative z-10">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-slate-400 ml-1">فیلتر بخش:</span>
             {[
@@ -153,8 +154,8 @@ export const ReviewsView: React.FC = () => {
                 onClick={() => setFilterSection(f.id as any)}
                 className={`px-3 py-1 rounded-lg border transition-all cursor-pointer ${
                   filterSection === f.id
-                    ? 'border-cyan-400 bg-cyan-500/10 text-cyan-400 font-bold'
-                    : 'border-slate-200 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033] text-slate-600 dark:text-slate-400'
+                    ? 'border-cyan-400 bg-cyan-500/10 text-cyan-400 font-bold shadow-[0_0_10px_rgba(6,182,212,0.2)]'
+                    : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-[#172033] text-slate-600 dark:text-slate-400'
                 }`}
               >
                 {f.label}
@@ -176,28 +177,28 @@ export const ReviewsView: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">موعد مرور امروز:</span>
           <span className="text-xl font-bold font-mono text-cyan-400">
             {toPersianDigits(dueReviews.length)} مبحث
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">کل مباحث ثبت‌شده:</span>
           <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
             {toPersianDigits(reviews.length)} مفهوم
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-rose-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">مباحث پرچالش (دشوار):</span>
           <span className="text-xl font-bold font-mono text-rose-500">
             {toPersianDigits(reviews.filter((r) => r.isDifficult).length)} مبحث
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-emerald-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">تثبیت‌شده در حافظه (سطح ۴ و ۵):</span>
           <span className="text-xl font-bold font-mono text-[#39FF88]">
             {toPersianDigits(reviews.filter((r) => (r.masteryLevel || 1) >= 4).length)} مورد
@@ -208,7 +209,7 @@ export const ReviewsView: React.FC = () => {
       {/* Active Flashcard Review Modal */}
       {activeReviewItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#111827] w-full max-w-lg rounded-2xl border border-cyan-500/40 p-6 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#0D1222] w-full max-w-lg rounded-2xl border border-cyan-500/40 p-6 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
               <div className="flex items-center gap-2">
                 <Brain className="w-5 h-5 text-cyan-400" />
@@ -437,16 +438,16 @@ export const ReviewsView: React.FC = () => {
 
       {/* Add Review Item Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#111827] w-full max-w-md rounded-2xl border border-slate-200 dark:border-[#263247] p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#0D1222] w-full max-w-md rounded-2xl border border-slate-200 dark:border-cyan-500/30 p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Brain className="w-4 h-4 text-cyan-400" />
                 ثبت مفهوم جدید برای تکرار فاصله‌دار
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-200 rounded"
+                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -463,7 +464,7 @@ export const ReviewsView: React.FC = () => {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="مثلاً: قضیه هم‌ارزی تالس و کاربردها"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
 
@@ -476,7 +477,7 @@ export const ReviewsView: React.FC = () => {
                   value={newTopic}
                   onChange={(e) => setNewTopic(e.target.value)}
                   placeholder="مثلاً: هندسه پایه یازدهم، فصل ۲"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
 
@@ -491,7 +492,7 @@ export const ReviewsView: React.FC = () => {
                       setNewSection(e.target.value as SectionType);
                       setNewEntityId('');
                     }}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                   >
                     <option value="school">مدرسه و درس‌ها</option>
                     <option value="skill">مهارت فنی</option>
@@ -507,7 +508,7 @@ export const ReviewsView: React.FC = () => {
                   <select
                     value={newEntityId}
                     onChange={(e) => setNewEntityId(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                   >
                     <option value="">بدون وابستگی خاص</option>
                     {newSection === 'school' &&

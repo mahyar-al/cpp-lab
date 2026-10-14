@@ -116,11 +116,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263247] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col bg-white dark:bg-[#0D1222] rounded-2xl shadow-[0_0_35px_rgba(0,0,0,0.6)] border border-slate-200 dark:border-cyan-500/30 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-[#263247] shrink-0">
-          <span className="text-sm font-bold text-slate-900 dark:text-white">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-[#090D18]">
+          <span className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
             ثبت سریع در سامانه
           </span>
           <button
@@ -132,7 +133,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
         </div>
 
         {/* Tab selection */}
-        <div className="flex p-2 gap-1.5 bg-slate-50 dark:bg-[#0D1220] border-b border-slate-200 dark:border-[#263247] overflow-x-auto shrink-0">
+        <div className="flex p-2 gap-1.5 bg-slate-50 dark:bg-[#090D18] border-b border-slate-200 dark:border-slate-800 overflow-x-auto shrink-0">
           {[
             { id: 'task', label: 'تکلیف / کار', icon: GraduationCap },
             { id: 'event', label: 'رویداد تقویم', icon: CalendarDays },
@@ -149,7 +150,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                 onClick={() => setAddType(tab.id as AddType)}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer shrink-0 sm:shrink ${
                   active
-                    ? 'bg-white dark:bg-[#172033] text-cyan-600 dark:text-[#00F5FF] shadow-xs border border-slate-200 dark:border-cyan-500/40'
+                    ? 'bg-white dark:bg-cyan-500/15 text-cyan-700 dark:text-[#00F5FF] shadow-xs border border-slate-200 dark:border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.25)]'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >

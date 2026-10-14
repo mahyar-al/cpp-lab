@@ -146,12 +146,13 @@ export const ResourceLibraryView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-teal-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-teal-500/5 dark:bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.2)]">
-                <Library className="w-5 h-5 text-cyan-400" />
+              <span className="p-2 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 shadow-[0_0_12px_rgba(20,184,166,0.25)]">
+                <Library className="w-5 h-5" />
               </span>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
                 کتابخانه و مدیریت دانش شخصی (Knowledge Hub)
@@ -164,15 +165,15 @@ export const ResourceLibraryView: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_14px_rgba(20,184,166,0.3)] transition-all cursor-pointer active:scale-95"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>ثبت منبع جدید</span>
           </button>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-[#263247]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800/80 relative z-10">
           <div className="relative">
             <Search className="w-4 h-4 absolute right-3 top-2.5 text-slate-400" />
             <input
@@ -180,14 +181,14 @@ export const ResourceLibraryView: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="جستجو در نام منبع، مؤلف، برچسب‌ها..."
-              className="w-full pr-9 pl-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+              className="w-full pr-9 pl-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-teal-500/50"
             />
           </div>
 
           <select
             value={filterSection}
             onChange={(e) => setFilterSection(e.target.value as any)}
-            className="px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+            className="px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-teal-500/50"
           >
             <option value="all">همه بخش‌ها (مدرسه، مهارت، پروژه، مسابقه)</option>
             <option value="school">مدرسه و درس‌ها</option>
@@ -199,7 +200,7 @@ export const ResourceLibraryView: React.FC = () => {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+            className="px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-teal-500/50"
           >
             <option value="all">همه فرمت‌ها</option>
             <option value="book">کتاب</option>
@@ -213,10 +214,10 @@ export const ResourceLibraryView: React.FC = () => {
       </div>
 
       {/* Resource Cards Grid */}
-      <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
+      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <BookMarked className="w-4 h-4 text-cyan-400" />
+            <BookMarked className="w-4 h-4 text-teal-400" />
             منابع ثبت‌شده در کتابخانه
           </h2>
           <span className="text-xs font-mono text-slate-400">
@@ -229,7 +230,7 @@ export const ResourceLibraryView: React.FC = () => {
             <p>منبعی مطابق با جستجو یا فیلترهای فعلی یافت نشد.</p>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl font-bold"
+              className="px-4 py-2 bg-teal-500/10 text-teal-400 border border-teal-500/30 rounded-xl font-bold cursor-pointer"
             >
               + ثبت اولین منبع
             </button>
@@ -241,8 +242,8 @@ export const ResourceLibraryView: React.FC = () => {
                 key={res.id}
                 className={`p-4 rounded-xl border transition-all text-right flex flex-col justify-between ${
                   res.pinned
-                    ? 'bg-cyan-500/5 dark:bg-[#0D1220] border-cyan-500/40 shadow-[0_0_12px_rgba(0,245,255,0.12)]'
-                    : 'bg-white dark:bg-[#0D1220] border-slate-200 dark:border-[#263247] hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'bg-teal-500/5 dark:bg-[#090D18] border-teal-500/40 shadow-[0_0_14px_rgba(20,184,166,0.18)]'
+                    : 'bg-white dark:bg-[#090D18] border-slate-200 dark:border-slate-800/80 hover:border-teal-500/40'
                 }`}
               >
                 <div>

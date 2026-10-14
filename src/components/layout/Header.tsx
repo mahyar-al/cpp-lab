@@ -99,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0D1220]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#263247] transition-colors">
+    <header className="sticky top-0 z-30 bg-white/90 dark:bg-[#080B14]/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 transition-colors relative before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-cyan-500/35 before:to-transparent">
       <div className="flex items-center justify-between px-4 lg:px-6 h-16 gap-4">
         {/* Right Zone in RTL: Mobile menu trigger & Breadcrumb / Date */}
         <div className="flex items-center gap-3 min-w-0">

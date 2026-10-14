@@ -108,11 +108,12 @@ export const HabitsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-amber-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.2)]">
+              <span className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
                 <Flame className="w-5 h-5 text-amber-400" />
               </span>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -126,9 +127,9 @@ export const HabitsView: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer active:scale-95 self-start md:self-auto"
+            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_22px_rgba(245,158,11,0.5)] transition-all cursor-pointer active:scale-95 self-start md:self-auto"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>تعریف عادت جدید</span>
           </button>
         </div>
@@ -161,28 +162,28 @@ export const HabitsView: React.FC = () => {
 
       {/* KPI Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">عادت‌های فعال:</span>
           <span className="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400">
             {toPersianDigits(habits.filter((h) => !h.paused).length)} عادت
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-amber-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">طولانی‌ترین استریک فعال:</span>
           <span className="text-xl font-bold font-mono text-amber-500">
             {toPersianDigits(Math.max(0, ...habits.map((h) => h.streak || 0)))} روز
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-emerald-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">نرخ پایبندی این هفته:</span>
           <span className="text-xl font-bold font-mono text-emerald-600 dark:text-[#39FF88]">
             {toPersianDigits(overallAdherencePercent)}٪
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
+        <div className="bg-white dark:bg-[#0D1222] p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 hover:border-purple-500/30 transition-all">
           <span className="text-xs text-slate-400 block mb-1">تکمیل‌شده‌های امروز:</span>
           <span className="text-xl font-bold font-mono text-indigo-600 dark:text-[#C084FC]">
             {toPersianDigits(habits.filter((h) => (h.completedDates || []).includes(todayIso)).length)} از {toPersianDigits(habits.filter((h) => !h.paused).length)}
@@ -191,8 +192,8 @@ export const HabitsView: React.FC = () => {
       </div>
 
       {/* Habits List */}
-      <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
+      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Flame className="w-4 h-4 text-cyan-400" />
             فهرست و نقشه استمرار روزانه
@@ -341,15 +342,15 @@ export const HabitsView: React.FC = () => {
       {/* Add Habit Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#111827] w-full max-w-md rounded-2xl border border-slate-200 dark:border-[#263247] p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
+          <div className="bg-white dark:bg-[#0D1222] w-full max-w-md rounded-2xl border border-slate-200 dark:border-cyan-500/30 p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Flame className="w-4 h-4 text-cyan-400" />
                 تعریف عادت یا زنجیره جدید
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-200 rounded"
+                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -366,7 +367,7 @@ export const HabitsView: React.FC = () => {
                   value={habitTitle}
                   onChange={(e) => setHabitTitle(e.target.value)}
                   placeholder="مثلاً: حل ۵ تست هوش و الگوریتم"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
 
@@ -378,7 +379,7 @@ export const HabitsView: React.FC = () => {
                   <select
                     value={habitCategory}
                     onChange={(e) => setHabitCategory(e.target.value as SectionType)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                   >
                     <option value="school">مدرسه و درس‌ها</option>
                     <option value="skill">توسعه مهارت‌ها</option>
@@ -395,7 +396,7 @@ export const HabitsView: React.FC = () => {
                   <select
                     value={habitTargetDays}
                     onChange={(e) => setHabitTargetDays(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs font-mono"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                   >
                     <option value="7">هر روز (۷ روز در هفته)</option>
                     <option value="6">۶ روز در هفته</option>
@@ -415,21 +416,21 @@ export const HabitsView: React.FC = () => {
                   value={habitNotes}
                   onChange={(e) => setHabitNotes(e.target.value)}
                   placeholder="دلیل و زمان اجرای این عادت..."
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-[#263247]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 text-slate-400 text-xs font-bold"
+                  className="px-4 py-2 text-slate-400 text-xs font-bold cursor-pointer"
                 >
                   انصراف
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)]"
+                  className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)] cursor-pointer"
                 >
                   ثبت عادت
                 </button>

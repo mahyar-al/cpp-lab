@@ -205,14 +205,14 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
       <div
-        className="w-full max-w-xl rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] text-right"
+        className="w-full max-w-xl rounded-2xl bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-cyan-500/30 shadow-[0_0_30px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col max-h-[80vh] text-right"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 dark:border-[#263247]">
-          <Search className="w-5 h-5 text-cyan-500 shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#090D18]">
+          <Search className="w-5 h-5 text-cyan-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"

@@ -187,6 +187,34 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   const daysInCurrentJalaliMonth = getJalaliMonthDays(todayJalali.jy, todayJalali.jm);
   const monthName = getPersianMonthName(todayJalali.jm);
 
+  // 4 Pillars Key Data Calculations
+  const activeSkillsCount = skills.length;
+  const totalSkillPracticeMinutes = skills.reduce(
+    (sum, s) => sum + (s.practiceLogs || []).reduce((acc, p) => acc + (p.minutes || 0), 0),
+    0
+  );
+  const totalSkillPracticeHours = (totalSkillPracticeMinutes / 60).toFixed(1);
+  const avgSkillProgress =
+    skills.length > 0
+      ? Math.round(
+          skills.reduce((sum, s) => {
+            const total = s.roadmap.length || 1;
+            const done = s.roadmap.filter((r) => r.completed).length;
+            return sum + (done / total) * 100;
+          }, 0) / skills.length
+        )
+      : 0;
+
+  const activeProjects = projects.filter((p) => p.status !== 'completed');
+  const pendingProjectTasks = projects.flatMap((p) => p.tasks).filter((t) => t.status !== 'completed').length;
+  const avgProjectProgress =
+    projects.length > 0
+      ? Math.round(projects.reduce((acc, p) => acc + p.progressPercentage, 0) / projects.length)
+      : 0;
+
+  const allStreaks = [...(skills || []).map((s) => s.streak || 0), ...(habits || []).map((h) => h.streak || 0)];
+  const maxStreak = Math.max(0, ...allStreaks);
+
   const hour = today.getHours();
   const greeting = hour < 12 ? 'صبح بخیر' : hour < 17 ? 'بعدازظهر بخیر' : 'عصر بخیر';
 
@@ -343,107 +371,166 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         </div>
       )}
 
-      {/* Primary KPI Metrics Grid */}
+      {/* 4 Core Pillars KPI Cards — School, Skills, Projects, Competitions */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Metric 1: School */}
+        {/* Pillar 1: School (مدرسه و درس‌ها) — Electric Cyan */}
         <div
           onClick={() => onNavigate('school')}
-          className="p-3.5 sm:p-4 bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-[#263247] hover:border-blue-500/40 dark:hover:border-blue-500/50 hover:shadow-[0_0_20px_-5px_rgba(59,130,246,0.25)] transition-all cursor-pointer group"
+          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-cyan-500/20 hover:border-cyan-500/50 hover:shadow-[0_0_25px_-5px_rgba(6,182,212,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
         >
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#94A3B8] mb-2">
-            <span>تکالیف در دست انجام</span>
-            <div className="p-1.5 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 text-blue-500">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+            <span className="font-medium">مدرسه و درس‌ها</span>
+            <div className="p-2 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-black font-mono tabular-nums text-slate-900 dark:text-[#F1F5F9]">
+            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(pendingHomeworks.length)}
             </span>
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center group-hover:translate-x-[-2px] transition-transform">
-              مدرسه <ChevronLeft className="w-3.5 h-3.5" />
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+              ورود <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span>تکالیف در دست انجام</span>
             {overdueHomeworks.length > 0 ? (
-              <span className="text-rose-500 dark:text-rose-400 font-medium">
-                {toPersianDigits(overdueHomeworks.length)} کار نیازمند پیگیری
+              <span className="text-rose-500 font-bold font-mono tabular-nums">
+                {toPersianDigits(overdueHomeworks.length)} عقب‌افتاده
               </span>
             ) : (
-              <span>همه تکالیف انجام شده</span>
+              <span className="text-emerald-500 dark:text-emerald-400 font-medium">به‌روز</span>
             )}
           </div>
         </div>
 
-        {/* Metric 2: Goals */}
+        {/* Pillar 2: Skills (توسعه مهارت‌ها) — Radiant Violet */}
         <div
-          onClick={() => onNavigate('goals')}
-          className="p-4 bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-[#263247] hover:border-emerald-500/40 dark:hover:border-emerald-500/50 hover:shadow-[0_0_20px_-5px_rgba(57,255,136,0.25)] transition-all cursor-pointer group"
+          onClick={() => onNavigate('skills')}
+          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_-5px_rgba(168,85,247,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
         >
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#94A3B8] mb-2">
-            <span>تحقق اهداف هفتگی</span>
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-[#39FF88]">
-              <Target className="w-4 h-4" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+            <span className="font-medium">توسعه مهارت‌ها</span>
+            <div className="p-2 rounded-xl bg-purple-500/10 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.25)]">
+              <Sparkles className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-black font-mono tabular-nums text-slate-900 dark:text-[#F1F5F9]">
-              {toPersianDigits(weeklyGoalsPercent)}٪
+            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
+              {toPersianDigits(activeSkillsCount)}
             </span>
-            <span className="text-xs text-emerald-600 dark:text-[#39FF88] font-semibold flex items-center group-hover:translate-x-[-2px] transition-transform">
-              اهداف <ChevronLeft className="w-3.5 h-3.5" />
+            <span className="text-xs text-purple-600 dark:text-purple-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+              نقشه‌راه <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            {toPersianDigits(completedWeeklyGoals)} از {toPersianDigits(weeklyGoals.length)} هدف کامل شده
+          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span>میانگین پیشرفت: <strong className="font-mono tabular-nums text-purple-400">{toPersianDigits(avgSkillProgress)}٪</strong></span>
+            <span className="font-mono tabular-nums">{toPersianDigits(totalSkillPracticeHours)}h تمرین</span>
           </div>
         </div>
 
-        {/* Metric 3: Focus & Study */}
+        {/* Pillar 3: Projects (پروژه‌ها و کانبان) — Electric Blue */}
         <div
-          onClick={() => onNavigate('focus_timer')}
-          className="p-4 bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-[#263247] hover:border-purple-500/40 dark:hover:border-purple-500/50 hover:shadow-[0_0_20px_-5px_rgba(168,85,247,0.25)] transition-all cursor-pointer group"
+          onClick={() => onNavigate('projects')}
+          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-blue-500/20 hover:border-blue-500/50 hover:shadow-[0_0_25px_-5px_rgba(59,130,246,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
         >
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#94A3B8] mb-2">
-            <span>مطالعه ۷ روز اخیر</span>
-            <div className="p-1.5 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 text-purple-400">
-              <Clock className="w-4 h-4" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+            <span className="font-medium">پروژه‌ها و کانبان</span>
+            <div className="p-2 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.25)]">
+              <FolderGit2 className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-black font-mono tabular-nums text-slate-900 dark:text-[#F1F5F9]">
-              {toPersianDigits(totalRecentHours)} <span className="text-xs font-normal">ساعت</span>
+            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
+              {toPersianDigits(activeProjects.length)}
             </span>
-            <span className="text-xs text-purple-600 dark:text-[#C084FC] font-semibold flex items-center group-hover:translate-x-[-2px] transition-transform">
-              تایمر <ChevronLeft className="w-3.5 h-3.5" />
+            <span className="text-xs text-blue-600 dark:text-blue-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+              کانبان <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            هدف روزانه: {toPersianDigits(profile.studyTargetDailyHours || 4)} ساعت
+          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span>پیشرفت کل: <strong className="font-mono tabular-nums text-blue-400">{toPersianDigits(avgProjectProgress)}٪</strong></span>
+            <span className="font-mono tabular-nums">{toPersianDigits(pendingProjectTasks)} تسک فعال</span>
           </div>
         </div>
 
-        {/* Metric 4: Competitions */}
+        {/* Pillar 4: Competitions (مسابقات و المپیاد) — Neon Amber */}
         <div
           onClick={() => onNavigate('competitions')}
-          className="p-4 bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-[#263247] hover:border-pink-500/40 dark:hover:border-pink-500/50 hover:shadow-[0_0_20px_-5px_rgba(255,79,216,0.25)] transition-all cursor-pointer group"
+          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-amber-500/20 hover:border-amber-500/50 hover:shadow-[0_0_25px_-5px_rgba(245,158,11,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
         >
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#94A3B8] mb-2">
-            <span>موعد مسابقه بعدی</span>
-            <div className="p-1.5 rounded-lg bg-pink-500/10 dark:bg-pink-500/20 text-pink-400">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+            <span className="font-medium">مسابقات و المپیاد</span>
+            <div className="p-2 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
               <Trophy className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-black font-mono tabular-nums text-slate-900 dark:text-[#F1F5F9]">
+            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
               {daysToNextCompetition !== null ? `${toPersianDigits(daysToNextCompetition)} روز` : '—'}
             </span>
-            <span className="text-xs text-pink-600 dark:text-[#FF4FD8] font-semibold flex items-center group-hover:translate-x-[-2px] transition-transform">
-              مسابقات <ChevronLeft className="w-3.5 h-3.5" />
+            <span className="text-xs text-amber-600 dark:text-amber-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+              آمادگی <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 truncate">
-            {nextCompetition ? nextCompetition.title : 'مسابقه‌ای ثبت نشده'}
+          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 truncate">
+            <span className="truncate">{nextCompetition ? nextCompetition.title : 'رویداد ثبت‌شده'}</span>
+            <span className="font-mono tabular-nums text-amber-500 shrink-0">موعد بعدی</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Secondary Performance Telemetry Ribbon */}
+      <div className="p-3 bg-white/80 dark:bg-[#0D1222]/80 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+          <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 shrink-0">
+            <Target className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">تحقق اهداف هفتگی</div>
+            <div className="font-mono font-bold text-slate-900 dark:text-emerald-400 tabular-nums">
+              {toPersianDigits(weeklyGoalsPercent)}٪ ({toPersianDigits(completedWeeklyGoals)} از {toPersianDigits(weeklyGoals.length)})
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+          <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 dark:text-purple-400 shrink-0">
+            <Clock className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">ساعت مطالعه ۷ روز اخیر</div>
+            <div className="font-mono font-bold text-slate-900 dark:text-purple-400 tabular-nums">
+              {toPersianDigits(totalRecentHours)} ساعت تمرکزی
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+          <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
+            <Flame className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">استمرار یادگیری متوالی</div>
+            <div className="font-mono font-bold text-slate-900 dark:text-amber-400 tabular-nums">
+              {toPersianDigits(maxStreak)} روز متوالی
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+          <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 shrink-0">
+            <Zap className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">زمان آزاد باقیمانده امروز</div>
+            <div className="font-mono font-bold text-slate-900 dark:text-cyan-400 tabular-nums">
+              {toPersianDigits(freeHoursRemaining)} ساعت آزاد
+            </div>
           </div>
         </div>
       </div>

@@ -457,3 +457,16 @@ export interface UserProfile {
   studyTargetDailyHours?: number;
   focusSettings?: FocusTimerSettings;
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+  name: string;
+  role: 'user' | 'admin';
+  avatarUrl?: string;
+  securityQuestion?: string;
+  createdAt?: string;
+}
+
+export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'error';

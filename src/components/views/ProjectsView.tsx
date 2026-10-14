@@ -151,21 +151,22 @@ export const ProjectsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <span className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
-              <FolderGit2 className="w-6 h-6" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-blue-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <span className="p-2.5 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <FolderGit2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </span>
             مدیریت پروژه‌های نرم‌افزاری
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
             پیگیری تسک‌ها با برد کانبان، ردیابی باگ‌ها، ددلاین‌ها، پشته فناوری و مستندات فنی
           </p>
         </div>
         <button
           onClick={() => setShowAddProjectModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all"
+          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(59,130,246,0.35)] hover:shadow-[0_0_22px_rgba(59,130,246,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
         >
           <Plus className="w-4 h-4" />
           پروژه جدید
@@ -173,13 +174,13 @@ export const ProjectsView: React.FC = () => {
       </div>
 
       {projects.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+        <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
           <FolderGit2 className="w-12 h-12 mx-auto text-slate-400 mb-3" />
           <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز پروژه‌ای ثبت نشده است</h3>
           <p className="text-sm text-slate-500 mt-1 mb-4">اولین پروژه برنامه‌نویسی یا تحصیلی خود را تعریف کنید.</p>
           <button
             onClick={() => setShowAddProjectModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl text-sm font-bold cursor-pointer"
           >
             افزودن اولین پروژه
           </button>
@@ -203,8 +204,8 @@ export const ProjectsView: React.FC = () => {
                   onClick={() => setSelectedProjectId(proj.id)}
                   className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-blue-50/60 dark:bg-blue-950/30 border-blue-300 dark:border-blue-800 shadow-sm'
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300'
+                      ? 'bg-blue-500/10 dark:bg-blue-950/40 border-blue-400 dark:border-blue-500/60 shadow-[0_0_20px_-3px_rgba(59,130,246,0.25)]'
+                      : 'bg-white dark:bg-[#0D1222] border-slate-200 dark:border-slate-800 hover:border-blue-500/30'
                   }`}
                 >
                   <div className="flex items-start justify-between">

@@ -166,8 +166,9 @@ export const FocusTimerView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white dark:bg-[#111827] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-cyan-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.2)]">
@@ -185,7 +186,7 @@ export const FocusTimerView: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSoundEnabled((prev) => !prev)}
-              className="p-2 rounded-xl border border-slate-200 dark:border-[#263247] text-slate-500 dark:text-slate-400 hover:text-cyan-400 cursor-pointer"
+              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-cyan-400 cursor-pointer"
               title={soundEnabled ? 'صدا فعال است' : 'صدا غیرفعال است'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4 text-cyan-400" /> : <VolumeX className="w-4 h-4" />}
@@ -194,7 +195,7 @@ export const FocusTimerView: React.FC = () => {
         </div>
 
         {/* Mode Selector Tabs */}
-        <div className="flex items-center justify-center gap-2 mt-6 p-1.5 bg-slate-100 dark:bg-[#0D1220] rounded-xl border border-slate-200 dark:border-[#263247] max-w-md mx-auto">
+        <div className="flex items-center justify-center gap-2 mt-6 p-1.5 bg-slate-100 dark:bg-[#090D18] rounded-xl border border-slate-200 dark:border-slate-800 max-w-md mx-auto">
           <button
             onClick={() => handleModeChange('focus', 25)}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
@@ -231,7 +232,7 @@ export const FocusTimerView: React.FC = () => {
       {/* Main Timer Display */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Timer Card (2 cols) */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#111827] p-8 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <div className="lg:col-span-2 bg-white dark:bg-[#0D1222] p-8 rounded-2xl border border-slate-200 dark:border-slate-800/90 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
           {/* Ambient Glow */}
           <div
             className={`absolute w-72 h-72 rounded-full blur-[100px] pointer-events-none opacity-20 ${
@@ -328,8 +329,8 @@ export const FocusTimerView: React.FC = () => {
         {/* Right Column: Pre-Session Config & Daily Focus Stats */}
         <div className="space-y-4">
           {/* Pre-session Setup Box */}
-          <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-3.5 text-right">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-[#263247]">
+          <div className="bg-white dark:bg-[#0D1222] p-5 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-3.5 text-right">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800/80">
               <BookOpen className="w-4 h-4 text-cyan-400" />
               تنظیم هدف جلسه تمرکز
             </h3>
@@ -344,7 +345,7 @@ export const FocusTimerView: React.FC = () => {
                   setSelectedSection(e.target.value as SectionType);
                   setSelectedEntityId('');
                 }}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
               >
                 <option value="school">درس مدرسه</option>
                 <option value="skill">مهارت فنی</option>
@@ -360,7 +361,7 @@ export const FocusTimerView: React.FC = () => {
               <select
                 value={selectedEntityId}
                 onChange={(e) => setSelectedEntityId(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
               >
                 <option value="">انتخاب کنید...</option>
                 {selectedSection === 'school' &&
@@ -393,14 +394,14 @@ export const FocusTimerView: React.FC = () => {
                 value={sessionTopic}
                 onChange={(e) => setSessionTopic(e.target.value)}
                 placeholder="مثلاً: حل تمارین هندسه فضایی"
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
               />
             </div>
           </div>
 
           {/* Today's Focus Summary Box */}
-          <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-3 text-right text-xs">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-[#263247]">
+          <div className="bg-white dark:bg-[#0D1222] p-5 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-3 text-right text-xs">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800/80">
               <Award className="w-4 h-4 text-amber-400" />
               عملکرد تمرکز امروز
             </h3>
@@ -426,7 +427,7 @@ export const FocusTimerView: React.FC = () => {
               </span>
             </div>
 
-            <div className="w-full bg-slate-100 dark:bg-[#0D1220] h-2 rounded-full overflow-hidden mt-1">
+            <div className="w-full bg-slate-100 dark:bg-[#090D18] h-2 rounded-full overflow-hidden mt-1">
               <div
                 className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,245,255,0.4)]"
                 style={{
@@ -444,8 +445,8 @@ export const FocusTimerView: React.FC = () => {
       {/* Finished Session Logging Modal */}
       {isFinishedModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#111827] w-full max-w-md rounded-2xl border border-cyan-400/40 p-6 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
+          <div className="bg-white dark:bg-[#0D1222] w-full max-w-md rounded-2xl border border-cyan-400/40 p-6 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80 mb-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-[#39FF88]" />
                 <span className="text-sm font-bold text-slate-900 dark:text-white">
@@ -454,7 +455,7 @@ export const FocusTimerView: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsFinishedModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-200 rounded"
+                className="p-1 text-slate-400 hover:text-slate-200 rounded cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -469,7 +470,7 @@ export const FocusTimerView: React.FC = () => {
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   میزان تمرکز حواس و کیفیت مطالعه (۱ تا ۵):
                 </label>
-                <div className="flex items-center justify-between gap-2 p-2 bg-slate-50 dark:bg-[#0D1220] rounded-xl border border-slate-200 dark:border-[#263247]">
+                <div className="flex items-center justify-between gap-2 p-2 bg-slate-50 dark:bg-[#090D18] rounded-xl border border-slate-200 dark:border-slate-800">
                   {[1, 2, 3, 4, 5].map((score) => (
                     <button
                       key={score}
@@ -496,21 +497,21 @@ export const FocusTimerView: React.FC = () => {
                   value={outcomeNotes}
                   onChange={(e) => setOutcomeNotes(e.target.value)}
                   placeholder="چه مباحثی پوشش داده شد؟ آیا نکته‌ای برای دور بعدی هست؟"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-[#263247]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80">
                 <button
                   type="button"
                   onClick={() => setIsFinishedModalOpen(false)}
-                  className="px-4 py-2 text-slate-400 text-xs font-bold"
+                  className="px-4 py-2 text-slate-400 text-xs font-bold cursor-pointer"
                 >
                   صرف‌نظر
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)]"
+                  className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)] cursor-pointer"
                 >
                   ثبت دائمی در تاریخچه مطالعه
                 </button>

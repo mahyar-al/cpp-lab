@@ -29,6 +29,8 @@ import {
   TaskItem,
   TaskSubtask,
   ReviewLogEntry,
+  AuthUser,
+  SyncStatus,
 } from '../types';
 import {
   initialProfile,
@@ -55,6 +57,23 @@ import {
   initialInboxItems,
 } from '../utils/initialData';
 import { toPersianDigits } from '../utils/jalali';
+import {
+  getStoredToken,
+  setStoredToken,
+  apiGetMe,
+  apiLogin,
+  apiRegister,
+  apiUpdateProfile,
+  apiChangePassword,
+  apiResetPassword,
+  apiDeleteAccount,
+  apiFetchUserData,
+  apiSaveUserData,
+  apiGetSnapshots,
+  apiRestoreSnapshot,
+  apiExportBackup,
+  apiImportBackup,
+} from '../utils/api';
 
 const STORAGE_KEY = 'pathly_app_data_v3_clean';
 
@@ -232,15 +251,59 @@ export interface AppContextType {
   exportSkillsCSV: () => void;
   resetToDefault: () => void;
   clearAllData: () => void;
+
+  // Multi-User & Server Sync
+  currentUser: AuthUser | null;
+  isAuthenticated: boolean;
+  authLoading: boolean;
+  syncStatus: SyncStatus;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  login: (identifier: string, pass: string) => Promise<void>;
+  register: (email: string, username: string, name: string, pass: string, question?: string, answer?: string) => Promise<void>;
+  logout: () => void;
+  updateAuthProfile: (payload: { name?: string; avatarUrl?: string; securityQuestion?: string; securityAnswer?: string }) => Promise<void>;
+  changePassword: (oldPass: string, newPass: string) => Promise<void>;
+  resetPassword: (identifier: string, answer: string, newPass: string) => Promise<void>;
+  deleteAccount: (pass: string) => Promise<void>;
+  syncWithServer: () => Promise<void>;
+  serverSnapshots: Array<{ id: string; createdAt: string; reason: string }>;
+  refreshSnapshots: () => Promise<void>;
+  restoreServerSnapshot: (snapshotId: string) => Promise<boolean>;
+  exportServerBackup: () => Promise<void>;
+  importServerBackup: (backupData: any) => Promise<boolean>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const getDefaultData = () => ({
+    profile: initialProfile,
+    subjects: initialSubjects,
+    grades: initialGrades,
+    weeklyCells: initialWeeklyCells,
+    dayData: initialDayDataMap,
+    homeworks: initialHomeworks,
+    exams: initialExams,
+    studySessions: initialStudySessions,
+    skills: initialSkills,
+    projects: initialProjects,
+    competitions: initialCompetitions,
+    goals: initialGoals,
+    weeklyReviews: initialWeeklyReviews,
+    calendarEvents: initialCalendarEvents,
+    notes: initialNotes,
+    activityLogs: initialActivityLogs,
+    notifications: initialNotifications,
+    habits: initialHabits,
+    reviews: initialReviews,
+    resources: initialResources,
+    inboxItems: initialInboxItems,
+    widgetConfig: initialWidgetConfig,
+  });
+
   const loadInitialData = () => {
     try {
-      localStorage.removeItem('pathly_app_data_v1');
-      localStorage.removeItem('pathly_app_data_v2_clean');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -272,41 +335,106 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (e) {
       console.error('Failed to load from storage:', e);
     }
-    return {
-      profile: initialProfile,
-      subjects: initialSubjects,
-      grades: initialGrades,
-      weeklyCells: initialWeeklyCells,
-      dayData: initialDayDataMap,
-      homeworks: initialHomeworks,
-      exams: initialExams,
-      studySessions: initialStudySessions,
-      skills: initialSkills,
-      projects: initialProjects,
-      competitions: initialCompetitions,
-      goals: initialGoals,
-      weeklyReviews: initialWeeklyReviews,
-      calendarEvents: initialCalendarEvents,
-      notes: initialNotes,
-      activityLogs: initialActivityLogs,
-      notifications: initialNotifications,
-      habits: initialHabits,
-      reviews: initialReviews,
-      resources: initialResources,
-      inboxItems: initialInboxItems,
-      widgetConfig: initialWidgetConfig,
-    };
+    return getDefaultData();
   };
 
   const [state, setState] = useState(loadInitialData);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('synced');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [serverSnapshots, setServerSnapshots] = useState<Array<{ id: string; createdAt: string; reason: string }>>([]);
 
+  // Initialize session and pull persistent user records from server
+  useEffect(() => {
+    let active = true;
+
+    const bootstrapAuth = async () => {
+      const token = getStoredToken();
+      if (!token) {
+        if (active) {
+          setAuthLoading(false);
+          setSyncStatus('offline');
+        }
+        return;
+      }
+
+      try {
+        const meRes = await apiGetMe();
+        if (!active) return;
+        setCurrentUser(meRes.user);
+
+        // Fetch latest server database state
+        const dataRes = await apiFetchUserData();
+        if (!active) return;
+        if (dataRes.exists && dataRes.data) {
+          setState(dataRes.data);
+          setSyncStatus('synced');
+        } else {
+          // First time user data initialization on server
+          await apiSaveUserData(state);
+          setSyncStatus('synced');
+        }
+
+        try {
+          const snapRes = await apiGetSnapshots();
+          if (active && snapRes.snapshots) {
+            setServerSnapshots(snapRes.snapshots);
+          }
+        } catch {}
+      } catch (err) {
+        console.warn('Auth token expired or invalid:', err);
+        setStoredToken(null);
+        if (active) {
+          setCurrentUser(null);
+          setSyncStatus('offline');
+        }
+      } finally {
+        if (active) setAuthLoading(false);
+      }
+    };
+
+    bootstrapAuth();
+
+    const handleExpired = () => {
+      setCurrentUser(null);
+      setSyncStatus('offline');
+    };
+    window.addEventListener('pathly_auth_expired', handleExpired);
+
+    return () => {
+      active = false;
+      window.removeEventListener('pathly_auth_expired', handleExpired);
+    };
+  }, []);
+
+  // Per-user local storage caching
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const cacheKey = currentUser ? `pathly_app_data_user_${currentUser.id}` : STORAGE_KEY;
+      localStorage.setItem(cacheKey, JSON.stringify(state));
     } catch (e) {
-      console.error('Failed to save to storage:', e);
+      console.error('Failed to cache state locally:', e);
     }
-  }, [state]);
+  }, [state, currentUser]);
+
+  // Real-time debounced synchronization to permanent server database
+  useEffect(() => {
+    if (!currentUser || authLoading) return;
+    setSyncStatus('syncing');
+
+    const timer = setTimeout(async () => {
+      try {
+        await apiSaveUserData(state);
+        setSyncStatus('synced');
+      } catch (err) {
+        console.error('Auto-save to server failed:', err);
+        setSyncStatus('error');
+      }
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [state, currentUser, authLoading]);
 
   useEffect(() => {
     if (state.profile.theme === 'dark') {
@@ -1925,10 +2053,187 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('تمامی اطلاعات با موفقیت پاکسازی شدند.');
   };
 
+  const login = async (identifier: string, pass: string) => {
+    setAuthLoading(true);
+    try {
+      const res = await apiLogin(identifier, pass);
+      setCurrentUser(res.user);
+      const serverRes = await apiFetchUserData();
+      if (serverRes.exists && serverRes.data) {
+        setState(serverRes.data);
+      } else {
+        const fresh = getDefaultData();
+        setState(fresh);
+        await apiSaveUserData(fresh);
+      }
+      setSyncStatus('synced');
+      try {
+        const snapRes = await apiGetSnapshots();
+        setServerSnapshots(snapRes.snapshots || []);
+      } catch {}
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const register = async (email: string, username: string, name: string, pass: string, question?: string, answer?: string) => {
+    setAuthLoading(true);
+    try {
+      const res = await apiRegister({ email, username, name, password: pass, securityQuestion: question, securityAnswer: answer });
+      setCurrentUser(res.user);
+      const freshData = {
+        ...getDefaultData(),
+        profile: { ...initialProfile, name },
+      };
+      setState(freshData);
+      await apiSaveUserData(freshData);
+      setSyncStatus('synced');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const logout = () => {
+    setStoredToken(null);
+    setCurrentUser(null);
+    setState(getDefaultData());
+    setSyncStatus('offline');
+  };
+
+  const updateAuthProfile = async (payload: { name?: string; avatarUrl?: string; securityQuestion?: string; securityAnswer?: string }) => {
+    const res = await apiUpdateProfile(payload);
+    setCurrentUser((prev) => (prev ? { ...prev, ...res.user } : res.user));
+    if (payload.name) {
+      updateProfile({ name: payload.name });
+    }
+    showToast('اطلاعات حساب با موفقیت بروزرسانی شد.');
+  };
+
+  const changePassword = async (oldPass: string, newPass: string) => {
+    await apiChangePassword(oldPass, newPass);
+    showToast('رمز عبور جدید با موفقیت ذخیره گردید.');
+  };
+
+  const resetPassword = async (identifier: string, answer: string, newPass: string) => {
+    await apiResetPassword({ identifier, securityAnswer: answer, newPassword: newPass });
+  };
+
+  const deleteAccount = async (pass: string) => {
+    await apiDeleteAccount(pass);
+    logout();
+    showToast('حساب کاربری و کلیه داده‌های آن با موفقیت حذف گردید.');
+  };
+
+  const syncWithServer = async () => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setSyncStatus('syncing');
+    try {
+      await apiSaveUserData(state);
+      setSyncStatus('synced');
+      showToast('تمامی اطلاعات در پایگاه داده سرور ذخیره شد.');
+    } catch (err: any) {
+      setSyncStatus('error');
+      showToast(err.message || 'خطا در ارتباط با سرور پایگاه داده');
+    }
+  };
+
+  const refreshSnapshots = async () => {
+    if (!currentUser) return;
+    try {
+      const res = await apiGetSnapshots();
+      setServerSnapshots(res.snapshots || []);
+    } catch {}
+  };
+
+  const restoreServerSnapshot = async (snapshotId: string): Promise<boolean> => {
+    if (!currentUser) return false;
+    try {
+      setSyncStatus('syncing');
+      await apiRestoreSnapshot(snapshotId);
+      const dataRes = await apiFetchUserData();
+      if (dataRes.exists && dataRes.data) {
+        setState(dataRes.data);
+      }
+      setSyncStatus('synced');
+      await refreshSnapshots();
+      showToast('نسخه پشتیبان سرور با موفقیت بازیابی شد.');
+      return true;
+    } catch (err: any) {
+      setSyncStatus('error');
+      showToast(err.message || 'خطا در بازگردانی نسخه پشتیبان');
+      return false;
+    }
+  };
+
+  const exportServerBackup = async () => {
+    if (!currentUser) {
+      exportBackup();
+      return;
+    }
+    try {
+      const blob = await apiExportBackup();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pathly_backup_${currentUser.username}_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('فایل پشتیبان کامل سرور دانلود شد.');
+    } catch (err: any) {
+      showToast(err.message || 'خطا در ایجاد پشتیبان');
+    }
+  };
+
+  const importServerBackup = async (backupData: any): Promise<boolean> => {
+    if (!currentUser) {
+      return importBackup(typeof backupData === 'string' ? backupData : JSON.stringify(backupData));
+    }
+    try {
+      setSyncStatus('syncing');
+      await apiImportBackup(backupData);
+      const dataRes = await apiFetchUserData();
+      if (dataRes.exists && dataRes.data) {
+        setState(dataRes.data);
+      }
+      setSyncStatus('synced');
+      await refreshSnapshots();
+      showToast('فایل پشتیبان با موفقیت در پایگاه داده اعمال گردید.');
+      return true;
+    } catch (err: any) {
+      setSyncStatus('error');
+      showToast(err.message || 'خطا در بازگردانی فایل پشتیبان');
+      return false;
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
         ...state,
+        currentUser,
+        isAuthenticated: !!currentUser,
+        authLoading,
+        syncStatus,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        login,
+        register,
+        logout,
+        updateAuthProfile,
+        changePassword,
+        resetPassword,
+        deleteAccount,
+        syncWithServer,
+        serverSnapshots,
+        refreshSnapshots,
+        restoreServerSnapshot,
+        exportServerBackup,
+        importServerBackup,
         reviews: state.reviews || [],
         resources: state.resources || [],
         inboxItems: state.inboxItems || [],

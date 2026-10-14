@@ -306,7 +306,7 @@ export const SchoolView: React.FC = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-x-auto">
           {[
             { id: 'timetable', label: 'جدول برنامه هفتگی' },
             { id: 'daily', label: 'صفحه روزانه (۵ روز)' },
@@ -317,15 +317,15 @@ export const SchoolView: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-cyan-500/15 text-cyan-700 dark:text-[#00F5FF] border border-slate-200 dark:border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge > 0 && (
-                <span className="px-1.5 py-0.2 font-mono text-[10px] rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold">
+                <span className="px-1.5 py-0.2 font-mono text-[10px] rounded-full bg-rose-500/15 text-rose-500 dark:text-rose-400 border border-rose-500/20 font-bold">
                   {toPersianDigits(tab.badge)}
                 </span>
               )}
@@ -345,14 +345,14 @@ export const SchoolView: React.FC = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setShowBellSettings(true)}
-                className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-xl hover:border-cyan-500/40 hover:text-cyan-400 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
                 <span>ساعات زنگ‌ها</span>
               </button>
               <button
                 onClick={() => window.print()}
-                className="px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-900 rounded-lg hover:bg-indigo-100 transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 text-xs font-medium text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-900/60 rounded-xl hover:bg-cyan-100 dark:hover:bg-cyan-900/50 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>چاپ برنامه هفتگی</span>
@@ -361,11 +361,11 @@ export const SchoolView: React.FC = () => {
           </div>
 
           {/* Timetable Matrix */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs print-table">
+          <div className="bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-slate-800/90 overflow-hidden shadow-xs print-table">
             <div className="overflow-x-auto">
               <table className="w-full text-right border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300">
+                  <tr className="bg-slate-50 dark:bg-[#090D18] border-b border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300">
                     <th className="p-3 w-28 text-center border-l border-slate-200 dark:border-slate-800">
                       زنگ / ساعت
                     </th>
@@ -387,9 +387,9 @@ export const SchoolView: React.FC = () => {
                     return (
                       <tr
                         key={period}
-                        className="border-b border-slate-200 dark:border-slate-800 last:border-b-0 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
+                        className="border-b border-slate-200 dark:border-slate-800/80 last:border-b-0 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                       >
-                        <td className="p-3 text-center border-l border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                        <td className="p-3 text-center border-l border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#090D18]">
                           <div className="text-xs font-bold text-slate-900 dark:text-white">
                             زنگ {toPersianDigits(period)}
                           </div>
@@ -409,17 +409,16 @@ export const SchoolView: React.FC = () => {
                             <td
                               key={dayIndex}
                               onClick={() => handleOpenCellEdit(dayIndex, period)}
-                              className="p-2 border-l border-slate-200 dark:border-slate-800 last:border-l-0 align-top cursor-pointer group hover:bg-indigo-50/40 dark:hover:bg-indigo-950/20 transition-all"
+                              className="p-2 border-l border-slate-200 dark:border-slate-800/80 last:border-l-0 align-top cursor-pointer group hover:bg-cyan-500/5 dark:hover:bg-[#121829] transition-all"
                             >
                               {hasContent ? (
                                 <div
-                                  className="h-24 p-2.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 flex flex-col justify-between transition-all group-hover:shadow-xs"
-                                  style={{
-                                    borderRightColor: cell?.color || sub?.color || '#3b82f6',
-                                    borderRightWidth: '4px',
-                                    backgroundColor: `${cell?.color || sub?.color || '#3b82f6'}08`,
-                                  }}
+                                  className="h-24 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-between transition-all group-hover:border-cyan-500/50 group-hover:shadow-[0_0_15px_-3px_rgba(6,182,212,0.2)] bg-slate-50/60 dark:bg-[#12192B]/80 relative overflow-hidden"
                                 >
+                                  <div
+                                    className="absolute top-0 right-0 left-0 h-[2px] opacity-80"
+                                    style={{ backgroundColor: cell?.color || sub?.color || '#06B6D4' }}
+                                  />
                                   <div>
                                     <div className="flex items-center justify-between gap-1">
                                       <span className="font-bold text-xs text-slate-900 dark:text-white truncate">
@@ -432,7 +431,7 @@ export const SchoolView: React.FC = () => {
                                     </div>
                                   </div>
 
-                                  <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/40 dark:border-slate-700/40">
+                                  <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/40 dark:border-slate-800/80">
                                     <span>کلاس {cell?.room || sub?.room || '—'}</span>
                                     {cell?.notes && (
                                       <span className="truncate max-w-[80px]" title={cell.notes}>
@@ -442,7 +441,7 @@ export const SchoolView: React.FC = () => {
                                   </div>
                                 </div>
                               ) : (
-                                <div className="h-24 border border-dashed border-slate-200 dark:border-slate-800 rounded-lg flex flex-col items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-400 transition-all">
+                                <div className="h-24 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-500/50 transition-all bg-slate-50/20 dark:bg-[#0D1222]/30">
                                   <Plus className="w-4 h-4 opacity-40 group-hover:opacity-100" />
                                   <span className="text-[10px] mt-1 opacity-0 group-hover:opacity-100">
                                     افزودن درس

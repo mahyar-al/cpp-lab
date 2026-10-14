@@ -237,7 +237,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0D1220] border-l border-slate-200 dark:border-[#263247] transition-all duration-300 ease-in-out shadow-lg ${
+        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0B0F1D] border-l border-slate-200 dark:border-slate-800/80 transition-all duration-300 ease-in-out shadow-lg ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${
           isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
@@ -245,7 +245,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {/* Top Header of Sidebar */}
         <div
-          className={`flex items-center h-16 border-b border-slate-200 dark:border-[#263247] transition-all relative ${
+          className={`flex items-center h-16 border-b border-slate-200 dark:border-slate-800/80 transition-all relative ${
             isCollapsed ? 'px-2 justify-center' : 'px-4 justify-between'
           }`}
         >
@@ -360,7 +360,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer Streaks Widget */}
         {!isCollapsed && (
-          <div className="p-3 mx-2.5 mb-3 bg-slate-50 dark:bg-[#111827]/90 rounded-xl border border-slate-200 dark:border-[#263247] shadow-xs">
+          <div className="p-3 mx-2.5 mb-3 bg-slate-50 dark:bg-[#080B14]/70 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-xs">
             <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 font-semibold mb-2">
               <span className="flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5 text-amber-400" />

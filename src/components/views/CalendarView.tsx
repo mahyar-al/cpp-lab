@@ -271,10 +271,13 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-        <div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-cyan-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
           <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-            <CalendarDays className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+            <span className="p-2.5 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+              <CalendarDays className="w-5 h-5 sm:w-6 sm:h-6" />
+            </span>
             تقویم و زمان‌بندی رویدادها
           </h1>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -282,29 +285,35 @@ export const CalendarView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="relative z-10 flex items-center gap-2.5 flex-wrap">
           {/* View mode switcher */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-medium">
+          <div className="flex items-center bg-slate-100 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 p-1 rounded-xl text-xs font-medium">
             <button
               onClick={() => setViewMode('month')}
-              className={`px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
-                viewMode === 'month' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'
+              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                viewMode === 'month'
+                  ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-[#00F5FF] font-bold shadow-[0_0_10px_rgba(6,182,212,0.25)]'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               ماهانه
             </button>
             <button
               onClick={() => setViewMode('week')}
-              className={`px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
-                viewMode === 'week' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'
+              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                viewMode === 'week'
+                  ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-[#00F5FF] font-bold shadow-[0_0_10px_rgba(6,182,212,0.25)]'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               هفتگی
             </button>
             <button
               onClick={() => setViewMode('day')}
-              className={`px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
-                viewMode === 'day' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'
+              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                viewMode === 'day'
+                  ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-[#00F5FF] font-bold shadow-[0_0_10px_rgba(6,182,212,0.25)]'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               روزانه
@@ -313,19 +322,19 @@ export const CalendarView: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-semibold rounded-xl shadow-xs transition-colors whitespace-nowrap"
+            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl shadow-[0_0_16px_rgba(6,182,212,0.35)] hover:shadow-[0_0_22px_rgba(6,182,212,0.5)] transition-all whitespace-nowrap cursor-pointer active:scale-95"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>رویداد جدید</span>
           </button>
         </div>
       </div>
 
       {/* Filter Tabs & Navigation Strip */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-[#0D1222] p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-1.5 flex-wrap">
           <span className="text-xs font-bold text-slate-400 pl-1 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5" /> فیلتر:
+            <Filter className="w-3.5 h-3.5 text-cyan-400" /> فیلتر ستون‌ها:
           </span>
           {[
             { id: 'all', label: 'همه بخش‌ها' },
@@ -337,10 +346,10 @@ export const CalendarView: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setSectionFilter(item.id as typeof sectionFilter)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
                 sectionFilter === item.id
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_12px_rgba(6,182,212,0.35)]'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121829]'
               }`}
             >
               {item.label}
@@ -352,7 +361,7 @@ export const CalendarView: React.FC = () => {
         <div className="flex items-center justify-between md:justify-end gap-3">
           <button
             onClick={prevMonth}
-            className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-600 dark:text-slate-300 cursor-pointer"
             title="ماه قبل"
           >
             <ChevronRight className="w-4 h-4" />
@@ -362,7 +371,7 @@ export const CalendarView: React.FC = () => {
           </span>
           <button
             onClick={nextMonth}
-            className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+            className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-600 dark:text-slate-300 cursor-pointer"
             title="ماه بعد"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -374,7 +383,7 @@ export const CalendarView: React.FC = () => {
       {viewMode === 'month' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Calendar Matrix (8 cols on desktop) */}
-          <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-3 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4">
+          <div className="lg:col-span-8 bg-white dark:bg-[#0D1222] p-3 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4 shadow-xs">
             {/* Weekday headers */}
             <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
               <div><span className="hidden sm:inline">شنبه</span><span className="sm:hidden text-[11px]">ش</span></div>
@@ -390,7 +399,7 @@ export const CalendarView: React.FC = () => {
             <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {/* Empty leading cells */}
               {Array.from({ length: firstDayIranian }).map((_, i) => (
-                <div key={`empty-${i}`} className="h-16 sm:h-24 p-1 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 opacity-30" />
+                <div key={`empty-${i}`} className="h-16 sm:h-24 p-1 rounded-xl bg-slate-50/50 dark:bg-[#090D18]/50 opacity-20" />
               ))}
 
               {/* Days in Month */}
@@ -413,17 +422,17 @@ export const CalendarView: React.FC = () => {
                     onClick={() => setSelectedDateIso(dayIso)}
                     className={`h-16 sm:h-24 p-1 sm:p-1.5 rounded-xl border flex flex-col justify-between cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/20 ring-2 ring-indigo-500/20'
+                        ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-950/30 ring-2 ring-cyan-500/30 shadow-[0_0_15px_-3px_rgba(6,182,212,0.3)]'
                         : isToday
-                        ? 'border-indigo-300 dark:border-indigo-800 bg-slate-50/60 dark:bg-slate-800/40'
-                        : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                        ? 'border-cyan-400/40 dark:border-cyan-500/40 bg-slate-50/80 dark:bg-[#121829]'
+                        : 'border-slate-100 dark:border-slate-800/80 hover:border-cyan-500/40 bg-white dark:bg-[#0D1222]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span
-                        className={`text-xs font-mono tabular-nums w-5 h-5 flex items-center justify-center rounded-full ${
+                        className={`text-xs font-mono tabular-nums w-5 h-5 flex items-center justify-center rounded-lg ${
                           isToday
-                            ? 'bg-indigo-600 text-white font-bold'
+                            ? 'bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 font-bold shadow-[0_0_8px_rgba(6,182,212,0.4)]'
                             : 'text-slate-800 dark:text-slate-200'
                         }`}
                       >

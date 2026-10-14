@@ -164,21 +164,22 @@ export const SkillsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <span className="p-2 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400">
-              <Sparkles className="w-6 h-6" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-purple-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <span className="p-2.5 rounded-xl bg-purple-500/10 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
             </span>
             مدیریت و توسعه مهارت‌ها
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
             پیگیری نقشه‌های راه یادگیری، منابع آموزشی، ساعات تمرین و استمرار مهارت‌آموزی
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all"
+          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(168,85,247,0.35)] hover:shadow-[0_0_22px_rgba(168,85,247,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
         >
           <Plus className="w-4 h-4" />
           افزودن مهارت جدید
@@ -186,13 +187,13 @@ export const SkillsView: React.FC = () => {
       </div>
 
       {skills.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+        <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
           <Sparkles className="w-12 h-12 mx-auto text-slate-400 mb-3" />
           <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز مهارتی تعریف نشده است</h3>
           <p className="text-sm text-slate-500 mt-1 mb-4">مهارت‌های برنامه‌نویسی، زبان، ابزارها یا هوش مصنوعی خود را اضافه کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm"
+            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-bold cursor-pointer"
           >
             افزودن اولین مهارت
           </button>
@@ -216,8 +217,8 @@ export const SkillsView: React.FC = () => {
                     onClick={() => setSelectedSkillId(skill.id)}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-purple-50/60 dark:bg-purple-950/30 border-purple-300 dark:border-purple-800 shadow-sm'
-                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300'
+                        ? 'bg-purple-500/10 dark:bg-purple-950/40 border-purple-400 dark:border-purple-500/60 shadow-[0_0_20px_-3px_rgba(168,85,247,0.25)]'
+                        : 'bg-white dark:bg-[#0D1222] border-slate-200 dark:border-slate-800 hover:border-purple-500/30'
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -236,7 +237,7 @@ export const SkillsView: React.FC = () => {
                           {skill.name}
                         </h3>
                       </div>
-                      <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-xl text-xs font-bold">
+                      <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-xl text-xs font-bold border border-amber-500/20">
                         <Flame className="w-3.5 h-3.5" />
                         <span>{toPersianDigits(skill.streak)} روز</span>
                       </div>
@@ -249,7 +250,7 @@ export const SkillsView: React.FC = () => {
                       </div>
                       <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-purple-600 rounded-full transition-all duration-300"
+                          className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full shadow-[0_0_8px_rgba(168,85,247,0.4)]"
                           style={{ width: `${mastery}%` }}
                         />
                       </div>

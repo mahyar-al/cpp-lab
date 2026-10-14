@@ -19,6 +19,7 @@ import { AnalyticsView } from './components/views/AnalyticsView';
 import { SettingsView } from './components/views/SettingsView';
 import { GlobalSearchModal } from './components/modals/GlobalSearchModal';
 import { QuickAddModal } from './components/modals/QuickAddModal';
+import { AuthModal } from './components/modals/AuthModal';
 import { BottomNav } from './components/layout/BottomNav';
 
 const TAB_TITLES: Record<NavTab, string> = {
@@ -40,7 +41,7 @@ const TAB_TITLES: Record<NavTab, string> = {
 };
 
 const MainContent: React.FC = () => {
-  const { profile, toastMessage } = useApp();
+  const { profile, toastMessage, isAuthModalOpen, setIsAuthModalOpen } = useApp();
   const [currentTab, setCurrentTab] = useState<NavTab>('dashboard');
   const [isOpenMobile, setIsOpenMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -152,6 +153,11 @@ const MainContent: React.FC = () => {
       <QuickAddModal
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
+      />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
 
       {/* Global Toast Notification */}

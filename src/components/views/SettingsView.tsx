@@ -2,18 +2,15 @@ import React, { useState } from 'react';
 import {
   Settings as SettingsIcon,
   User,
-  Bell,
   Clock,
   Download,
   Upload,
   RefreshCw,
-  Trash2,
   Check,
   AlertTriangle,
   Sun,
   Moon,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits } from '../../utils/jalali';
@@ -37,9 +34,6 @@ export const SettingsView: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [importError, setImportError] = useState(false);
   const [importSuccess, setImportSuccess] = useState(false);
-
-  const activeAvatarObj = getAvatarOption(selectedAvatar);
-  const ActiveIcon = activeAvatarObj.icon;
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,23 +71,26 @@ export const SettingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <span className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.25)]">
-            <SettingsIcon className="w-6 h-6" />
-          </span>
-          تنظیمات سامانه و مدیریت اطلاعات
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          پیکربندی حساب کاربری، آیکون پروفایل، ساعت زنگ‌های مدرسه، پوسته و پشتیبان‌گیری
-        </p>
+      <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-cyan-500/25 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <span className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.25)]">
+              <SettingsIcon className="w-6 h-6" />
+            </span>
+            تنظیمات سامانه و مدیریت اطلاعات
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            پیکربندی حساب کاربری، آیکون پروفایل، ساعت زنگ‌های مدرسه، پوسته و پشتیبان‌گیری
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Section 1: User Profile & Theme */}
-        <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-5">
+        <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-5">
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <User className="w-4 h-4 text-cyan-500" />
+            <User className="w-4 h-4 text-cyan-400" />
             اطلاعات حساب، آیکون و ظاهر
           </h2>
 
@@ -107,7 +104,7 @@ export const SettingsView: React.FC = () => {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-sm focus:border-cyan-400 focus:outline-hidden"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
               />
             </div>
 
@@ -121,7 +118,7 @@ export const SettingsView: React.FC = () => {
                 value={gradeOrField}
                 onChange={(e) => setGradeOrField(e.target.value)}
                 placeholder="مثلاً: پایه یازدهم ریاضی فیزیک"
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-sm focus:border-cyan-400 focus:outline-hidden"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
               />
             </div>
 
@@ -144,8 +141,8 @@ export const SettingsView: React.FC = () => {
                       }}
                       className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-cyan-400 bg-cyan-500/10 dark:bg-[#172033] ring-2 ring-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
-                          : 'border-slate-200 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/60'
+                          ? 'border-cyan-400 bg-cyan-500/10 dark:bg-[#090D18] ring-2 ring-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
+                          : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-[#121829]'
                       }`}
                     >
                       <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center ${isSelected ? opt.glowColor : ''}`}>
@@ -172,7 +169,7 @@ export const SettingsView: React.FC = () => {
                   className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all cursor-pointer ${
                     profile.theme === 'light'
                       ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 shadow-xs'
-                      : 'border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#172033]'
+                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
                   }`}
                 >
                   <Sun className="w-4 h-4 text-amber-500" />
@@ -183,8 +180,8 @@ export const SettingsView: React.FC = () => {
                   onClick={() => updateProfile({ theme: 'dark' })}
                   className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all cursor-pointer ${
                     profile.theme === 'dark'
-                      ? 'border-cyan-500 bg-cyan-500/10 dark:bg-[#172033] text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
-                      : 'border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#172033]'
+                      ? 'border-cyan-500 bg-cyan-500/10 dark:bg-[#090D18] text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
+                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
                   }`}
                 >
                   <Moon className="w-4 h-4 text-cyan-400" />
@@ -210,9 +207,9 @@ export const SettingsView: React.FC = () => {
         </div>
 
         {/* Section 2: School Bell Times */}
-        <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-4">
+        <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
           <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Clock className="w-4 h-4 text-cyan-500" />
+            <Clock className="w-4 h-4 text-cyan-400" />
             ساعت شروع و پایان زنگ‌های مدرسه
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -223,7 +220,7 @@ export const SettingsView: React.FC = () => {
             {bellTimes.map((bell, idx) => (
               <div
                 key={bell.period}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] text-xs"
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 text-xs"
               >
                 <span className="font-bold text-slate-800 dark:text-slate-200 w-24">
                   {bell.title}
@@ -234,14 +231,14 @@ export const SettingsView: React.FC = () => {
                     type="time"
                     value={bell.startTime}
                     onChange={(e) => handleBellTimeChange(idx, 'startTime', e.target.value)}
-                    className="px-2 py-1 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] rounded-lg text-xs"
+                    className="px-2 py-1 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-900 dark:text-white"
                   />
                   <span className="text-slate-400">تا</span>
                   <input
                     type="time"
                     value={bell.endTime}
                     onChange={(e) => handleBellTimeChange(idx, 'endTime', e.target.value)}
-                    className="px-2 py-1 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] rounded-lg text-xs"
+                    className="px-2 py-1 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -258,7 +255,7 @@ export const SettingsView: React.FC = () => {
       </div>
 
       {/* Section 3: Backup & Restore */}
-      <div className="bg-white dark:bg-[#111827] p-6 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm space-y-5">
+      <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-5">
         <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-[#39FF88]" />
           پشتیبان‌گیری، بازیابی و ایمنی داده‌ها
@@ -269,7 +266,7 @@ export const SettingsView: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           {/* Action 1: Export */}
-          <div className="p-4 rounded-xl border border-slate-200 dark:border-[#263247] bg-slate-50/50 dark:bg-[#0D1220]/60 space-y-3 text-xs">
+          <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#090D18] space-y-3 text-xs">
             <span className="font-bold text-slate-800 dark:text-slate-200 block">
               خروجی گرفتن (Export)
             </span>
@@ -278,7 +275,7 @@ export const SettingsView: React.FC = () => {
             </p>
             <button
               onClick={exportBackup}
-              className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+              className="w-full py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               دانلود فایل پشتیبان JSON
@@ -286,7 +283,7 @@ export const SettingsView: React.FC = () => {
           </div>
 
           {/* Action 2: Import */}
-          <div className="p-4 rounded-xl border border-slate-200 dark:border-[#263247] bg-slate-50/50 dark:bg-[#0D1220]/60 space-y-2 text-xs md:col-span-2">
+          <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#090D18] space-y-2 text-xs md:col-span-2">
             <span className="font-bold text-slate-800 dark:text-slate-200 block">
               بازیابی از فایل پشتیبان (Import)
             </span>
@@ -296,7 +293,7 @@ export const SettingsView: React.FC = () => {
                 value={importJson}
                 onChange={(e) => setImportJson(e.target.value)}
                 placeholder="محتوای متنی فایل JSON را اینجا قرار دهید..."
-                className="w-full p-2.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#263247] rounded-xl text-xs font-mono focus:border-cyan-400 focus:outline-hidden"
+                className="w-full p-2.5 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
               />
               <div className="flex items-center justify-between">
                 {importSuccess && (
@@ -322,7 +319,7 @@ export const SettingsView: React.FC = () => {
         </div>
 
         {/* Action 3: Reset to Default */}
-        <div className="pt-4 border-t border-slate-100 dark:border-[#263247] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div>
             <span className="font-bold text-rose-500 block">پاکسازی یا بازنشانی داده‌ها</span>
             <span className="text-slate-400">شروع از ابتدا با پاک‌سازی کامل تمام اطلاعات سامانه</span>
