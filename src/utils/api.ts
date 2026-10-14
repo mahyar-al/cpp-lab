@@ -163,3 +163,14 @@ export async function apiRestoreSnapshot(snapshotId: string) {
     body: JSON.stringify({ snapshotId }),
   });
 }
+
+export async function apiCreateSnapshot(reason?: string) {
+  return request<{ success: boolean; message: string; snapshot: { id: string; createdAt: string; reason: string } }>('/api/backup/create-snapshot', {
+    method: 'POST',
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export async function apiGetAdminUsers() {
+  return request<{ users: Array<AuthUser> }>('/api/admin/users');
+}

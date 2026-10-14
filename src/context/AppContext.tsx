@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   UserProfile,
   SchoolSubject,
@@ -31,6 +31,13 @@ import {
   ReviewLogEntry,
   AuthUser,
   SyncStatus,
+  TrashItem,
+  NavTab,
+  UserCustomization,
+  ThemeMode,
+  AccentColor,
+  FontSize,
+  LayoutDensity,
 } from '../types';
 import {
   initialProfile,
@@ -55,6 +62,10 @@ import {
   initialReviews,
   initialResources,
   initialInboxItems,
+  DEFAULT_SECTION_NAMES,
+  DEFAULT_NAV_ORDER,
+  DEFAULT_DASHBOARD_CARDS,
+  initialCustomization,
 } from '../utils/initialData';
 import { toPersianDigits } from '../utils/jalali';
 import {
@@ -71,6 +82,7 @@ import {
   apiSaveUserData,
   apiGetSnapshots,
   apiRestoreSnapshot,
+  apiCreateSnapshot,
   apiExportBackup,
   apiImportBackup,
 } from '../utils/api';
@@ -272,6 +284,17 @@ export interface AppContextType {
   restoreServerSnapshot: (snapshotId: string) => Promise<boolean>;
   exportServerBackup: () => Promise<void>;
   importServerBackup: (backupData: any) => Promise<boolean>;
+  createManualSnapshot: (reason?: string) => Promise<boolean>;
+  trash: TrashItem[];
+  restoreFromTrash: (trashId: string) => void;
+  emptyTrash: () => void;
+  deleteFromTrashPermanently: (trashId: string) => void;
+
+  // Full User Customization
+  customization: UserCustomization;
+  updateCustomization: (updates: Partial<UserCustomization>) => void;
+  resetCustomization: (part?: 'all' | 'names' | 'appearance' | 'dashboard' | 'nav') => void;
+  getSectionTitle: (tab: NavTab) => string;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -300,6 +323,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     resources: initialResources,
     inboxItems: initialInboxItems,
     widgetConfig: initialWidgetConfig,
+    trash: [] as TrashItem[],
   });
 
   const loadInitialData = () => {
@@ -308,7 +332,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (saved) {
         const parsed = JSON.parse(saved);
         return {
-          profile: { ...initialProfile, ...(parsed.profile || {}) },
+          profile: {
+            ...initialProfile,
+            ...(parsed.profile || {}),
+            customization: {
+              ...initialCustomization,
+              ...(parsed.profile?.customization || {}),
+              sectionNames: {
+                ...DEFAULT_SECTION_NAMES,
+                ...(parsed.profile?.customization?.sectionNames || {}),
+              },
+            },
+          },
           subjects: parsed.subjects ?? initialSubjects,
           grades: parsed.grades ?? initialGrades,
           weeklyCells: parsed.weeklyCells ?? initialWeeklyCells,
@@ -330,6 +365,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           resources: parsed.resources ?? initialResources,
           inboxItems: parsed.inboxItems ?? initialInboxItems,
           widgetConfig: parsed.widgetConfig ? { ...initialWidgetConfig, ...parsed.widgetConfig } : initialWidgetConfig,
+          trash: parsed.trash ?? [],
         };
       }
     } catch (e) {
@@ -436,13 +472,130 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => clearTimeout(timer);
   }, [state, currentUser, authLoading]);
 
+  // Customization derived state
+  const customization: UserCustomization = {
+    ...initialCustomization,
+    ...(state.profile?.customization || {}),
+    sectionNames: {
+      ...DEFAULT_SECTION_NAMES,
+      ...(state.profile?.customization?.sectionNames || {}),
+    },
+    hiddenSections: state.profile?.customization?.hiddenSections || [],
+    navOrder: state.profile?.customization?.navOrder?.length
+      ? state.profile.customization.navOrder
+      : [...initialCustomization.navOrder],
+    themeMode: state.profile?.customization?.themeMode || (state.profile?.theme === 'light' ? 'light' : 'dark'),
+    accentColor: state.profile?.customization?.accentColor || 'cyan',
+    fontSize: state.profile?.customization?.fontSize || 'normal',
+    density: state.profile?.customization?.density || 'comfortable',
+    dashboardCardsOrder: state.profile?.customization?.dashboardCardsOrder?.length
+      ? state.profile.customization.dashboardCardsOrder
+      : [...initialCustomization.dashboardCardsOrder],
+    hiddenDashboardCards: state.profile?.customization?.hiddenDashboardCards || [],
+  };
+
+  // Sync theme, accent color, font size and density to the HTML element
   useEffect(() => {
-    if (state.profile.theme === 'dark') {
+    const cust = customization;
+    const isDark = cust.themeMode !== 'light';
+
+    if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [state.profile.theme]);
+
+    document.documentElement.setAttribute('data-theme', cust.themeMode);
+    document.documentElement.setAttribute('data-accent', cust.accentColor);
+    document.documentElement.setAttribute('data-font-size', cust.fontSize);
+    document.documentElement.setAttribute('data-density', cust.density);
+  }, [
+    state.profile?.theme,
+    state.profile?.customization?.themeMode,
+    state.profile?.customization?.accentColor,
+    state.profile?.customization?.fontSize,
+    state.profile?.customization?.density,
+  ]);
+
+  const getSectionTitle = useCallback(
+    (tab: NavTab): string => {
+      const custom = state.profile?.customization?.sectionNames?.[tab];
+      if (custom && custom.trim()) {
+        return custom.trim();
+      }
+      return DEFAULT_SECTION_NAMES[tab] || tab;
+    },
+    [state.profile?.customization?.sectionNames]
+  );
+
+  const updateCustomization = (updates: Partial<UserCustomization>) => {
+    setState((prev: any) => {
+      const currentCust = prev.profile?.customization || initialCustomization;
+      const updatedCust: UserCustomization = {
+        ...currentCust,
+        ...updates,
+        sectionNames: {
+          ...DEFAULT_SECTION_NAMES,
+          ...currentCust.sectionNames,
+          ...(updates.sectionNames || {}),
+        },
+      };
+
+      let newTheme = prev.profile?.theme || 'dark';
+      if (updates.themeMode) {
+        newTheme = updates.themeMode === 'light' ? 'light' : 'dark';
+      }
+
+      return {
+        ...prev,
+        profile: {
+          ...prev.profile,
+          theme: newTheme,
+          customization: updatedCust,
+        },
+      };
+    });
+    showToast('تنظیمات شخصی‌سازی ذخیره شد.');
+  };
+
+  const resetCustomization = (part: 'all' | 'names' | 'appearance' | 'dashboard' | 'nav' = 'all') => {
+    setState((prev: any) => {
+      const currentCust = prev.profile?.customization || initialCustomization;
+      let newCust: UserCustomization = { ...currentCust };
+
+      if (part === 'all') {
+        newCust = {
+          ...initialCustomization,
+          sectionNames: { ...DEFAULT_SECTION_NAMES },
+          dashboardCardsOrder: [...initialCustomization.dashboardCardsOrder],
+          navOrder: [...initialCustomization.navOrder],
+        };
+      } else if (part === 'names') {
+        newCust.sectionNames = { ...DEFAULT_SECTION_NAMES };
+      } else if (part === 'appearance') {
+        newCust.themeMode = initialCustomization.themeMode;
+        newCust.accentColor = initialCustomization.accentColor;
+        newCust.fontSize = initialCustomization.fontSize;
+        newCust.density = initialCustomization.density;
+      } else if (part === 'dashboard') {
+        newCust.dashboardCardsOrder = [...initialCustomization.dashboardCardsOrder];
+        newCust.hiddenDashboardCards = [];
+      } else if (part === 'nav') {
+        newCust.navOrder = [...initialCustomization.navOrder];
+        newCust.hiddenSections = [];
+      }
+
+      return {
+        ...prev,
+        profile: {
+          ...prev.profile,
+          theme: newCust.themeMode === 'light' ? 'light' : 'dark',
+          customization: newCust,
+        },
+      };
+    });
+    showToast('تنظیمات به حالت پیش‌فرض بازگردانده شدند.');
+  };
 
   const addActivityLog = (section: SectionType, description: string) => {
     const newLog: ActivityLogItem = {
@@ -485,14 +638,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteSubject = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      subjects: prev.subjects.filter((s: SchoolSubject) => s.id !== id),
-      weeklyCells: prev.weeklyCells.map((c: WeeklyTimetableCell) =>
-        c.subjectId === id ? { ...c, subjectId: '', color: undefined, notes: undefined } : c
-      ),
-    }));
-    addActivityLog('school', 'درس حذف شد');
+    setState((prev: any) => {
+      const subject = (prev.subjects || []).find((s: SchoolSubject) => s.id === id);
+      const trashItem: TrashItem | null = subject
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'subject',
+            title: subject.name,
+            deletedAt: new Date().toISOString(),
+            data: subject,
+          }
+        : null;
+      return {
+        ...prev,
+        subjects: (prev.subjects || []).filter((s: SchoolSubject) => s.id !== id),
+        weeklyCells: (prev.weeklyCells || []).map((c: WeeklyTimetableCell) =>
+          c.subjectId === id ? { ...c, subjectId: '', color: undefined, notes: undefined } : c
+        ),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    addActivityLog('school', 'درس به سطل بازیافت منتقل شد');
+    showToast('درس به سطل بازیافت منتقل شد.');
   };
 
   const addGrade = (grade: Omit<SubjectGrade, 'id'>) => {
@@ -708,10 +876,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteHomework = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      homeworks: prev.homeworks.filter((h: SchoolHomework) => h.id !== id),
-    }));
+    setState((prev: any) => {
+      const item = (prev.homeworks || []).find((h: SchoolHomework) => h.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'homework',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        homeworks: (prev.homeworks || []).filter((h: SchoolHomework) => h.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    showToast('تکلیف به سطل بازیافت منتقل شد.');
   };
 
   const addExam = (exam: Omit<SchoolExamItem, 'id'>) => {
@@ -745,10 +928,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteExam = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      exams: prev.exams.filter((e: SchoolExamItem) => e.id !== id),
-    }));
+    setState((prev: any) => {
+      const item = (prev.exams || []).find((e: SchoolExamItem) => e.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'exam',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        exams: (prev.exams || []).filter((e: SchoolExamItem) => e.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    showToast('آزمون به سطل بازیافت منتقل شد.');
   };
 
   const addStudySession = (session: Omit<StudySession, 'id'>) => {
@@ -792,11 +990,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteSkill = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      skills: prev.skills.filter((s: Skill) => s.id !== id),
-    }));
-    addActivityLog('skill', 'مهارت حذف شد');
+    setState((prev: any) => {
+      const item = (prev.skills || []).find((s: Skill) => s.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'skill',
+            title: item.name,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        skills: (prev.skills || []).filter((s: Skill) => s.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    addActivityLog('skill', 'مهارت به سطل بازیافت منتقل شد');
+    showToast('مهارت به سطل بازیافت منتقل شد.');
   };
 
   const toggleSkillRoadmapStep = (skillId: string, stepId: string) => {
@@ -950,11 +1163,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteProject = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      projects: prev.projects.filter((p: Project) => p.id !== id),
-    }));
-    addActivityLog('project', 'پروژه حذف شد');
+    setState((prev: any) => {
+      const item = (prev.projects || []).find((p: Project) => p.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'project',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        projects: (prev.projects || []).filter((p: Project) => p.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    addActivityLog('project', 'پروژه به سطل بازیافت منتقل شد');
+    showToast('پروژه به سطل بازیافت منتقل شد.');
   };
 
   const addProjectTask = (
@@ -1100,11 +1328,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteCompetition = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      competitions: prev.competitions.filter((c: Competition) => c.id !== id),
-    }));
-    addActivityLog('competition', 'مسابقه حذف شد');
+    setState((prev: any) => {
+      const item = (prev.competitions || []).find((c: Competition) => c.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'competition',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        competitions: (prev.competitions || []).filter((c: Competition) => c.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    addActivityLog('competition', 'مسابقه به سطل بازیافت منتقل شد');
+    showToast('مسابقه به سطل بازیافت منتقل شد.');
   };
 
   const toggleCompetitionStage = (compId: string, stageId: string) => {
@@ -1215,11 +1458,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteGoal = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      goals: prev.goals.filter((g: Goal) => g.id !== id),
-    }));
-    addActivityLog('general', 'هدف حذف شد');
+    setState((prev: any) => {
+      const item = (prev.goals || []).find((g: Goal) => g.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'goal',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        goals: (prev.goals || []).filter((g: Goal) => g.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    addActivityLog('general', 'هدف به سطل بازیافت منتقل شد');
+    showToast('هدف به سطل بازیافت منتقل شد.');
   };
 
   const toggleGoalMilestone = (goalId: string, milestoneId: string) => {
@@ -1287,10 +1545,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteCalendarEvent = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      calendarEvents: prev.calendarEvents.filter((e: CalendarEvent) => e.id !== id),
-    }));
+    setState((prev: any) => {
+      const item = (prev.calendarEvents || []).find((e: CalendarEvent) => e.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'calendarEvent',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        calendarEvents: (prev.calendarEvents || []).filter((e: CalendarEvent) => e.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    showToast('رویداد تقویم به سطل بازیافت منتقل شد.');
   };
 
   const toggleCalendarEventCompleted = (id: string) => {
@@ -1323,10 +1596,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteNote = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      notes: prev.notes.filter((n: Note) => n.id !== id),
-    }));
+    setState((prev: any) => {
+      const item = (prev.notes || []).find((n: Note) => n.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'note',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        notes: (prev.notes || []).filter((n: Note) => n.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    showToast('یادداشت به سطل بازیافت منتقل شد.');
   };
 
   const toggleNotePinned = (id: string) => {
@@ -1431,11 +1719,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteHabit = (habitId: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      habits: (prev.habits || []).filter((h: Habit) => h.id !== habitId),
-    }));
-    showToast('عادت حذف شد.');
+    setState((prev: any) => {
+      const item = (prev.habits || []).find((h: Habit) => h.id === habitId);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: habitId,
+            itemType: 'habit',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        habits: (prev.habits || []).filter((h: Habit) => h.id !== habitId),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    showToast('عادت به سطل بازیافت منتقل شد.');
   };
 
   const updateHabit = (habitId: string, updates: Partial<Habit>) => {
@@ -1594,11 +1896,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteResource = (id: string) => {
-    setState((prev: any) => ({
-      ...prev,
-      resources: (prev.resources || []).filter((r: KnowledgeResource) => r.id !== id),
-    }));
-    showToast('منبع حذف شد.');
+    setState((prev: any) => {
+      const item = (prev.resources || []).find((r: KnowledgeResource) => r.id === id);
+      const trashItem: TrashItem | null = item
+        ? {
+            id: `trash-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            originalId: id,
+            itemType: 'resource',
+            title: item.title,
+            deletedAt: new Date().toISOString(),
+            data: item,
+          }
+        : null;
+      return {
+        ...prev,
+        resources: (prev.resources || []).filter((r: KnowledgeResource) => r.id !== id),
+        trash: trashItem ? [trashItem, ...(prev.trash || [])].slice(0, 100) : (prev.trash || []),
+      };
+    });
+    showToast('منبع به سطل بازیافت منتقل شد.');
   };
 
   const toggleResourcePinned = (id: string) => {
@@ -2015,6 +2331,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       resources: initialResources,
       inboxItems: initialInboxItems,
       widgetConfig: initialWidgetConfig,
+      trash: [],
     });
     showToast('داده‌ها به حالت اولیه پیش‌فرض بازنشانی شدند.');
   };
@@ -2049,6 +2366,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       resources: [],
       inboxItems: [],
       widgetConfig: initialWidgetConfig,
+      trash: [],
     });
     showToast('تمامی اطلاعات با موفقیت پاکسازی شدند.');
   };
@@ -2211,6 +2529,85 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const createManualSnapshot = async (reason?: string): Promise<boolean> => {
+    if (!currentUser) {
+      showToast('لطفاً ابتدا وارد حساب کاربری خود شوید.');
+      return false;
+    }
+    try {
+      setSyncStatus('syncing');
+      await apiCreateSnapshot(reason || 'پشتیبان دستی کاربر');
+      await refreshSnapshots();
+      setSyncStatus('synced');
+      showToast('نسخه پشتیبان لحظه‌ای (Snapshot) در پایگاه داده سرور ثبت شد.');
+      return true;
+    } catch (err: any) {
+      setSyncStatus('error');
+      showToast(err.message || 'خطا در ثبت نسخه پشتیبان');
+      return false;
+    }
+  };
+
+  const restoreFromTrash = (trashId: string) => {
+    setState((prev: any) => {
+      const item = (prev.trash || []).find((t: TrashItem) => t.id === trashId);
+      if (!item) return prev;
+      const remainingTrash = (prev.trash || []).filter((t: TrashItem) => t.id !== trashId);
+      const updates: any = { trash: remainingTrash };
+
+      switch (item.itemType) {
+        case 'subject':
+          updates.subjects = [...(prev.subjects || []), item.data];
+          break;
+        case 'homework':
+          updates.homeworks = [...(prev.homeworks || []), item.data];
+          break;
+        case 'exam':
+          updates.exams = [...(prev.exams || []), item.data];
+          break;
+        case 'skill':
+          updates.skills = [...(prev.skills || []), item.data];
+          break;
+        case 'project':
+          updates.projects = [...(prev.projects || []), item.data];
+          break;
+        case 'competition':
+          updates.competitions = [...(prev.competitions || []), item.data];
+          break;
+        case 'goal':
+          updates.goals = [...(prev.goals || []), item.data];
+          break;
+        case 'note':
+          updates.notes = [...(prev.notes || []), item.data];
+          break;
+        case 'habit':
+          updates.habits = [...(prev.habits || []), item.data];
+          break;
+        case 'calendarEvent':
+          updates.calendarEvents = [...(prev.calendarEvents || []), item.data];
+          break;
+        case 'resource':
+          updates.resources = [...(prev.resources || []), item.data];
+          break;
+      }
+      return { ...prev, ...updates };
+    });
+    showToast('مورد با موفقیت از سطل بازیافت بازیابی شد.');
+  };
+
+  const emptyTrash = () => {
+    setState((prev: any) => ({ ...prev, trash: [] }));
+    showToast('سطل بازیافت کاملاً تخلیه گردید.');
+  };
+
+  const deleteFromTrashPermanently = (trashId: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      trash: (prev.trash || []).filter((t: TrashItem) => t.id !== trashId),
+    }));
+    showToast('مورد برای همیشه حذف شد.');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -2350,6 +2747,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         importBackup,
         resetToDefault,
         clearAllData,
+        createManualSnapshot,
+        trash: state.trash || [],
+        restoreFromTrash,
+        emptyTrash,
+        deleteFromTrashPermanently,
+        customization,
+        updateCustomization,
+        resetCustomization,
+        getSectionTitle,
       }}
     >
       {children}

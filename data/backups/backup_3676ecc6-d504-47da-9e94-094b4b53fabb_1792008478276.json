@@ -1,0 +1,61 @@
+{
+  "id": "862f360c-d525-4d95-a08d-952fb8ec9f47",
+  "userId": "3676ecc6-d504-47da-9e94-094b4b53fabb",
+  "createdAt": "2026-10-14T20:07:58.276Z",
+  "reason": "Pre-restore safety snapshot",
+  "data": {
+    "profile": {
+      "name": "کاربر آزمایشی الف",
+      "theme": "dark"
+    },
+    "subjects": [
+      {
+        "id": "sub-1792008477356",
+        "name": "هندسه تحلیلی و جبر خطی",
+        "teacher": "استاد حسینی",
+        "color": "#00F5FF"
+      }
+    ],
+    "projects": [
+      {
+        "id": "proj-1792008477356",
+        "title": "سامانه پایش هوشمند",
+        "status": "in_progress",
+        "priority": "high"
+      }
+    ],
+    "notes": [
+      {
+        "id": "temp-note",
+        "title": "یادداشت موقت که باید بعد از Restore پاک شود",
+        "content": "تست"
+      }
+    ],
+    "calendarEvents": [
+      {
+        "id": "cev-1792008477356",
+        "title": "جلسه تمرینی المپیاد",
+        "date": "1405-02-15",
+        "section": "competition"
+      }
+    ],
+    "homeworks": [],
+    "exams": [],
+    "studySessions": [],
+    "skills": [],
+    "competitions": [],
+    "goals": [],
+    "weeklyReviews": [],
+    "weeklyCells": [],
+    "dayData": {},
+    "activityLogs": [],
+    "notifications": [],
+    "habits": [],
+    "reviews": [],
+    "resources": [],
+    "inboxItems": [],
+    "trash": [],
+    "userId": "3676ecc6-d504-47da-9e94-094b4b53fabb",
+    "_lastModified": "2026-10-14T20:07:58.273Z"
+  }
+}

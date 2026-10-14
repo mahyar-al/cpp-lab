@@ -446,6 +446,40 @@ export interface ReminderNotification {
   linkedTab?: string;
 }
 
+export type NavTab =
+  | 'dashboard'
+  | 'daily_planner'
+  | 'school'
+  | 'skills'
+  | 'projects'
+  | 'competitions'
+  | 'habits'
+  | 'reviews'
+  | 'focus_timer'
+  | 'resources'
+  | 'calendar'
+  | 'goals'
+  | 'notes'
+  | 'analytics'
+  | 'settings';
+
+export type ThemeMode = 'dark' | 'light' | 'cyber-purple' | 'emerald-matrix' | 'ocean-deep' | 'sunset-gold';
+export type AccentColor = 'cyan' | 'emerald' | 'violet' | 'rose' | 'amber' | 'blue';
+export type FontSize = 'small' | 'normal' | 'large';
+export type LayoutDensity = 'compact' | 'comfortable' | 'spacious';
+
+export interface UserCustomization {
+  sectionNames: Partial<Record<NavTab, string>>;
+  hiddenSections: NavTab[];
+  navOrder: NavTab[];
+  themeMode: ThemeMode;
+  accentColor: AccentColor;
+  fontSize: FontSize;
+  density: LayoutDensity;
+  dashboardCardsOrder: string[];
+  hiddenDashboardCards: string[];
+}
+
 export interface UserProfile {
   name: string;
   gradeOrField: string;
@@ -456,6 +490,7 @@ export interface UserProfile {
   widgetConfig?: DashboardWidgetConfig;
   studyTargetDailyHours?: number;
   focusSettings?: FocusTimerSettings;
+  customization?: UserCustomization;
 }
 
 export interface AuthUser {
@@ -470,3 +505,12 @@ export interface AuthUser {
 }
 
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'error';
+
+export interface TrashItem {
+  id: string;
+  originalId: string;
+  itemType: 'subject' | 'homework' | 'exam' | 'skill' | 'project' | 'competition' | 'goal' | 'note' | 'habit' | 'task' | 'calendarEvent' | 'resource';
+  title: string;
+  deletedAt: string;
+  data: any;
+}

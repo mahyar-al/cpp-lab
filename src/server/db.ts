@@ -58,6 +58,31 @@ class DatabaseService {
 
   constructor() {
     this.init();
+    // Periodic background backup every 30 minutes
+    setInterval(() => {
+      this.triggerAutomaticBackup('Periodic 30m automated system checkpoint');
+    }, 30 * 60 * 1000).unref();
+  }
+
+  public triggerAutomaticBackup(reason: string = 'Periodic system checkpoint'): string | null {
+    try {
+      this.ensureDirectories();
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const autoBackupPath = path.resolve(BACKUP_DIR, `auto_full_system_${timestamp}.json`);
+      fs.writeFileSync(autoBackupPath, JSON.stringify(this.data, null, 2), 'utf-8');
+
+      // Keep at most 10 recent automated full system backups
+      const files = fs.readdirSync(BACKUP_DIR).filter(f => f.startsWith('auto_full_system_')).sort();
+      if (files.length > 10) {
+        for (let i = 0; i < files.length - 10; i++) {
+          try { fs.unlinkSync(path.resolve(BACKUP_DIR, files[i])); } catch {}
+        }
+      }
+      return autoBackupPath;
+    } catch (e) {
+      console.warn('Failed to write automatic backup:', e);
+      return null;
+    }
   }
 
   private ensureDirectories() {

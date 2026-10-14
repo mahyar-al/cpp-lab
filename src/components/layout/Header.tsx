@@ -12,6 +12,11 @@ import {
   Settings,
   Check,
   ChevronDown,
+  LogIn,
+  LogOut,
+  Cloud,
+  ShieldCheck,
+  Palette,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatJalaliFull, toPersianDigits } from '../../utils/jalali';
@@ -41,6 +46,11 @@ export const Header: React.FC<HeaderProps> = ({
     markNotificationAsRead,
     markAllNotificationsAsRead,
     clearNotification,
+    currentUser,
+    syncStatus,
+    setIsAuthModalOpen,
+    logout,
+    syncWithServer,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -121,38 +131,25 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center / Search CTA bar */}
-        <div className="hidden sm:flex items-center flex-1 max-w-md mx-4">
-          <button
-            onClick={onOpenSearch}
-            className="w-full flex items-center justify-between px-3.5 py-1.5 text-xs text-slate-400 bg-slate-100 dark:bg-[#111827] rounded-lg border border-slate-200 dark:border-[#263247] hover:border-slate-300 dark:hover:border-cyan-500/50 transition-all text-right group cursor-pointer"
-          >
-            <div className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-slate-400 group-hover:text-cyan-400 transition-colors" />
-              <span className="group-hover:text-slate-300 transition-colors">جستجو در دروس، وظایف، اهداف، یادداشت‌ها...</span>
-            </div>
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] bg-white dark:bg-[#172033] text-slate-500 dark:text-slate-300 rounded border border-slate-200 dark:border-[#263247]">
-              Ctrl+K
-            </kbd>
-          </button>
-        </div>
-
         {/* Action buttons, Notifications, Theme, Profile on the left (in RTL) */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Unified Single Search Trigger (No duplicate empty bars, No ctrl+k text) */}
+          <button
+            onClick={onOpenSearch}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-[#172033] rounded-xl border border-slate-200 dark:border-[#263247] hover:border-cyan-500/50 hover:text-cyan-500 dark:hover:text-cyan-400 transition-all cursor-pointer"
+            aria-label="جستجو در سامانه"
+            title="جستجو در تمام بخش‌های سامانه"
+          >
+            <Search className="w-4 h-4 text-slate-400 group-hover:text-cyan-400" />
+            <span className="hidden sm:inline">جستجو</span>
+          </button>
+
           <button
             onClick={onOpenQuickAdd}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-lg shadow-[0_0_12px_rgba(0,245,255,0.3)] transition-all whitespace-nowrap cursor-pointer active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden md:inline">ثبت سریع</span>
-          </button>
-
-          <button
-            onClick={onOpenSearch}
-            className="sm:hidden p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033]"
-            aria-label="جستجو"
-          >
-            <Search className="w-4 h-4" />
           </button>
 
           {/* Notifications Dropdown */}
@@ -253,6 +250,38 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
+          {/* Cloud Sync Status Indicator */}
+          {currentUser && (
+            <button
+              onClick={syncWithServer}
+              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                syncStatus === 'synced'
+                  ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
+                  : syncStatus === 'syncing'
+                  ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-400 animate-pulse'
+                  : 'bg-rose-500/10 border-rose-500/25 text-rose-500 hover:bg-rose-500/20'
+              }`}
+              title="همگام‌سازی فوری با پایگاه داده سرور"
+            >
+              <Cloud className={`w-3.5 h-3.5 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+              <span className="text-[11px]">
+                {syncStatus === 'synced' ? 'ذخیره ابری فعال' : syncStatus === 'syncing' ? 'در حال ذخیره...' : 'خطا در همگام‌سازی'}
+              </span>
+            </button>
+          )}
+
+          {/* Login CTA if guest */}
+          {!currentUser && (
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-cyan-500/15 to-blue-500/15 hover:from-cyan-500/25 hover:to-blue-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs active:scale-95"
+              title="ورود یا ثبت‌نام حساب چندکاربره"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">ورود / ثبت‌نام</span>
+            </button>
+          )}
+
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
@@ -279,10 +308,10 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <div className="hidden sm:flex flex-col text-right min-w-0">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors truncate max-w-[110px]">
-                  {profile.name || 'کاربر'}
+                  {currentUser ? currentUser.name : (profile.name || 'کاربر مهمان')}
                 </span>
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[110px]">
-                  {profile.gradeOrField || currentAvatar.label}
+                  {currentUser ? `@${currentUser.username}` : (profile.gradeOrField || currentAvatar.label)}
                 </span>
               </div>
               <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-transform" />
@@ -298,15 +327,57 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                      {profile.name || 'کاربر سیستم'}
+                      {currentUser ? currentUser.name : (profile.name || 'کاربر مهمان')}
                     </span>
                     <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                      {profile.gradeOrField || 'دانش‌آموز / یادگیرنده'}
+                      {currentUser ? `${currentUser.email} (${currentUser.role === 'admin' ? 'مدیر سیستم' : 'کاربر'})` : (profile.gradeOrField || 'دانش‌آموز / یادگیرنده')}
                     </span>
-                    <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium">
-                      آیکون فعال: {currentAvatar.label}
-                    </span>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className={`w-2 h-2 rounded-full ${currentUser ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                      <span className="text-[10px] text-slate-600 dark:text-slate-400">
+                        {currentUser ? 'متصل به سرور ابری' : 'حالت مهمان (آفلاین)'}
+                      </span>
+                    </div>
                   </div>
+                </div>
+
+                {/* Account Actions Bar */}
+                <div className="py-2.5 border-b border-slate-100 dark:border-[#263247] space-y-1.5">
+                  {currentUser ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          setShowProfileMenu(false);
+                          setIsAuthModalOpen(true);
+                        }}
+                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-[#172033] dark:hover:bg-[#1f2b45] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                      >
+                        <LogIn className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>تغییر حساب</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowProfileMenu(false);
+                          logout();
+                        }}
+                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>خروج</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="w-full py-2 px-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span>ورود / ساخت حساب مستقل</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Avatar icons selection */}
@@ -375,10 +446,21 @@ export const Header: React.FC<HeaderProps> = ({
                       setShowProfileMenu(false);
                       if (onSelectTab) onSelectTab('settings');
                     }}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 rounded-xl transition-all cursor-pointer shadow-xs"
+                  >
+                    <Palette className="w-3.5 h-3.5" />
+                    <span>شخصی‌سازی سایت و ظاهر</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      if (onSelectTab) onSelectTab('settings');
+                    }}
                     className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-[#172033] dark:hover:bg-[#1f2b45] rounded-xl transition-all cursor-pointer"
                   >
                     <Settings className="w-3.5 h-3.5 text-slate-400 dark:text-cyan-400" />
-                    <span>تنظیمات پیشرفته حساب کاربری</span>
+                    <span>تنظیمات پیشرفته و امنیت</span>
                   </button>
                 </div>
               </div>

@@ -22,7 +22,67 @@ import {
   KnowledgeResource,
   QuickInboxItem,
   FocusTimerSettings,
+  NavTab,
+  UserCustomization,
 } from '../types';
+
+export const DEFAULT_SECTION_NAMES: Record<NavTab, string> = {
+  dashboard: 'داشبورد اصلی',
+  daily_planner: 'برنامه‌ریز روزانه',
+  school: 'مدرسه و درس‌ها',
+  skills: 'توسعه مهارت‌ها',
+  projects: 'پروژه‌ها و کانبان',
+  competitions: 'مسابقات و المپیاد',
+  habits: 'عادت‌های روزانه',
+  reviews: 'مرور فاصله‌دار',
+  focus_timer: 'تایمر تمرکز',
+  resources: 'کتابخانه منابع',
+  calendar: 'تقویم رویدادها',
+  goals: 'اهداف و مرور',
+  notes: 'یادداشت‌ها',
+  analytics: 'آمار و عملکرد',
+  settings: 'تنظیمات و پشتیبان‌گیری',
+};
+
+export const DEFAULT_NAV_ORDER: NavTab[] = [
+  'dashboard',
+  'daily_planner',
+  'school',
+  'skills',
+  'projects',
+  'competitions',
+  'habits',
+  'reviews',
+  'focus_timer',
+  'resources',
+  'calendar',
+  'goals',
+  'notes',
+  'analytics',
+  'settings',
+];
+
+export const DEFAULT_DASHBOARD_CARDS = [
+  { id: 'today_priority', label: 'اولویت‌های کلیدی امروز (وظایف و مهلت‌ها)', category: 'برنامه و وظایف' },
+  { id: 'school_schedule', label: 'برنامه زنگ‌های مدرسه امروز', category: 'مدرسه' },
+  { id: 'habits', label: 'پیگیری عادت‌ها و استریک‌های روزانه', category: 'عادت‌ها' },
+  { id: 'study_chart', label: 'نمودار ساعات مطالعه ۷ روز اخیر', category: 'آمار مطالعه' },
+  { id: 'mini_calendar', label: 'تقویمچه شمسی ماه جاری', category: 'تقویم' },
+  { id: 'section_progress', label: 'خلاصه وضعیت مهارت‌ها و پروژه‌ها', category: 'پیشرفت' },
+  { id: 'recent_activity', label: 'گزارش فعالیت‌های اخیر سیستم', category: 'سیستم' },
+];
+
+export const initialCustomization: UserCustomization = {
+  sectionNames: { ...DEFAULT_SECTION_NAMES },
+  hiddenSections: [],
+  navOrder: [...DEFAULT_NAV_ORDER],
+  themeMode: 'dark',
+  accentColor: 'cyan',
+  fontSize: 'normal',
+  density: 'comfortable',
+  dashboardCardsOrder: DEFAULT_DASHBOARD_CARDS.map((c) => c.id),
+  hiddenDashboardCards: [],
+};
 
 export const initialWidgetConfig: DashboardWidgetConfig = {
   showTodaySchedule: true,
@@ -48,14 +108,15 @@ export const initialFocusSettings: FocusTimerSettings = {
 };
 
 export const initialProfile: UserProfile = {
-  name: 'مهیار',
-  gradeOrField: 'پایه یازدهم ریاضی',
+  name: 'کاربر',
+  gradeOrField: 'دانش‌آموز / یادگیرنده',
   avatarSeed: 'cyber-neon',
   theme: 'dark',
   enableBrowserNotifications: true,
   studyTargetDailyHours: 4,
   widgetConfig: initialWidgetConfig,
   focusSettings: initialFocusSettings,
+  customization: initialCustomization,
   bellTimes: [
     { period: 1, title: 'زنگ اول', startTime: '07:30', endTime: '09:00' },
     { period: 2, title: 'زنگ دوم', startTime: '09:15', endTime: '10:45' },

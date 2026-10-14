@@ -491,6 +491,42 @@ app.post('/api/backup/restore-snapshot', authenticateToken, (req: AuthenticatedR
   }
 });
 
+// Create Manual Snapshot on Demand
+app.post('/api/backup/create-snapshot', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const { reason } = req.body || {};
+    const snapshot = db.createSnapshot(req.userId!, reason || 'پشتیبان دستی کاربر');
+    res.json({
+      success: true,
+      message: 'نسخه پشتیبان لحظه‌ای با موفقیت ایجاد شد.',
+      snapshot: {
+        id: snapshot.id,
+        createdAt: snapshot.createdAt,
+        reason: snapshot.reason,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'خطا در ایجاد نسخه پشتیبان لحظه‌ای' });
+  }
+});
+
+// Admin Only: Get System Users
+app.get('/api/admin/users', authenticateToken, (req: AuthenticatedRequest, res) => {
+  if (req.user?.role !== 'admin') {
+    res.status(403).json({ error: 'دسترسی غیرمجاز. فقط مدیر سیستم مجاز به مشاهده این بخش است.' });
+    return;
+  }
+  const users = db.getAllUsers().map((u) => ({
+    id: u.id,
+    email: u.email,
+    username: u.username,
+    name: u.name,
+    role: u.role,
+    createdAt: u.createdAt,
+  }));
+  res.json({ users });
+});
+
 // ----------------- Vite Dev Server vs Production Static -----------------
 
 async function startServer() {

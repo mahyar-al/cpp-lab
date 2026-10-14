@@ -124,32 +124,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
     }
   };
 
-  const handleQuickDemoSwitch = async (demoName: string, demoUsername: string) => {
-    setError(null);
-    try {
-      setLoading(true);
-      // Try login first, or register if not existing
-      try {
-        await login(demoUsername, '123456');
-      } catch {
-        await register(
-          `${demoUsername}@pathly.app`,
-          demoUsername,
-          demoName,
-          '123456',
-          'رنگ مورد علاقه شما چیست؟',
-          'آبی'
-        );
-      }
-      showToast(`وارد حساب "${demoName}" شدید.`);
-      onClose();
-    } catch (err: any) {
-      setError(err.message || 'خطا در تغییر حساب کاربری');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
       <div className="bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-cyan-500/30 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden relative text-right flex flex-col max-h-[90vh]">
@@ -499,47 +473,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
               </button>
             </form>
           )}
-
-          {/* Quick Demo Switcher for Friends */}
-          <div className="pt-4 mt-2 border-t border-slate-100 dark:border-slate-800/80">
-            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              سوئیچ سریع برای آزمایش چندکاربره (دوستان و همکلاسی‌ها):
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickDemoSwitch('سارا حسینی', 'sara')}
-                className="p-2.5 text-xs text-right rounded-xl bg-slate-100 dark:bg-[#13192B] hover:bg-cyan-500/10 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 transition-all flex items-center gap-2 text-slate-800 dark:text-slate-200"
-              >
-                <img
-                  src="https://api.dicebear.com/7.x/bottts/svg?seed=sara"
-                  alt="سارا"
-                  className="w-6 h-6 rounded-full"
-                />
-                <div>
-                  <div className="font-bold">حساب سارا</div>
-                  <div className="text-[10px] text-slate-500">کاربر مستقل A</div>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoSwitch('امیررضا کمالی', 'amirreza')}
-                className="p-2.5 text-xs text-right rounded-xl bg-slate-100 dark:bg-[#13192B] hover:bg-cyan-500/10 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 transition-all flex items-center gap-2 text-slate-800 dark:text-slate-200"
-              >
-                <img
-                  src="https://api.dicebear.com/7.x/bottts/svg?seed=amirreza"
-                  alt="امیررضا"
-                  className="w-6 h-6 rounded-full"
-                />
-                <div>
-                  <div className="font-bold">حساب امیررضا</div>
-                  <div className="text-[10px] text-slate-500">کاربر مستقل B</div>
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
