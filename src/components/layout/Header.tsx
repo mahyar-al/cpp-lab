@@ -5,6 +5,7 @@ import {
   Bell,
   Sun,
   Moon,
+  Monitor,
   Menu,
   CheckCircle2,
   X,
@@ -47,6 +48,9 @@ export const Header: React.FC<HeaderProps> = ({
   const {
     profile,
     updateProfile,
+    themeMode,
+    resolvedTheme,
+    setThemeMode,
     notifications,
     markNotificationAsRead,
     markAllNotificationsAsRead,
@@ -64,7 +68,9 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   const currentAvatar = getAvatarOption(profile.avatarSeed);
@@ -76,12 +82,15 @@ export const Header: React.FC<HeaderProps> = ({
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
         setShowProfileMenu(false);
       }
+      if (themeMenuRef.current && !themeMenuRef.current.contains(e.target as Node)) {
+        setShowThemeMenu(false);
+      }
     };
-    if (showProfileMenu) {
+    if (showProfileMenu || showThemeMenu) {
       document.addEventListener('mousedown', handleOutsideClick);
     }
     return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [showProfileMenu]);
+  }, [showProfileMenu, showThemeMenu]);
 
   const toggleTheme = () => {
     updateProfile({ theme: profile.theme === 'dark' ? 'light' : 'dark' });
@@ -318,19 +327,126 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-amber-400 rounded-xl hover:bg-slate-100 dark:hover:bg-[#172033] transition-all cursor-pointer active:scale-95"
-            aria-label="تغییر تم"
-            title={profile.theme === 'dark' ? 'تغییر به حالت روشن (Light Mode)' : 'تغییر به حالت تاریک (Dark Mode)'}
-          >
-            {profile.theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400 hover:rotate-45 transition-transform" />
-            ) : (
-              <Moon className="w-4 h-4 text-indigo-600 hover:-rotate-12 transition-transform" />
+          {/* Modern Theme Switcher Control */}
+          <div className="relative" ref={themeMenuRef}>
+            <button
+              onClick={() => setShowThemeMenu((prev) => !prev)}
+              className="flex items-center gap-1.5 p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-[#172033] border border-transparent hover:border-slate-200 dark:hover:border-[#263247] transition-all cursor-pointer active:scale-95 group"
+              aria-label="تغییر حالت تم (روشن / تاریک / سیستم)"
+              title={
+                themeMode === 'system'
+                  ? `تم سیستم (فعال: ${resolvedTheme === 'dark' ? 'تاریک' : 'روشن'})`
+                  : themeMode === 'light'
+                  ? 'تم روشن (Light Mode)'
+                  : 'تم تاریک نئون (Dark Mode)'
+              }
+            >
+              <div className="relative flex items-center justify-center">
+                {themeMode === 'system' ? (
+                  <Monitor className="w-4 h-4 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
+                ) : resolvedTheme === 'dark' ? (
+                  <Moon className="w-4 h-4 text-cyan-400 group-hover:-rotate-12 transition-transform" />
+                ) : (
+                  <Sun className="w-4 h-4 text-amber-500 group-hover:rotate-45 transition-transform" />
+                )}
+                {themeMode === 'system' && (
+                  <span className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-white dark:ring-[#080B14]" />
+                )}
+              </div>
+              <ChevronDown className={`hidden sm:block w-3 h-3 text-slate-400 transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Theme Dropdown Popover */}
+            {showThemeMenu && (
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-64 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#0D1222] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263247] p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-right">
+                <div className="px-2.5 py-1.5 text-[11px] font-bold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-[#1F293D] mb-1.5 flex items-center justify-between">
+                  <span>انتخاب پوسته و تم</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    {resolvedTheme === 'dark' ? 'تاریک' : 'روشن'}
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  {/* Light Mode Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setThemeMode('light', true);
+                      setShowThemeMenu(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      themeMode === 'light'
+                        ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172033] border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                        <Sun className="w-4 h-4" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs font-bold">حالت روشن</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">سفید و شفاف برای روز</div>
+                      </div>
+                    </div>
+                    {themeMode === 'light' && <Check className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />}
+                  </button>
+
+                  {/* Dark Mode Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setThemeMode('dark', true);
+                      setShowThemeMenu(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      themeMode === 'dark'
+                        ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 font-bold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172033] border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                        <Moon className="w-4 h-4" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs font-bold">حالت تاریک نئونی</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">مشکی سرمه‌ای با درخشش فیروزه‌ای</div>
+                      </div>
+                    </div>
+                    {themeMode === 'dark' && <Check className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />}
+                  </button>
+
+                  {/* System Auto Mode Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setThemeMode('system', true);
+                      setShowThemeMenu(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      themeMode === 'system'
+                        ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-bold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172033] border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                        <Monitor className="w-4 h-4" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs font-bold">هماهنگ با سیستم</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">
+                          تنظیم خودکار با سیستم‌عامل ({resolvedTheme === 'dark' ? 'اکنون: تاریک' : 'اکنون: روشن'})
+                        </div>
+                      </div>
+                    </div>
+                    {themeMode === 'system' && <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />}
+                  </button>
+                </div>
+              </div>
             )}
-          </button>
+          </div>
 
           {/* Profile pill button & Dropdown on the left */}
           <div className="relative" ref={profileMenuRef}>
@@ -457,24 +573,54 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Quick actions: Theme switch & Settings */}
                 <div className="pt-3 space-y-2">
-                  <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247]">
-                    <span className="text-slate-600 dark:text-slate-300 font-medium">حالت تصویر:</span>
-                    <button
-                      onClick={toggleTheme}
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-700 dark:text-slate-200 hover:border-cyan-400"
-                    >
-                      {profile.theme === 'dark' ? (
-                        <>
-                          <Sun className="w-3.5 h-3.5 text-amber-400" />
-                          <span>روشن</span>
-                        </>
-                      ) : (
-                        <>
-                          <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                          <span>تاریک</span>
-                        </>
-                      )}
-                    </button>
+                  <div className="text-xs p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-medium text-slate-600 dark:text-slate-400">
+                      <span>پوسته و تم سامانه:</span>
+                      <span className="font-mono text-[10px] text-cyan-600 dark:text-cyan-400">
+                        {themeMode === 'system' ? 'سیستم (خودکار)' : themeMode === 'light' ? 'روشن' : 'تاریک نئون'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setThemeMode('light', true)}
+                        className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          themeMode === 'light'
+                            ? 'bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-400 shadow-xs'
+                            : 'bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                        }`}
+                        title="حالت روشن"
+                      >
+                        <Sun className="w-3.5 h-3.5 text-amber-500" />
+                        <span>روشن</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setThemeMode('dark', true)}
+                        className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          themeMode === 'dark'
+                            ? 'bg-cyan-500/15 border border-cyan-500/40 text-cyan-700 dark:text-cyan-400 shadow-xs'
+                            : 'bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                        }`}
+                        title="حالت تاریک"
+                      >
+                        <Moon className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>تاریک</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setThemeMode('system', true)}
+                        className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          themeMode === 'system'
+                            ? 'bg-indigo-500/15 border border-indigo-500/40 text-indigo-700 dark:text-indigo-400 shadow-xs'
+                            : 'bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                        }`}
+                        title="هماهنگ با سیستم"
+                      >
+                        <Monitor className="w-3.5 h-3.5 text-indigo-500" />
+                        <span>سیستم</span>
+                      </button>
+                    </div>
                   </div>
 
                   <button

@@ -982,40 +982,40 @@ export const DailyPlannerView: React.FC = () => {
       )}
       {/* Smart Planner & AI Schedule Modal */}
       {isSmartPlannerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in" dir="rtl">
-          <div className="relative w-full max-w-xl bg-slate-900 border border-cyan-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-slate-950/80 backdrop-blur-md animate-fade-in" dir="rtl">
+          <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-cyan-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-800 bg-slate-900/90 relative z-10">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-lg shadow-purple-500/10">
-                  <Sparkles className="w-5 h-5 text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shadow-lg shadow-purple-500/10">
+                  <Sparkles className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     برنامه‌ریزی خودکار و بهینه‌ساز روز
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 font-medium">
                       AI Schedule
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     چینش بهینه وظایف بر اساس فوریت، انرژی، تعهدات ثابت و زمان‌های استراحت
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsSmartPlannerModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-slate-300 flex-1">
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-slate-700 dark:text-slate-300 flex-1">
               {/* Parameters Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/40 p-3.5 rounded-xl border border-slate-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-950/40 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800">
                 <div>
-                  <label className="block font-semibold text-slate-300 mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     زمان مفید در دسترس امروز (دقیقه):
                   </label>
                   <input
@@ -1024,7 +1024,7 @@ export const DailyPlannerView: React.FC = () => {
                     step="15"
                     value={smartAvailMinutes}
                     onChange={(e) => setSmartAvailMinutes(Number(e.target.value) || 180)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-mono text-cyan-400 font-bold"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-cyan-600 dark:text-cyan-400 font-bold focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   />
                   <div className="flex gap-1.5 mt-1.5">
                     {[120, 180, 240, 300].map((m) => (
@@ -1032,10 +1032,10 @@ export const DailyPlannerView: React.FC = () => {
                         key={m}
                         type="button"
                         onClick={() => setSmartAvailMinutes(m)}
-                        className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                        className={`text-[10px] px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                           smartAvailMinutes === m
-                            ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300'
-                            : 'border-slate-800 text-slate-400 hover:text-slate-200'
+                            ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-700 dark:text-cyan-300 font-bold'
+                            : 'border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white dark:hover:bg-slate-900'
                         }`}
                       >
                         {toPersianDigits(m / 60)} ساعت
@@ -1045,14 +1045,14 @@ export const DailyPlannerView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-300 mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     ساعت شروع فعالیت‌ها:
                   </label>
                   <input
                     type="time"
                     value={smartStartTime}
                     onChange={(e) => setSmartStartTime(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-mono text-white"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   />
                   <span className="text-[10px] text-slate-500 mt-1 block">
                     پس از بازگشت از مدرسه و استراحت اولیه
@@ -1060,7 +1060,7 @@ export const DailyPlannerView: React.FC = () => {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block font-semibold text-slate-300 mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     تمرکز ویژه امروز (اختیاری):
                   </label>
                   <input
@@ -1068,7 +1068,7 @@ export const DailyPlannerView: React.FC = () => {
                     value={smartFocusGoal}
                     onChange={(e) => setSmartFocusGoal(e.target.value)}
                     placeholder="مثلاً: جمع‌بندی مبحث فیزیک، تمرین کدنویسی C++"
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-500"
                   />
                 </div>
               </div>
@@ -1079,10 +1079,10 @@ export const DailyPlannerView: React.FC = () => {
                 return (
                   <div className={`p-3.5 rounded-xl border flex flex-col gap-2 ${
                     sim.feasibilityStatus === 'comfortable'
-                      ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                      ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-700 dark:text-emerald-300'
                       : sim.feasibilityStatus === 'tight'
-                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-300'
-                      : 'bg-rose-500/10 border-rose-500/25 text-rose-300'
+                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-700 dark:text-amber-300'
+                      : 'bg-rose-500/10 border-rose-500/25 text-rose-700 dark:text-rose-300'
                   }`}>
                     <div className="flex items-center justify-between font-bold">
                       <span className="flex items-center gap-1.5">
@@ -1135,19 +1135,19 @@ export const DailyPlannerView: React.FC = () => {
 
               {/* Proposed Schedule Preview */}
               {proposedSchedule && proposedSchedule.length > 0 && (
-                <div className="space-y-3 pt-3 border-t border-slate-800">
-                  <div className="flex items-center justify-between font-bold text-white">
-                    <span className="flex items-center gap-1.5 text-cyan-400">
+                <div className="space-y-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white">
+                    <span className="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
                       <CheckCircle2 className="w-4 h-4" />
                       برنامه پیشنهادی برای بررسی و تایید:
                     </span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
                       {toPersianDigits(proposedSchedule.length)} آیتم
                     </span>
                   </div>
 
                   {proposedAdvice && (
-                    <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-[11px] text-purple-200 leading-relaxed">
+                    <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-[11px] text-purple-700 dark:text-purple-200 leading-relaxed">
                       💡 {proposedAdvice}
                     </div>
                   )}
@@ -1158,24 +1158,24 @@ export const DailyPlannerView: React.FC = () => {
                         key={idx}
                         className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
                           item.isBreak
-                            ? 'bg-amber-500/5 border-amber-500/20 text-amber-300'
-                            : 'bg-slate-950/70 border-slate-800 text-slate-200'
+                            ? 'bg-amber-500/5 border-amber-500/20 text-amber-700 dark:text-amber-300'
+                            : 'bg-slate-50 dark:bg-slate-950/70 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200'
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span className="w-5 h-5 rounded-md bg-slate-800 text-cyan-400 flex items-center justify-center text-[10px] font-mono">
+                          <span className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800 text-cyan-700 dark:text-cyan-400 flex items-center justify-center text-[10px] font-mono">
                             {toPersianDigits(idx + 1)}
                           </span>
                           <div>
                             <span className="font-semibold block">{item.title}</span>
                             {item.reason && (
-                              <span className="text-[10px] text-slate-400">{item.reason}</span>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400">{item.reason}</span>
                             )}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-cyan-400 text-[11px]">
+                          <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-cyan-700 dark:text-cyan-400 text-[11px]">
                             {item.timeSlot}
                           </span>
                         </div>
@@ -1199,7 +1199,7 @@ export const DailyPlannerView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setProposedSchedule(null)}
-                      className="px-3 py-2.5 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold"
+                      className="px-3 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold cursor-pointer"
                     >
                       تنظیم مجدد
                     </button>

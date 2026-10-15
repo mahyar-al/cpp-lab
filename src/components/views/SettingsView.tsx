@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Sun,
   Moon,
+  Monitor,
   ShieldCheck,
   Lock,
   Trash2,
@@ -35,6 +36,9 @@ export const SettingsView: React.FC = () => {
   const {
     profile,
     updateProfile,
+    themeMode,
+    resolvedTheme,
+    setThemeMode,
     exportBackup,
     importBackup,
     resetToDefault,
@@ -441,33 +445,70 @@ export const SettingsView: React.FC = () => {
               </div>
 
               <div className="pt-2">
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                  پوسته سامانه:
-                </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300">
+                    پوسته و تم سامانه:
+                  </label>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25">
+                    {themeMode === 'system' ? `سیستم (در حال حاضر: ${resolvedTheme === 'dark' ? 'تاریک' : 'روشن'})` : themeMode === 'light' ? 'روشن' : 'تاریک نئون'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Light Option */}
                   <button
                     type="button"
-                    onClick={() => updateProfile({ theme: 'light' })}
-                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all cursor-pointer ${
-                      profile.theme === 'light'
-                        ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 shadow-xs'
+                    onClick={() => setThemeMode('light', true)}
+                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
+                      themeMode === 'light'
+                        ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-2 ring-amber-400/30 shadow-xs font-bold'
                         : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
                     }`}
                   >
-                    <Sun className="w-4 h-4 text-amber-500" />
-                    حالت روشن (Light)
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                      <Sun className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold">حالت روشن (Light)</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سفید و شفاف، مناسب مطالعه روز</div>
+                    </div>
                   </button>
+
+                  {/* Dark Option */}
                   <button
                     type="button"
-                    onClick={() => updateProfile({ theme: 'dark' })}
-                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all cursor-pointer ${
-                      profile.theme === 'dark'
-                        ? 'border-cyan-500 bg-cyan-500/10 dark:bg-[#090D18] text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
+                    onClick={() => setThemeMode('dark', true)}
+                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
+                      themeMode === 'dark'
+                        ? 'border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 ring-2 ring-cyan-400/30 shadow-[0_0_15px_rgba(0,245,255,0.2)] font-bold'
                         : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
                     }`}
                   >
-                    <Moon className="w-4 h-4 text-cyan-400" />
-                    حالت تاریک نئونی (Dark)
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                      <Moon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold">حالت تاریک نئونی (Dark)</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سرمه‌ای مشکی با هایلایت فیروزه‌ای</div>
+                    </div>
+                  </button>
+
+                  {/* System Option */}
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('system', true)}
+                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
+                      themeMode === 'system'
+                        ? 'border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-400/30 shadow-xs font-bold'
+                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                      <Monitor className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold">هماهنگ با سیستم (System)</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">تطبیق پویا با تنظیمات ویندوز/مک</div>
+                    </div>
                   </button>
                 </div>
               </div>

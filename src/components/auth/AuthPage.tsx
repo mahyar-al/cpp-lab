@@ -377,35 +377,35 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     <div
       className={`w-full ${
         isModal
-          ? 'max-w-5xl rounded-3xl bg-[#090D18]/95 border border-cyan-500/30 shadow-[0_0_80px_rgba(6,182,212,0.18)] overflow-hidden text-right'
+          ? 'max-w-5xl rounded-3xl bg-white/95 dark:bg-[#090D18]/95 border border-slate-200 dark:border-cyan-500/30 shadow-2xl dark:shadow-[0_0_80px_rgba(6,182,212,0.18)] overflow-hidden text-right'
           : 'min-h-[85vh] flex items-center justify-center p-2 sm:p-4 text-right'
       }`}
       dir="rtl"
     >
-      <div className={`w-full ${isModal ? '' : 'max-w-6xl'} grid grid-cols-1 lg:grid-cols-12 rounded-3xl border border-slate-800/80 bg-[#090E1B]/95 backdrop-blur-2xl shadow-[0_10px_50px_rgba(0,0,0,0.6)] overflow-hidden relative`}>
+      <div className={`w-full ${isModal ? '' : 'max-w-6xl'} grid grid-cols-1 lg:grid-cols-12 rounded-3xl border border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-[#090E1B]/95 backdrop-blur-2xl shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.6)] overflow-hidden relative`}>
         
         {/* Subtle Cyber Neon Ambient Highlights */}
-        <div className="pointer-events-none absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/15 rounded-full blur-[140px]" />
-        <div className="pointer-events-none absolute -bottom-40 -left-40 w-96 h-96 bg-purple-600/15 rounded-full blur-[140px]" />
-        <div className="pointer-events-none absolute top-1/2 left-1/3 w-64 h-64 bg-blue-500/10 rounded-full blur-[120px]" />
+        <div className="pointer-events-none absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px]" />
+        <div className="pointer-events-none absolute -bottom-40 -left-40 w-96 h-96 bg-purple-600/10 dark:bg-purple-600/15 rounded-full blur-[140px]" />
+        <div className="pointer-events-none absolute top-1/2 left-1/3 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[120px]" />
 
         {/* ----------------- COLUMN 1: FORM SECTION (7 cols on lg) ----------------- */}
-        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative z-10 border-b lg:border-b-0 lg:border-l border-slate-800/80">
+        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative z-10 border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-slate-800/80">
           <div>
             {/* Top Bar with Brand and Quick Action */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800/70">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/70">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25 ring-2 ring-cyan-400/30">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-black text-lg text-white tracking-wider">PATHLY</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                    <span className="font-black text-lg text-slate-900 dark:text-white tracking-wider">PATHLY</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
                       نسخه ابری هوشمند
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400">سیستم جامع یادگیری، مهارت‌ها و برنامه‌ریزی فردی</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">سیستم جامع یادگیری، مهارت‌ها و برنامه‌ریزی فردی</span>
                 </div>
               </div>
 
@@ -413,7 +413,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 transition-colors cursor-pointer"
                 >
                   <span>پیش‌نمایش مهمان</span>
                   <ChevronLeft className="w-3.5 h-3.5" />
@@ -422,7 +422,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             </div>
 
             {/* Mode Selector Tabs (Login / Register / Forgot Password) */}
-            <div className="grid grid-cols-3 p-1.5 bg-slate-950/70 rounded-2xl border border-slate-800/90 mb-6 gap-1 text-xs font-bold">
+            <div className="grid grid-cols-3 p-1.5 bg-slate-100 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800/90 mb-6 gap-1 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => {
@@ -432,8 +432,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 }}
                 className={`py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   mode === 'login'
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    ? 'bg-white dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/40 shadow-xs dark:shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-900/60'
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
@@ -449,8 +449,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 }}
                 className={`py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   mode === 'register'
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    ? 'bg-white dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/40 shadow-xs dark:shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-900/60'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
@@ -466,8 +466,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 }}
                 className={`py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   mode === 'forgot_password' || mode === 'recovery_token'
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    ? 'bg-white dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/40 shadow-xs dark:shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-900/60'
                 }`}
               >
                 <KeyRound className="w-3.5 h-3.5" />
@@ -518,8 +518,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     className="w-8 h-8 rounded-full border border-cyan-500/40"
                   />
                   <div>
-                    <span className="text-white font-bold block">{currentUser.name}</span>
-                    <span className="text-slate-400 text-[11px]">حساب فعال: @{currentUser.username}</span>
+                    <span className="text-slate-900 dark:text-white font-bold block">{currentUser.name}</span>
+                    <span className="text-slate-500 dark:text-slate-400 text-[11px]">حساب فعال: @{currentUser.username}</span>
                   </div>
                 </div>
                 <button
@@ -528,7 +528,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     logout();
                     showToast('با موفقیت از حساب خارج شدید.');
                   }}
-                  className="px-3 py-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-rose-500/30 transition-colors cursor-pointer"
+                  className="px-3 py-1 text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-rose-500/30 transition-colors cursor-pointer"
                 >
                   خروج از حساب
                 </button>
@@ -546,19 +546,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 className="space-y-4"
               >
                 <div>
-                  <h3 className="text-xl font-black text-white flex items-center gap-2">
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
                     <span>خوش برگشتی!</span>
                     <span className="inline-block animate-wave">👋</span>
                   </h3>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     جهت دسترسی به داشبورد، کارنامه‌ها، پروژه‌ها و برنامه‌های شخصی وارد شوید.
                   </p>
                 </div>
 
                 {/* Username / Email Field */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    نام کاربری یا ایمیل <span className="text-cyan-400">*</span>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                    نام کاربری یا ایمیل <span className="text-cyan-600 dark:text-cyan-400">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -567,7 +567,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="مثال: ali_developer یا user@domain.com"
-                      className="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left"
+                      className="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
                       dir="ltr"
                       autoFocus
                     />
@@ -578,8 +578,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 {/* Password Field */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
-                      رمز عبور <span className="text-cyan-400">*</span>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      رمز عبور <span className="text-cyan-600 dark:text-cyan-400">*</span>
                     </label>
                     <button
                       type="button"
@@ -587,7 +587,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         setRecoveryIdentifier(identifier);
                         setMode('forgot_password');
                       }}
-                      className="text-[11px] text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+                      className="text-[11px] text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors cursor-pointer font-medium"
                     >
                       رمز عبور را فراموش کرده‌اید؟
                     </button>
@@ -599,14 +599,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left"
+                      className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
                       dir="ltr"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      className="absolute left-3 top-3.5 text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
+                      className="absolute left-3 top-3.5 text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer"
                       title={showPassword ? 'مخفی‌سازی رمز' : 'نمایش رمز'}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -623,13 +623,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-4 h-4 rounded-md border border-slate-600 bg-slate-900 peer-checked:bg-cyan-500 peer-checked:border-cyan-400 flex items-center justify-center transition-all">
+                    <div className="w-4 h-4 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 peer-checked:bg-cyan-500 peer-checked:border-cyan-400 flex items-center justify-center transition-all">
                       {rememberMe && <Check className="w-3 h-3 text-slate-950 stroke-[3]" />}
                     </div>
-                    <span className="text-xs text-slate-300 font-medium">مرا به خاطر بسپار</span>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">مرا به خاطر بسپار</span>
                   </label>
 
-                  <span className="text-[11px] text-slate-500">احراز هویت ایمن با JWT</span>
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500">احراز هویت ایمن با JWT</span>
                 </div>
 
                 {/* Submit Button */}
@@ -652,7 +652,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </button>
 
                 {/* Switch to Register Link */}
-                <div className="text-center pt-3 text-xs text-slate-400">
+                <div className="text-center pt-3 text-xs text-slate-500 dark:text-slate-400">
                   <span>حساب کاربری ندارید؟ </span>
                   <button
                     type="button"
@@ -660,7 +660,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       setMode('register');
                       setError(null);
                     }}
-                    className="text-cyan-400 hover:text-cyan-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
+                    className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
                   >
                     همین حالا ثبت‌نام کنید
                   </button>

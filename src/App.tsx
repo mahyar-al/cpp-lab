@@ -52,22 +52,13 @@ const MainContent: React.FC = () => {
     openAuthModal,
     getSectionTitle,
     customization,
+    resolvedTheme,
   } = useApp();
   const [currentTab, setCurrentTab] = useState<NavTab>('dashboard');
   const [isOpenMobile, setIsOpenMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
-
-  // Sync dark theme class on document.documentElement
-  useEffect(() => {
-    const isDark = customization.themeMode ? customization.themeMode !== 'light' : profile.theme === 'dark';
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [profile.theme, customization.themeMode]);
 
   // Handle URL hash for quick auth routing (#login, #register, #forgot-password)
   useEffect(() => {

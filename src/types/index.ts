@@ -468,7 +468,7 @@ export type NavTab =
   | 'analytics'
   | 'settings';
 
-export type ThemeMode = 'dark' | 'light' | 'cyber-purple' | 'emerald-matrix' | 'ocean-deep' | 'sunset-gold' | 'rose-quartz';
+export type ThemeMode = 'dark' | 'light' | 'system' | 'cyber-purple' | 'emerald-matrix' | 'ocean-deep' | 'sunset-gold' | 'rose-quartz';
 export type AccentColor = 'cyan' | 'emerald' | 'violet' | 'rose' | 'amber' | 'blue';
 export type FontSize = 'small' | 'normal' | 'large';
 export type LayoutDensity = 'compact' | 'comfortable' | 'spacious';
@@ -496,7 +496,7 @@ export interface UserProfile {
   name: string;
   gradeOrField: string;
   avatarSeed: string;
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark' | 'system';
   enableBrowserNotifications: boolean;
   bellTimes: SchoolBellTime[];
   widgetConfig?: DashboardWidgetConfig;

@@ -320,11 +320,14 @@ export interface AppContextType {
   emptyTrash: () => void;
   deleteFromTrashPermanently: (trashId: string) => void;
 
-  // Full User Customization
+  // Full User Customization & Theme System
   customization: UserCustomization;
   updateCustomization: (updates: Partial<UserCustomization>, notify?: boolean) => void;
   resetCustomization: (part?: 'all' | 'names' | 'appearance' | 'dashboard' | 'nav') => void;
   getSectionTitle: (tab: NavTab) => string;
+  themeMode: ThemeMode;
+  resolvedTheme: 'dark' | 'light';
+  setThemeMode: (mode: ThemeMode, notify?: boolean) => void;
 
   // Life RPG Gamification
   rpg: UserRPGState;
@@ -566,7 +569,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     navOrder: state.profile?.customization?.navOrder?.length
       ? state.profile.customization.navOrder
       : [...initialCustomization.navOrder],
-    themeMode: state.profile?.customization?.themeMode || (state.profile?.theme === 'light' ? 'light' : 'dark'),
+    themeMode: (state.profile?.customization?.themeMode as ThemeMode) || (state.profile?.theme as ThemeMode) || 'dark',
     accentColor: state.profile?.customization?.accentColor || 'cyan',
     secondaryAccent: state.profile?.customization?.secondaryAccent || 'violet',
     borderRadius: state.profile?.customization?.borderRadius || 'medium',
@@ -580,10 +583,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     dashboardColumns: state.profile?.customization?.dashboardColumns || 'auto',
   };
 
+  const currentThemeMode: ThemeMode = customization.themeMode;
+
+  // OS Dark mode listener for 'system' theme preference
+  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      setSystemPrefersDark(e.matches);
+    };
+
+    setSystemPrefersDark(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleMediaChange);
+    return () => mediaQuery.removeEventListener('change', handleMediaChange);
+  }, []);
+
+  const resolvedTheme: 'dark' | 'light' =
+    currentThemeMode === 'system'
+      ? (systemPrefersDark ? 'dark' : 'light')
+      : currentThemeMode === 'light'
+      ? 'light'
+      : 'dark';
+
   // Sync theme, accent color, font size, density, border radius, and glow to the HTML element
   useEffect(() => {
-    const cust = customization;
-    const isDark = cust.themeMode !== 'light';
+    const isDark = resolvedTheme === 'dark';
+
+    // Temporary smooth transition class
+    document.documentElement.classList.add('theme-transitioning');
+    const transitionTimer = setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 250);
 
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -591,23 +628,67 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       document.documentElement.classList.remove('dark');
     }
 
-    document.documentElement.setAttribute('data-theme', cust.themeMode);
-    document.documentElement.setAttribute('data-accent', cust.accentColor);
-    document.documentElement.setAttribute('data-secondary-accent', cust.secondaryAccent || 'violet');
-    document.documentElement.setAttribute('data-border-radius', cust.borderRadius || 'medium');
-    document.documentElement.setAttribute('data-glow', cust.glowIntensity || 'subtle');
-    document.documentElement.setAttribute('data-font-size', cust.fontSize);
-    document.documentElement.setAttribute('data-density', cust.density);
+    document.documentElement.setAttribute('data-theme', currentThemeMode);
+    document.documentElement.setAttribute('data-resolved-theme', resolvedTheme);
+    document.documentElement.setAttribute('data-accent', customization.accentColor);
+    document.documentElement.setAttribute('data-secondary-accent', customization.secondaryAccent || 'violet');
+    document.documentElement.setAttribute('data-border-radius', customization.borderRadius || 'medium');
+    document.documentElement.setAttribute('data-glow', customization.glowIntensity || 'subtle');
+    document.documentElement.setAttribute('data-font-size', customization.fontSize);
+    document.documentElement.setAttribute('data-density', customization.density);
+
+    // Save standalone preference immediately for next load / anti-flash
+    try {
+      localStorage.setItem('pathly_theme_mode', currentThemeMode);
+    } catch {}
+
+    return () => clearTimeout(transitionTimer);
   }, [
-    state.profile?.theme,
-    state.profile?.customization?.themeMode,
-    state.profile?.customization?.accentColor,
-    state.profile?.customization?.secondaryAccent,
-    state.profile?.customization?.borderRadius,
-    state.profile?.customization?.glowIntensity,
-    state.profile?.customization?.fontSize,
-    state.profile?.customization?.density,
+    resolvedTheme,
+    currentThemeMode,
+    customization.accentColor,
+    customization.secondaryAccent,
+    customization.borderRadius,
+    customization.glowIntensity,
+    customization.fontSize,
+    customization.density,
   ]);
+
+  const setThemeMode = useCallback((newMode: ThemeMode, notify: boolean = false) => {
+    setState((prev: any) => {
+      const currentCust = prev.profile?.customization || initialCustomization;
+      const updatedCust: UserCustomization = {
+        ...currentCust,
+        themeMode: newMode,
+      };
+
+      const newTheme: 'light' | 'dark' | 'system' =
+        newMode === 'system' ? 'system' : newMode === 'light' ? 'light' : 'dark';
+
+      return {
+        ...prev,
+        profile: {
+          ...prev.profile,
+          theme: newTheme,
+          customization: updatedCust,
+        },
+      };
+    });
+
+    try {
+      localStorage.setItem('pathly_theme_mode', newMode);
+    } catch {}
+
+    if (notify) {
+      const label =
+        newMode === 'light'
+          ? 'حالت روشن فعال شد.'
+          : newMode === 'system'
+          ? 'حالت هماهنگ با سیستم فعال شد.'
+          : 'حالت تاریک نئونی فعال شد.';
+      showToast(label);
+    }
+  }, [showToast]);
 
   const getSectionTitle = useCallback(
     (tab: NavTab): string => {
@@ -635,7 +716,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       let newTheme = prev.profile?.theme || 'dark';
       if (updates.themeMode) {
-        newTheme = updates.themeMode === 'light' ? 'light' : 'dark';
+        newTheme = updates.themeMode === 'system' ? 'system' : updates.themeMode === 'light' ? 'light' : 'dark';
+        try {
+          localStorage.setItem('pathly_theme_mode', updates.themeMode);
+        } catch {}
       }
 
       return {
@@ -709,10 +793,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateProfile = (updates: Partial<UserProfile>) => {
-    setState((prev: any) => ({
-      ...prev,
-      profile: { ...prev.profile, ...updates },
-    }));
+    setState((prev: any) => {
+      const currentCust = prev.profile?.customization || initialCustomization;
+      const updatedCust = updates.theme
+        ? { ...currentCust, themeMode: updates.theme as ThemeMode }
+        : currentCust;
+
+      if (updates.theme) {
+        try {
+          localStorage.setItem('pathly_theme_mode', updates.theme);
+        } catch {}
+      }
+
+      return {
+        ...prev,
+        profile: {
+          ...prev.profile,
+          ...updates,
+          customization: updatedCust,
+        },
+      };
+    });
     addActivityLog('general', 'تنظیمات کاربری به‌روزرسانی شد');
   };
 
@@ -3268,6 +3369,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateCustomization,
         resetCustomization,
         getSectionTitle,
+        themeMode: currentThemeMode,
+        resolvedTheme,
+        setThemeMode,
         rpg: state.rpg || initialRPGState,
         awardXP,
         toggleRPG,

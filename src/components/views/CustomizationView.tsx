@@ -104,13 +104,15 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
 
     // If live preview is active, apply theme and typography immediately to documentElement
     if (isLivePreviewActive) {
-      const isDark = draft.themeMode !== 'light';
+      const isSystemDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = draft.themeMode === 'system' ? isSystemDark : draft.themeMode !== 'light';
       if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
       document.documentElement.setAttribute('data-theme', draft.themeMode);
+      document.documentElement.setAttribute('data-resolved-theme', isDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-accent', draft.accentColor);
       document.documentElement.setAttribute('data-secondary-accent', draft.secondaryAccent || 'violet');
       document.documentElement.setAttribute('data-border-radius', draft.borderRadius || 'medium');
@@ -123,13 +125,15 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
   // Cleanup on unmount: if not saved, revert DOM attributes to saved customization
   useEffect(() => {
     return () => {
-      const isDark = customization.themeMode !== 'light';
+      const isSystemDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = customization.themeMode === 'system' ? isSystemDark : customization.themeMode !== 'light';
       if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
       document.documentElement.setAttribute('data-theme', customization.themeMode);
+      document.documentElement.setAttribute('data-resolved-theme', isDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-accent', customization.accentColor);
       document.documentElement.setAttribute('data-secondary-accent', customization.secondaryAccent || 'violet');
       document.documentElement.setAttribute('data-border-radius', customization.borderRadius || 'medium');
@@ -296,6 +300,13 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
 
   // Available Theme presets
   const THEME_OPTIONS: Array<{ id: ThemeMode; label: string; desc: string; bgClass: string; badgeClass: string }> = [
+    {
+      id: 'system',
+      label: 'هماهنگ با سیستم (System Auto)',
+      desc: 'تنظیم هوشمند بر اساس رنگ و تم فعال سیستم‌عامل (ویندوز / مک / اندروید / لینوکس)',
+      bgClass: 'bg-indigo-50/70 dark:bg-[#0D1225] border-indigo-300 dark:border-indigo-500/50 text-indigo-700 dark:text-indigo-400',
+      badgeClass: 'bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-500/30',
+    },
     {
       id: 'dark',
       label: 'نئون سایبر (Dark Neon)',

@@ -181,42 +181,60 @@
 }
 
 /* ==========================================================================
-   Dark Neon / Futuristic Dashboard Design System
+   Dark Neon & Modern Light Dashboard Design System
    ========================================================================== */
 
 /* Subtle ambient tech grid background */
 .cyber-grid {
   background-image: 
-    linear-gradient(to right, rgba(14, 165, 233, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(14, 165, 233, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.10) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
-/* Glassmorphism futuristic card surfaces */
-.glass-panel {
-  background-color: rgba(13, 18, 34, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(38, 50, 71, 0.8);
+.dark .cyber-grid {
+  background-image: 
+    linear-gradient(to right, rgba(14, 165, 233, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 165, 233, 0.04) 1px, transparent 1px);
 }
 
-:root:not(.dark) .glass-panel {
-  background-color: rgba(255, 255, 255, 0.88);
+/* Glassmorphism card surfaces */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
 }
 
-/* Futuristic Card with subtle top highlight */
+.dark .glass-panel {
+  background-color: rgba(13, 18, 34, 0.75);
+  border: 1px solid rgba(38, 50, 71, 0.8);
+  box-shadow: none;
+}
+
+/* Futuristic Card with theme-adaptive styling */
 .futuristic-card {
   position: relative;
-  background-color: #0D1222;
-  border: 1px solid rgba(38, 50, 71, 0.75);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .futuristic-card:hover {
+  border-color: rgba(14, 165, 233, 0.45);
+  box-shadow: 0 6px 18px -3px rgba(14, 165, 233, 0.12);
+}
+
+.dark .futuristic-card {
+  background-color: #0D1222;
+  border: 1px solid rgba(38, 50, 71, 0.75);
+  box-shadow: none;
+}
+
+.dark .futuristic-card:hover {
   border-color: rgba(6, 182, 212, 0.35);
   box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.15);
 }
@@ -505,14 +523,45 @@ html[data-glow="high"] .neon-glow-blue {
   box-shadow: 0 0 32px 3px rgba(59, 130, 246, 0.65) !important;
 }
 
-/* Accent Color Glows and CSS Variables */
+/* Theme-Aware Centralized Design Tokens */
 :root {
+  --bg-app: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-secondary: #F1F5F9;
+  --border-subtle: #E2E8F0;
+  --text-main: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --accent-cyan: #0284C7;
+  --accent-emerald: #059669;
+  --accent-violet: #7C3AED;
+  --accent-rose: #E11D48;
+  --accent-amber: #D97706;
+  --accent-blue: #2563EB;
+}
+
+.dark {
+  --bg-app: #080B14;
+  --bg-surface: #0D1222;
+  --bg-surface-secondary: #111827;
+  --border-subtle: rgba(38, 50, 71, 0.75);
+  --text-main: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
   --accent-cyan: #00F5FF;
   --accent-emerald: #10B981;
   --accent-violet: #A855F7;
   --accent-rose: #F43F5E;
   --accent-amber: #F59E0B;
   --accent-blue: #3B82F6;
+}
+
+/* Global Smooth Theme Transition (Only applied to visual surface properties) */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.22s ease-out, border-color 0.22s ease-out, color 0.15s ease-out, fill 0.15s ease-out, stroke 0.15s ease-out !important;
+  transition-delay: 0s !important;
 }
 
 
