@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   X,
   Layers,
+  Bot,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits } from '../../utils/jalali';
@@ -71,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   onToggleCollapse,
 }) => {
-  const { homeworks, skills, goals, habits, reviews, dayData, getSectionTitle, customization } = useApp();
+  const { homeworks, skills, goals, habits, reviews, dayData, getSectionTitle, customization, setIsAIAssistantOpen } = useApp();
 
   const pendingHomeworkCount = homeworks.filter((h) => !h.completed).length;
 
@@ -324,6 +325,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation Item Groups */}
         <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4 cyber-scrollbar">
+          {/* AI Assistant Quick Launcher */}
+          <div className="mb-2">
+            <button
+              onClick={() => {
+                setIsAIAssistantOpen(true);
+                if (isOpenMobile) onCloseMobile();
+              }}
+              className={`w-full flex items-center gap-2.5 p-2 rounded-xl bg-gradient-to-r from-cyan-500/15 via-blue-500/15 to-purple-500/15 hover:from-cyan-500/25 hover:to-purple-500/25 border border-cyan-500/40 text-cyan-600 dark:text-cyan-300 font-bold text-xs transition-all cursor-pointer shadow-sm shadow-cyan-500/10 group active:scale-95 ${
+                isCollapsed ? 'justify-center px-0' : 'justify-between'
+              }`}
+              title="دستیار هوش مصنوعی هوشمند و زنده (ChatGPT-Like)"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <div className="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-500 dark:text-cyan-400 shrink-0">
+                  <Bot className="w-4 h-4 animate-pulse" />
+                </div>
+                {!isCollapsed && <span className="truncate">دستیار هوش مصنوعی</span>}
+              </div>
+              {!isCollapsed && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-mono font-bold shrink-0">
+                  زنده
+                </span>
+              )}
+            </button>
+          </div>
+
           {navGroups.map((group, groupIdx) => (
             <div key={groupIdx} className="space-y-1">
               {!isCollapsed && (

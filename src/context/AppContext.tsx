@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   UserProfile,
   SchoolSubject,
@@ -46,6 +46,10 @@ import {
   ScheduleSimulation,
   ActiveFocusSession,
   AIChatMessage,
+  AIConversation,
+  AIConversationSummary,
+  AIModelId,
+  AISystemTone,
 } from '../types';
 import {
   initialProfile,
@@ -101,6 +105,13 @@ import {
   apiGenerateRescuePlan,
   apiBreakdownGoal,
   apiSendAIChat,
+  apiStreamAIChat,
+  apiGetAIConversations,
+  apiCreateAIConversation,
+  apiGetAIConversation,
+  apiDeleteAIConversation,
+  apiClearAIConversation,
+  apiUpdateAIConversationTitle,
   apiAwardXP,
 } from '../utils/api';
 
@@ -363,6 +374,25 @@ export interface AppContextType {
   setIsAIAssistantOpen: (open: boolean) => void;
   aiMessages: AIChatMessage[];
   isAILoading: boolean;
+  isAIStreaming: boolean;
+  aiStreamText: string;
+  aiError: string | null;
+  aiConversations: AIConversationSummary[];
+  activeConversationId: string | null;
+  activeConversationTitle: string;
+  selectedAIModel: AIModelId;
+  setSelectedAIModel: (m: AIModelId) => void;
+  selectedAITone: AISystemTone;
+  setSelectedAITone: (t: AISystemTone) => void;
+  renameAIConversation: (id: string, title: string) => Promise<boolean>;
+  loadAIConversations: () => Promise<void>;
+  selectAIConversation: (id: string) => Promise<void>;
+  createNewAIConversation: () => Promise<void>;
+  deleteAIConversation: (id: string) => Promise<void>;
+  clearActiveAIConversation: () => Promise<void>;
+  sendStreamingAIMessage: (text: string) => Promise<void>;
+  stopAIGeneration: () => void;
+  retryLastAIMessage: () => Promise<void>;
   sendAIMessage: (text: string) => Promise<string>;
   breakdownGoalWithAI: (title: string, description?: string, targetLevel?: string, category?: string) => Promise<any>;
   clearAIMessages: () => void;
@@ -465,6 +495,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsAuthModalOpen(true);
   }, []);
   const [serverSnapshots, setServerSnapshots] = useState<Array<{ id: string; createdAt: string; reason: string }>>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((curr) => (curr === msg ? null : curr));
+    }, 3200);
+  }, []);
 
   // Initialize session and pull persistent user records from server
   useEffect(() => {
@@ -1867,14 +1905,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return false;
   };
 
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage((curr) => (curr === msg ? null : curr));
-    }, 3200);
-  };
 
   const addHabit = (habitData: Omit<Habit, 'id' | 'streak' | 'completedDates'>) => {
     const newHabit: Habit = {
@@ -3140,65 +3170,267 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('جلسه تمرکز متوقف گردید.');
   };
 
-  // ----------------- AI Assistant & Chat -----------------
+  // ----------------- AI Assistant & Real-Time Streaming Chat -----------------
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [selectedAIModel, setSelectedAIModelState] = useState<AIModelId>(() => {
+    try {
+      return (localStorage.getItem('pathly_ai_model') as AIModelId) || 'gemini-3.8-flash';
+    } catch {
+      return 'gemini-3.8-flash';
+    }
+  });
+  const [selectedAITone, setSelectedAIToneState] = useState<AISystemTone>(() => {
+    try {
+      return (localStorage.getItem('pathly_ai_tone') as AISystemTone) || 'balanced';
+    } catch {
+      return 'balanced';
+    }
+  });
+
+  const setSelectedAIModel = (model: AIModelId) => {
+    setSelectedAIModelState(model);
+    try {
+      localStorage.setItem('pathly_ai_model', model);
+    } catch {}
+  };
+
+  const setSelectedAITone = (tone: AISystemTone) => {
+    setSelectedAIToneState(tone);
+    try {
+      localStorage.setItem('pathly_ai_tone', tone);
+    } catch {}
+  };
+
+  const [aiConversations, setAiConversations] = useState<AIConversationSummary[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [activeConversationTitle, setActiveConversationTitle] = useState<string>('مکالمه جدید');
   const [aiMessages, setAiMessages] = useState<AIChatMessage[]>([
     {
       id: 'welcome',
       sender: 'assistant',
-      text: 'سلام! من دستیار هوشمند Pathly هستم. می‌توانم به شما در تنظیم برنامه روزانه، نجات روز پس از عقب‌افتادگی، شکستن اهداف بزرگ به گام‌های کوچک و مرور هفتگی کمک کنم. چطور می‌توانم یاری‌تان کنم؟',
+      text: 'سلام! من دستیار هوشمند و برخط شما در Pathly هستم؛ متصل به مدل زنده هوش مصنوعی و اطلاعات واقعی برنامه‌ریزی، تکالیف و اهداف شما. چطور می‌توانم یاری‌تان کنم؟',
       timestamp: new Date().toISOString(),
     },
   ]);
   const [isAILoading, setIsAILoading] = useState(false);
+  const [isAIStreaming, setIsAIStreaming] = useState(false);
+  const [aiStreamText, setAiStreamText] = useState('');
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [lastUserPrompt, setLastUserPrompt] = useState<string>('');
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const sendAIMessage = async (text: string): Promise<string> => {
-    const userMsg: AIChatMessage = {
-      id: `msg-${Date.now()}`,
-      sender: 'user',
-      text,
-      timestamp: new Date().toISOString(),
-    };
-    setAiMessages((prev) => [...prev, userMsg]);
-    setIsAILoading(true);
-
+  const loadAIConversations = useCallback(async () => {
+    if (!currentUser) return;
     try {
-      const todayIndex = new Date().getDay() === 6 ? 0 : (new Date().getDay() + 1) % 7;
-      const todayTasks = [
-        ...(state.dayData?.[todayIndex]?.preSchoolTasks || []),
-        ...(state.dayData?.[todayIndex]?.postSchoolTasks || []),
-      ];
-      const context = {
-        todayTasksCount: todayTasks.length,
-        completedTasksCount: todayTasks.filter((t) => t.completed).length,
-        streak: (state.habits || []).reduce((max: number, h: Habit) => Math.max(max, h.streak || 0), 0),
-        activeGoalsCount: (state.goals || []).filter((g: Goal) => g.status !== 'completed').length,
-        weeklyStudyHours: Math.round(
-          (state.studySessions || []).reduce((acc: number, s: StudySession) => acc + (s.actualDurationMin || 0), 0) / 60
-        ),
-      };
+      const res = await apiGetAIConversations();
+      if (res.success && res.conversations) {
+        setAiConversations(res.conversations);
+      }
+    } catch (e) {
+      console.warn('Failed to load conversations:', e);
+    }
+  }, [currentUser]);
 
-      const res = await apiSendAIChat(text, context);
-      const assistantMsg: AIChatMessage = {
-        id: `msg-ai-${Date.now()}`,
-        sender: 'assistant',
-        text: res.reply || 'پاسخی دریافت نشد.',
-        timestamp: new Date().toISOString(),
-      };
-      setAiMessages((prev) => [...prev, assistantMsg]);
-      return res.reply;
+  useEffect(() => {
+    if (isAIAssistantOpen && currentUser) {
+      loadAIConversations();
+    }
+  }, [isAIAssistantOpen, currentUser, loadAIConversations]);
+
+  const selectAIConversation = async (convId: string) => {
+    try {
+      setIsAILoading(true);
+      setAiError(null);
+      const res = await apiGetAIConversation(convId);
+      if (res.success && res.conversation) {
+        setActiveConversationId(res.conversation.id);
+        setActiveConversationTitle(res.conversation.title || 'مکالمه جاری');
+        setAiMessages(res.conversation.messages);
+      }
     } catch (err: any) {
-      const errorMsg: AIChatMessage = {
-        id: `msg-err-${Date.now()}`,
-        sender: 'assistant',
-        text: 'متأسفانه در برقراری ارتباط مشکلی پیش آمد. لطفاً دوباره امتحان کنید.',
-        timestamp: new Date().toISOString(),
-      };
-      setAiMessages((prev) => [...prev, errorMsg]);
-      return errorMsg.text;
+      setAiError(err.message || 'خطا در بارگذاری مکالمه');
     } finally {
       setIsAILoading(false);
     }
+  };
+
+  const createNewAIConversation = async () => {
+    setActiveConversationId(null);
+    setActiveConversationTitle('مکالمه جدید');
+    setAiMessages([
+      {
+        id: `welcome_${Date.now()}`,
+        sender: 'assistant',
+        text: 'سلام! یک مکالمه تازه آغاز شد. هر سؤالی درباره برنامه‌ریزی، درس‌ها، اهداف یا شکستن پروژه‌ها دارید بپرسید.',
+        timestamp: new Date().toISOString(),
+      },
+    ]);
+    setAiStreamText('');
+    setAiError(null);
+  };
+
+  const renameAIConversation = async (convId: string, newTitle: string): Promise<boolean> => {
+    if (!convId || !newTitle.trim()) return false;
+    try {
+      const res = await apiUpdateAIConversationTitle(convId, newTitle.trim());
+      if (res.success) {
+        setAiConversations((prev) =>
+          prev.map((c) => (c.id === convId ? { ...c, title: newTitle.trim() } : c))
+        );
+        if (activeConversationId === convId) {
+          setActiveConversationTitle(newTitle.trim());
+        }
+        showToast('عنوان گفتگو با موفقیت ویرایش شد.');
+        return true;
+      }
+    } catch (err: any) {
+      showToast(err.message || 'خطا در ویرایش عنوان گفتگو');
+    }
+    return false;
+  };
+
+  const deleteAIConversation = async (convId: string) => {
+    try {
+      await apiDeleteAIConversation(convId);
+      setAiConversations((prev) => prev.filter((c) => c.id !== convId));
+      if (activeConversationId === convId) {
+        createNewAIConversation();
+      }
+      showToast('مکالمه با موفقیت حذف شد.');
+    } catch (err: any) {
+      showToast(err.message || 'خطا در حذف مکالمه');
+    }
+  };
+
+  const clearActiveAIConversation = async () => {
+    if (activeConversationId) {
+      try {
+        await apiClearAIConversation(activeConversationId);
+      } catch {}
+    }
+    setAiMessages([]);
+    setAiStreamText('');
+    setAiError(null);
+    showToast('تاریخچه پیام‌های این گفتگو پاکسازی شد.');
+  };
+
+  const stopAIGeneration = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    if (aiStreamText.trim()) {
+      setAiMessages((prev) => [
+        ...prev,
+        {
+          id: `msg_stopped_${Date.now()}`,
+          sender: 'assistant',
+          text: aiStreamText,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+    }
+    setIsAILoading(false);
+    setIsAIStreaming(false);
+    setAiStreamText('');
+    showToast('تولید پاسخ متوقف گردید.');
+  };
+
+  const sendStreamingAIMessage = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || isAILoading || isAIStreaming) return;
+
+    if (!currentUser) {
+      openAuthModal('login');
+      showToast('برای گفتگو با هوش مصنوعی زنده، لطفاً ابتدا وارد حساب کاربری خود شوید.');
+      return;
+    }
+
+    setLastUserPrompt(trimmed);
+    setAiError(null);
+
+    const userMsg: AIChatMessage = {
+      id: `msg_u_${Date.now()}`,
+      sender: 'user',
+      text: trimmed,
+      timestamp: new Date().toISOString(),
+    };
+
+    setAiMessages((prev) => [...prev, userMsg]);
+    setIsAILoading(true);
+    setIsAIStreaming(true);
+    setAiStreamText('');
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    let accumulatedText = '';
+
+    try {
+      await apiStreamAIChat(
+        {
+          message: trimmed,
+          conversationId: activeConversationId || undefined,
+          model: selectedAIModel,
+          tone: selectedAITone,
+        },
+        {
+          signal: controller.signal,
+          onStart: (meta) => {
+            if (meta.conversationId && !activeConversationId) {
+              setActiveConversationId(meta.conversationId);
+            }
+          },
+          onChunk: (chunk) => {
+            accumulatedText += chunk;
+            setAiStreamText(accumulatedText);
+          },
+          onDone: (meta) => {
+            const assistantMsg: AIChatMessage = meta.assistantMessage || {
+              id: `msg_a_${Date.now()}`,
+              sender: 'assistant',
+              text: accumulatedText,
+              timestamp: new Date().toISOString(),
+            };
+            setAiMessages((prev) => [...prev, assistantMsg]);
+            if (meta.conversationId) {
+              setActiveConversationId(meta.conversationId);
+            }
+            if (meta.title) {
+              setActiveConversationTitle(meta.title);
+            }
+            setAiStreamText('');
+            setIsAIStreaming(false);
+            setIsAILoading(false);
+            loadAIConversations();
+          },
+          onError: (errMsg) => {
+            setAiError(errMsg);
+            setIsAIStreaming(false);
+            setIsAILoading(false);
+          },
+        }
+      );
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        setAiError(err.message || 'خطا در ارتباط با سرور هوش مصنوعی');
+      }
+      setIsAIStreaming(false);
+      setIsAILoading(false);
+    } finally {
+      abortControllerRef.current = null;
+    }
+  };
+
+  const retryLastAIMessage = async () => {
+    if (lastUserPrompt) {
+      setAiError(null);
+      await sendStreamingAIMessage(lastUserPrompt);
+    }
+  };
+
+  const sendAIMessage = async (text: string): Promise<string> => {
+    await sendStreamingAIMessage(text);
+    return '';
   };
 
   const breakdownGoalWithAI = async (title: string, description?: string, targetLevel?: string, category?: string) => {
@@ -3213,7 +3445,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const clearAIMessages = () => {
-    setAiMessages([]);
+    clearActiveAIConversation();
   };
 
   return (
@@ -3397,6 +3629,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsAIAssistantOpen,
         aiMessages,
         isAILoading,
+        isAIStreaming,
+        aiStreamText,
+        aiError,
+        aiConversations,
+        activeConversationId,
+        activeConversationTitle,
+        loadAIConversations,
+        selectAIConversation,
+        createNewAIConversation,
+        deleteAIConversation,
+        clearActiveAIConversation,
+        sendStreamingAIMessage,
+        stopAIGeneration,
+        retryLastAIMessage,
         sendAIMessage,
         breakdownGoalWithAI,
         clearAIMessages,

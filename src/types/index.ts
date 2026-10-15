@@ -621,3 +621,30 @@ export interface AIChatMessage {
   isActionApplied?: boolean;
 }
 
+export interface AIConversation {
+  id: string;
+  userId: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: AIChatMessage[];
+}
+
+export interface AIConversationSummary {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messageCount: number;
+  lastMessagePreview?: string;
+}
+
+export type AIModelId = 'gemini-3.8-flash' | 'gemini-2.5-flash' | 'gemini-2.5-pro';
+export type AISystemTone = 'balanced' | 'academic' | 'motivational';
+
+export interface AIModelConfig {
+  provider: string;
+  availableModels: Array<{ id: AIModelId; name: string; description?: string }>;
+  defaultModel: AIModelId;
+  isConfigured: boolean;
+}

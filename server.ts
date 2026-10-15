@@ -8,7 +8,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { GoogleGenAI } from '@google/genai';
 import { db } from './src/server/db.ts';
-import type { UserAccount } from './src/server/db.ts';
+import type { UserAccount, AIChatMessage, AIConversation } from './src/server/db.ts';
+import { formatJalaliFull } from './src/utils/jalali.ts';
 
 dotenv.config();
 
@@ -706,6 +707,135 @@ function getGeminiClient(): GoogleGenAI | null {
   }
 }
 
+// Rate limiter in-memory structure: 25 requests/min, 200 requests/day per userId
+interface RateLimitRecord {
+  minuteTimestamp: number;
+  minuteCount: number;
+  dayString: string;
+  dayCount: number;
+}
+const aiRateLimits = new Map<string, RateLimitRecord>();
+
+function checkAIRateLimit(userId: string): { allowed: boolean; message?: string } {
+  const now = Date.now();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  let record = aiRateLimits.get(userId);
+
+  if (!record) {
+    record = { minuteTimestamp: now, minuteCount: 1, dayString: todayStr, dayCount: 1 };
+    aiRateLimits.set(userId, record);
+    return { allowed: true };
+  }
+
+  if (record.dayString !== todayStr) {
+    record.dayString = todayStr;
+    record.dayCount = 0;
+  }
+
+  if (now - record.minuteTimestamp > 60 * 1000) {
+    record.minuteTimestamp = now;
+    record.minuteCount = 0;
+  }
+
+  const MAX_PER_MIN = Number(process.env.AI_MAX_PER_MINUTE) || 25;
+  const MAX_PER_DAY = Number(process.env.AI_MAX_PER_DAY) || 200;
+
+  if (record.minuteCount >= MAX_PER_MIN) {
+    return {
+      allowed: false,
+      message: `تعداد درخواست‌های شما بیش از سقف مجاز (${MAX_PER_MIN} درخواست در دقیقه) است. لطفاً کمی صبر کنید.`,
+    };
+  }
+
+  if (record.dayCount >= MAX_PER_DAY) {
+    return {
+      allowed: false,
+      message: `سقف مصرف روزانه هوش مصنوعی (${MAX_PER_DAY} درخواست در روز) برای حساب شما به پایان رسیده است.`,
+    };
+  }
+
+  record.minuteCount += 1;
+  record.dayCount += 1;
+  return { allowed: true };
+}
+
+function buildUserPlannerContext(userId: string): string {
+  const userData = db.getUserData(userId) || {};
+  const userAccount = db.findUserById(userId);
+  const now = new Date();
+
+  // Day index in week (0: Saturday, 1: Sunday, ..., 6: Friday)
+  const dayOfWeek = now.getDay();
+  const todayIndex = (dayOfWeek + 1) % 7;
+  const dayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه'];
+  const todayName = dayNames[todayIndex];
+
+  let jalaliDateStr = '';
+  try {
+    jalaliDateStr = formatJalaliFull(now);
+  } catch {
+    jalaliDateStr = now.toISOString().slice(0, 10);
+  }
+
+  const profile = userData.profile || {};
+  const dayData = (userData.dayData && userData.dayData[todayIndex]) || { preSchoolTasks: [], postSchoolTasks: [], notes: '' };
+  const allTodayTasks = [
+    ...(dayData.preSchoolTasks || []).map((t: any) => ({ ...t, period: 'قبل از مدرسه / صبح' })),
+    ...(dayData.postSchoolTasks || []).map((t: any) => ({ ...t, period: 'بعد از مدرسه / عصر' })),
+  ];
+
+  const pendingHomeworks = (userData.homeworks || []).filter((h: any) => !h.completed);
+  const activeGoals = (userData.goals || []).filter((g: any) => g.status !== 'completed');
+  const habits = userData.habits || [];
+  const skills = userData.skills || [];
+  const projects = userData.projects || [];
+  const recentExams = (userData.exams || []).filter((e: any) => !e.completed);
+  const subjects = userData.subjects || [];
+  const notes = (userData.notes || []).slice(0, 4);
+  const calendarEvents = (userData.calendarEvents || []).slice(0, 4);
+  const studySessions = (userData.studySessions || []).slice(-3);
+
+  return `
+[اطلاعات واقعی، زنده و جاری کاربر در پایگاه‌داده Pathly]
+نام کاربر: ${userAccount?.name || profile.name || 'کاربر گرامی'}
+تاریخ امروز: ${jalaliDateStr} (${todayName})
+ساعت فعلی: ${now.toTimeString().slice(0, 5)}
+
+۱. کارهای امروز کاربر (${todayName}):
+${allTodayTasks.length > 0 ? allTodayTasks.map((t: any, i: number) => `  ${i + 1}. [${t.completed ? 'انجام شده ✓' : 'انجام نشده ✗'}] «${t.title}» (${t.period}) - اولویت: ${t.priority || 'عادی'}${t.dueTime || t.startTime ? ` - زمان: ${t.dueTime || t.startTime}` : ''}${t.notes ? ` - یادداشت: ${t.notes}` : ''}`).join('\n') : '  هیچ کاری برای امروز ثبت نشده است.'}
+
+۲. تکالیف مدرسه در انتظار انجام:
+${pendingHomeworks.length > 0 ? pendingHomeworks.map((h: any, i: number) => `  ${i + 1}. درس «${h.subjectName || 'عمومی'}»: «${h.title}» (مهلت تحویل: ${h.dueDate || 'تعیین نشده'}) - اولویت: ${h.priority || 'عادی'}`).join('\n') : '  تکلیف در انتظاری ثبت نشده است.'}
+
+۳. دروس مدرسه ثبت‌شده در سامانه:
+${subjects.length > 0 ? subjects.map((s: any) => `  - درس: «${s.name}»${s.teacher ? ` (معلم: ${s.teacher})` : ''}`).join('\n') : '  درسی تعریف نشده است.'}
+
+۴. آزمون‌ها و امتحانات پیش‌رو:
+${recentExams.length > 0 ? recentExams.map((e: any, i: number) => `  ${i + 1}. درس: «${e.subjectName}» - عنوان: «${e.title}» - تاریخ: ${e.date || 'نامشخص'}`).join('\n') : '  آزمون ثبتی در پیش نیست.'}
+
+۵. اهداف فعال:
+${activeGoals.length > 0 ? activeGoals.map((g: any, i: number) => `  - هدف: «${g.title}» (دسته‌بندی: ${g.category}) - پیشرفت: ${g.progress || 0}٪`).join('\n') : '  هدف فعالی ثبت نشده است.'}
+
+۶. عادات و استمرار (Streak):
+${habits.length > 0 ? habits.map((h: any) => `  - عادت: «${h.title}» (استمرار: ${h.streak || 0} روز پیاپی)`).join('\n') : '  عادتی تعریف نشده است.'}
+
+۷. مهارت‌های در حال توسعه:
+${skills.length > 0 ? skills.slice(0, 5).map((s: any) => `  - مهارت: «${s.name}» (سطح فعلی: ${s.currentLevel}، سطح هدف: ${s.targetLevel})`).join('\n') : '  مهارتی ثبت نشده است.'}
+
+۸. پروژه‌های در حال اجرا:
+${projects.length > 0 ? projects.slice(0, 4).map((p: any) => `  - پروژه: «${p.title}» (وضعیت: ${p.status})`).join('\n') : '  پروژه‌ای ثبت نشده است.'}
+
+۹. رویدادهای تقویم ثبت‌شده:
+${calendarEvents.length > 0 ? calendarEvents.map((ev: any, i: number) => `  ${i + 1}. «${ev.title}» (تاریخ: ${ev.date}${ev.time ? ` ساعت ${ev.time}` : ''})`).join('\n') : '  رویداد تقویمی ثبت نشده است.'}
+
+۱۰. یادداشت‌های اخیر کاربر:
+${notes.length > 0 ? notes.map((n: any, i: number) => `  ${i + 1}. «${n.title}» (دسته‌بندی: ${n.category}): ${n.content?.slice(0, 80) || 'بدون متن'}`).join('\n') : '  یادداشتی ثبت نشده است.'}
+
+۱۱. جلسات تمرکز اخیر:
+${studySessions.length > 0 ? studySessions.map((ss: any) => `  - درس/فعالیت: «${ss.subjectName}» (مدت: ${ss.actualDurationMin} دقیقه، تاریخ: ${ss.date})`).join('\n') : '  جلسه تمرکز اخیری ثبت نشده است.'}
+`;
+}
+
 // 1. Smart Daily Scheduler
 app.post('/api/ai/smart-plan', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
@@ -1078,68 +1208,398 @@ app.post('/api/ai/goal-breakdown', authenticateToken, async (req: AuthenticatedR
   }
 });
 
-// 4. AI Life Coach Chat (Context-Aware)
+// ----------------- AI Conversations & Real-Time Streaming Chat -----------------
+
+// List conversations for authenticated user
+app.get('/api/ai/conversations', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const convs = db.getConversations(req.userId!);
+    const summaries = convs.map((c) => ({
+      id: c.id,
+      title: c.title,
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt,
+      messageCount: c.messages.length,
+      lastMessagePreview: c.messages.length > 0 ? c.messages[c.messages.length - 1].text.slice(0, 60) : '',
+    }));
+    res.json({ success: true, conversations: summaries });
+  } catch (err: any) {
+    console.error('Error fetching conversations:', err.message || err);
+    res.status(500).json({ error: 'خطا در دریافت لیست مکالمات' });
+  }
+});
+
+// Create new conversation
+app.post('/api/ai/conversations', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const title = req.body?.title;
+    const newConv = db.createConversation(req.userId!, title);
+    res.status(201).json({ success: true, conversation: newConv });
+  } catch (err: any) {
+    console.error('Error creating conversation:', err.message || err);
+    res.status(500).json({ error: 'خطا در ساخت مکالمه جدید' });
+  }
+});
+
+// Get single conversation details with messages
+app.get('/api/ai/conversations/:id', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const conv = db.getConversation(req.userId!, req.params.id);
+    if (!conv) {
+      res.status(404).json({ error: 'مکالمه مورد نظر یافت نشد.' });
+      return;
+    }
+    res.json({ success: true, conversation: conv });
+  } catch (err: any) {
+    res.status(500).json({ error: 'خطا در بارگذاری مکالمه' });
+  }
+});
+
+// Delete conversation
+app.delete('/api/ai/conversations/:id', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const deleted = db.deleteConversation(req.userId!, req.params.id);
+    if (!deleted) {
+      res.status(404).json({ error: 'مکالمه یافت نشد یا متعلق به شما نیست.' });
+      return;
+    }
+    res.json({ success: true, message: 'مکالمه با موفقیت حذف گردید.' });
+  } catch (err: any) {
+    res.status(500).json({ error: 'خطا در حذف مکالمه' });
+  }
+});
+
+// Clear messages in conversation
+app.post('/api/ai/conversations/:id/clear', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const cleared = db.clearConversation(req.userId!, req.params.id);
+    if (!cleared) {
+      res.status(404).json({ error: 'مکالمه یافت نشد.' });
+      return;
+    }
+    res.json({ success: true, message: 'تاریخچه پیام‌های مکالمه پاکسازی شد.' });
+  } catch (err: any) {
+    res.status(500).json({ error: 'خطا در پاکسازی مکالمه' });
+  }
+});
+
+// Rename conversation title
+app.patch('/api/ai/conversations/:id/title', authenticateToken, (req: AuthenticatedRequest, res) => {
+  try {
+    const { title } = req.body || {};
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      res.status(400).json({ error: 'عنوان وارد شده معتبر نمی‌باشد.' });
+      return;
+    }
+    const ok = db.updateConversationTitle(req.userId!, req.params.id, title.trim());
+    if (!ok) {
+      res.status(404).json({ error: 'مکالمه یافت نشد.' });
+      return;
+    }
+    res.json({ success: true, title: title.trim() });
+  } catch (err: any) {
+    res.status(500).json({ error: 'خطا در ویرایش عنوان مکالمه' });
+  }
+});
+
+// AI Model and Service Configuration (Provider, available models, connection status)
+app.get('/api/ai/config', authenticateToken, (_req: AuthenticatedRequest, res) => {
+  res.json({
+    provider: 'Google Gemini',
+    availableModels: [
+      { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (پیشنهادی - هوشمند، سریع و زنده)' },
+      { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (پاسخ بسیار سریع و سبک)' },
+      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (استدلال عمیق و تفصیلی)' },
+    ],
+    defaultModel: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+    isConfigured: !!process.env.GEMINI_API_KEY,
+  });
+});
+
+// Real-Time Streaming Chat Endpoint (Server-Sent Events)
+app.post('/api/ai/chat/stream', authenticateToken, async (req: AuthenticatedRequest, res) => {
+  try {
+    const { message, conversationId, model, tone } = req.body;
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      res.status(400).json({ error: 'متن پیام الزامی است.' });
+      return;
+    }
+
+    const trimmedMessage = message.trim();
+    if (trimmedMessage.length > 4000) {
+      res.status(400).json({ error: 'طول پیام نمی‌تواند بیش از ۴۰۰۰ کاراکتر باشد.' });
+      return;
+    }
+
+    // Rate limiting & quota enforcement per user
+    const rateCheck = checkAIRateLimit(req.userId!);
+    if (!rateCheck.allowed) {
+      res.status(429).json({ error: rateCheck.message });
+      return;
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      res.status(503).json({
+        error: 'کلید ارتباط با مدل هوش مصنوعی (GEMINI_API_KEY) روی سرور یافت نشد. لطفاً کلید معتبر Gemini API را تنظیم فرمایید.',
+      });
+      return;
+    }
+
+    // Find or create conversation
+    let conv = conversationId ? db.getConversation(req.userId!, conversationId) : null;
+    if (!conv) {
+      conv = db.createConversation(req.userId!);
+    }
+
+    // Multi-turn sliding memory window (last 12 turns)
+    const historyMessages = conv.messages.slice(-12);
+    const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
+
+    for (const m of historyMessages) {
+      contents.push({
+        role: m.sender === 'user' ? 'user' : 'model',
+        parts: [{ text: m.text }],
+      });
+    }
+
+    // Append the incoming user prompt
+    contents.push({
+      role: 'user',
+      parts: [{ text: trimmedMessage }],
+    });
+
+    // Real dynamic user planner context
+    const plannerContext = buildUserPlannerContext(req.userId!);
+
+    // Validated customizable model selection
+    const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.5-pro'];
+    const modelName = model && ALLOWED_MODELS.includes(model)
+      ? model
+      : (process.env.GEMINI_MODEL || 'gemini-3.8-flash');
+
+    const toneInstruction =
+      tone === 'academic'
+        ? '\nلحن پاسخ‌دهی: مشاور منضبط، علمی، ساختاریافته و تمرکز بر عمل‌گرایی و برنامه‌ریزی بدون حاشیه.'
+        : tone === 'motivational'
+        ? '\nلحن پاسخ‌دهی: مربی پرانرژی، امیدبخش، الهام‌بخش، تقویت‌کننده اراده و انگیزه برای شروع.'
+        : '\nلحن پاسخ‌دهی: متوازن، صمیمی، آرامش‌بخش، شفاف و دقیق.';
+
+    const systemInstruction = `شما «مسیرساز هوشمند Pathly»، دستیار ارشد هوش مصنوعی اختصاصی، زنده و تعاملی کاربر در سامانه برنامه‌ریزی جامع تحصیلی و فردی Pathly هستید.
+شما مانند یک مشاور برجسته، دقیق، دلسوز و متعهد به زبان فارسی روان، جذاب و استاندارد پاسخ می‌دهید.${toneInstruction}
+
+اطلاعات واقعی و برخط کاربر از پایگاه‌داده Pathly به شرح زیر است:
+${plannerContext}
+
+اصول بنیادین پاسخ‌دهی:
+۱. پاسخ شما کاملاً برخط، تازه و متناسب با سؤال فعلی کاربر و زمینه مکالمه است. هیچ پاسخ ثابت یا کلیشه‌ای ندهید.
+۲. اتصال به اطلاعات واقعی: اگر کاربر در مورد برنامه امروز، تکالیف در انتظار، دروس، امتحانات، اهداف، عادات یا پروژه‌ها پرسید، بر اساس داده‌های واقعی بالا پاسخ دهید.
+۳. درستی و صداقت داده‌ها: اگر اطلاعات خواسته‌شده در برنامه‌ریز کاربر وجود ندارد، صریحاً و با لحنی همدلانه بفرمایید که این مورد هنوز در برنامه‌ریز او ثبت نشده است؛ هرگز وظیفه خیالی یا امتحان فرضی نسازید.
+۴. حافظه مکالمه: اگر کاربر به پیام‌های قبلی گفتگو اشاره کرد (مثل «همان برنامه را تغییر بده» یا «برای مورد دوم بیشتر توضیح بده»)، متناسب با تاریخچه مکالمه فوراً عمل کنید.
+۵. ساختاردهی خروجی با Markdown:
+   - از عناوین موضوعی (## و ###)
+   - از لیست‌های بولت‌دار (- ) یا شماره‌دار (1. 2.)
+   - برای کلیدواژه‌های اصلی از **بولد**
+   - برای جدول زمانی و زمان‌بندی‌ها از جدول تمیز Markdown (| ساعت | فعالیت | اولویت |)
+   - برای کدهای برنامه‌نویسی یا اصطلاحات فنی انگلیسی از \`\`\` با ذکر زبان استفاده کنید.
+۶. در هنگام خستگی یا عقب‌افتادگی کاربر، بدون سرزنش، تکنیک گام‌های ۵ دقیقه‌ای و کاهش فشار ذهنی را به کار بگیرید.`;
+
+    // Instantiate GoogleGenAI client (User-Agent header required by system skill)
+    const ai = new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        },
+      },
+    });
+
+    // Setup Server-Sent Events (SSE) streaming headers
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+
+    // Record user message into DB immediately
+    const userMsg: AIChatMessage = {
+      id: `msg_${Date.now()}_u`,
+      sender: 'user',
+      text: trimmedMessage,
+      timestamp: new Date().toISOString(),
+    };
+    db.addMessageToConversation(req.userId!, conv.id, userMsg);
+
+    // Send start event to client
+    res.write(`data: ${JSON.stringify({ type: 'start', conversationId: conv.id, userMessage: userMsg })}\n\n`);
+
+    let isAborted = false;
+    req.on('close', () => {
+      isAborted = true;
+    });
+
+    const responseStream = await ai.models.generateContentStream({
+      model: modelName,
+      contents,
+      config: {
+        systemInstruction,
+        temperature: 0.7,
+      },
+    });
+
+    let fullAssistantText = '';
+
+    for await (const chunk of responseStream) {
+      if (isAborted) break;
+      const text = chunk.text;
+      if (text) {
+        fullAssistantText += text;
+        res.write(`data: ${JSON.stringify({ type: 'chunk', text })}\n\n`);
+      }
+    }
+
+    if (fullAssistantText.trim()) {
+      const assistantMsg: AIChatMessage = {
+        id: `msg_${Date.now()}_a`,
+        sender: 'assistant',
+        text: fullAssistantText,
+        timestamp: new Date().toISOString(),
+      };
+      const updatedConv = db.addMessageToConversation(req.userId!, conv.id, assistantMsg);
+
+      res.write(
+        `data: ${JSON.stringify({
+          type: 'done',
+          conversationId: conv.id,
+          assistantMessage: assistantMsg,
+          title: updatedConv?.title || conv.title,
+        })}\n\n`
+      );
+    }
+
+    res.end();
+  } catch (err: any) {
+    console.error('Gemini streaming error:', err.message || err);
+    const errorMessage =
+      err?.message?.includes('API_KEY_INVALID') || err?.status === 400
+        ? 'کلید Gemini API نامعتبر است. لطفاً متغیر GEMINI_API_KEY را در تنظیمات بررسی نمایید.'
+        : err?.status === 429
+        ? 'سقف مصرف یا محدودیت نرخ درخواست Gemini API تکمیل شده است. لطفاً کمی بعد امتحان کنید.'
+        : `خطا در ارتباط با مدل هوش مصنوعی: ${err.message || 'پاسخی دریافت نشد'}`;
+
+    if (res.headersSent) {
+      res.write(`data: ${JSON.stringify({ type: 'error', error: errorMessage })}\n\n`);
+      res.end();
+    } else {
+      res.status(500).json({ error: errorMessage });
+    }
+  }
+});
+
+// Non-streaming chat endpoint (backward-compatible, real Gemini with planner context)
 app.post('/api/ai/chat', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
-    const { message, context = {} } = req.body;
-    if (!message || typeof message !== 'string') {
+    const { message, conversationId, model, tone } = req.body;
+    if (!message || typeof message !== 'string' || !message.trim()) {
       res.status(400).json({ error: 'پیام کاربر الزامی است.' });
       return;
     }
 
-    const client = getGeminiClient();
-    if (client) {
-      try {
-        const prompt = `شما «مسیرساز هوشمند Pathly»، دستیار شخصی، دلسوز و حرفه‌ای در برنامه‌ریزی، تحصیلی، توسعه مهارت و تمرکز هستید.
-نام کاربر: ${req.user?.name || 'دوست من'}
-خلاصه وضعیت کاربر:
-- وظایف امروز: ${context.todayTasksCount || 0} تسک (${context.completedTasksCount || 0} انجام شده)
-- ساعت مطالعه هفتگی: ${context.weeklyStudyHours || 0} ساعت
-- روزهای متوالی استمرار (Streak): ${context.streak || 0} روز
-- اهداف فعال: ${context.activeGoalsCount || 0} هدف
-
-پیام کاربر:
-"${message}"
-
-پاسخ خود را کوتاه، همدلانه، کاربردی و به زبان فارسی شیوا ارائه دهید. در صورت لزوم راهکار عملیاتی با زمانبندی مشخص پیشنهاد کنید.`;
-
-        const aiResponse = await client.models.generateContent({
-          model: 'gemini-3.8-flash',
-          contents: prompt,
-        });
-
-        res.json({
-          success: true,
-          source: 'gemini',
-          reply: aiResponse.text?.trim() || 'در خدمت شما هستم. لطفاً بفرمایید چطور می‌توانم در تنظیم برنامه یا پیشرفت پروژه‌هایتان کمکتان کنم؟',
-        });
-        return;
-      } catch (aiErr) {
-        console.warn('Gemini chat failed, fallback used:', aiErr);
-      }
+    const rateCheck = checkAIRateLimit(req.userId!);
+    if (!rateCheck.allowed) {
+      res.status(429).json({ error: rateCheck.message });
+      return;
     }
 
-    // Friendly Rule-based Fallback
-    const lower = message.toLowerCase();
-    let reply = `سلام ${req.user?.name || 'عزیز'}! من همراه برنامه‌ریزی شما هستم. `;
-    if (lower.includes('خسته') || lower.includes('عقب')) {
-      reply += 'اگر امروز از برنامه عقب افتاده‌اید، اصلاً نگران نباشید. می‌توانید از بخش «نجات روز» (Rescue Mode) استفاده کنید تا با یک اقدام ۵ دقیقه‌ای دوباره در مسیر قرار بگیرید.';
-    } else if (lower.includes('درس') || lower.includes('مدرسه')) {
-      reply += 'برای مدیریت درس‌های مدرسه، حتماً تکالیف فردا را در برنامه‌ریز روزانه بررسی کرده و پس از هر ۴۵ دقیقه مطالعه، ۱۰ دقیقه استراحت داشته باشید.';
-    } else if (lower.includes('تمرکز') || lower.includes('پومودورو')) {
-      reply += 'پیشنهاد می‌کنم یک جلسه پومودورو ۲۵ دقیقه‌ای را با انتخاب تسک فعلی‌تان از بخش تایمر تمرکز شروع کنید.';
-    } else {
-      reply += 'می‌توانید برای ساخت خودکار برنامه روزانه، بازسازی برنامه پس از عقب‌افتادگی یا شکستن اهداف بزرگ به گام‌های کوچک روی من حساب کنید.';
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      res.status(503).json({
+        error: 'کلید ارتباط با مدل هوش مصنوعی (GEMINI_API_KEY) روی سرور یافت نشد.',
+      });
+      return;
     }
+
+    let conv = conversationId ? db.getConversation(req.userId!, conversationId) : null;
+    if (!conv) {
+      conv = db.createConversation(req.userId!);
+    }
+
+    const historyMessages = conv.messages.slice(-12);
+    const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
+
+    for (const m of historyMessages) {
+      contents.push({
+        role: m.sender === 'user' ? 'user' : 'model',
+        parts: [{ text: m.text }],
+      });
+    }
+
+    contents.push({
+      role: 'user',
+      parts: [{ text: message.trim() }],
+    });
+
+    const plannerContext = buildUserPlannerContext(req.userId!);
+
+    const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.5-pro'];
+    const modelName = model && ALLOWED_MODELS.includes(model)
+      ? model
+      : (process.env.GEMINI_MODEL || 'gemini-3.8-flash');
+
+    const toneInstruction =
+      tone === 'academic'
+        ? '\nلحن پاسخ‌دهی: مشاور منضبط، علمی و ساختاریافته.'
+        : tone === 'motivational'
+        ? '\nلحن پاسخ‌دهی: مربی پرانرژی و انگیزشی.'
+        : '\nلحن پاسخ‌دهی: متوازن، صمیمی و دقیق.';
+
+    const systemInstruction = `شما «مسیرساز هوشمند Pathly»، دستیار شخصی و برنامه‌ریز زنده کاربر در Pathly هستید.${toneInstruction}
+اطلاعات واقعی و جاری کاربر:
+${plannerContext}
+پاسخ تازه، واقعی و متناسب با سؤال کاربر به فارسی تولید کنید. از اطلاعات واقعی بالا استفاده کنید و در صورت عدم وجود داده، صادقانه بفرمایید داده‌ای ثبت نشده است.`;
+
+    const client = new GoogleGenAI({
+      apiKey,
+      httpOptions: { headers: { 'User-Agent': 'aistudio-build' } },
+    });
+
+    const aiResponse = await client.models.generateContent({
+      model: modelName,
+      contents,
+      config: {
+        systemInstruction,
+        temperature: 0.7,
+      },
+    });
+
+    const reply = aiResponse.text?.trim() || 'پاسخی از مدل دریافت نشد.';
+
+    const userMsg: AIChatMessage = {
+      id: `msg_${Date.now()}_u`,
+      sender: 'user',
+      text: message.trim(),
+      timestamp: new Date().toISOString(),
+    };
+    const assistantMsg: AIChatMessage = {
+      id: `msg_${Date.now()}_a`,
+      sender: 'assistant',
+      text: reply,
+      timestamp: new Date().toISOString(),
+    };
+
+    db.addMessageToConversation(req.userId!, conv.id, userMsg);
+    const updatedConv = db.addMessageToConversation(req.userId!, conv.id, assistantMsg);
 
     res.json({
       success: true,
-      source: 'rule_based',
+      source: 'gemini',
+      model: modelName,
+      conversationId: conv.id,
+      title: updatedConv?.title || conv.title,
       reply,
     });
-  } catch (err) {
-    console.error('Chat error:', err);
-    res.status(500).json({ error: 'خطا در ارتباط با دستیار هوشمند' });
+  } catch (err: any) {
+    console.error('Chat error:', err.message || err);
+    res.status(500).json({ error: `خطا در ارتباط با مدل هوش مصنوعی: ${err.message || 'خطای سرور'}` });
   }
 });
 

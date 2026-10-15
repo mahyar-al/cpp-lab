@@ -24,11 +24,33 @@ export interface UserBackupSnapshot {
   data: any;
 }
 
+export interface AIChatMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+  actionPayload?: {
+    type: 'apply_schedule' | 'apply_tasks' | 'breakdown_goal' | 'apply_rescue';
+    data: any;
+  };
+  isActionApplied?: boolean;
+}
+
+export interface AIConversation {
+  id: string;
+  userId: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: AIChatMessage[];
+}
+
 export interface DatabaseSchema {
   version: number;
   users: Record<string, UserAccount>; // id -> UserAccount
   userData: Record<string, any>; // userId -> Full User App State
   snapshots: UserBackupSnapshot[];
+  conversations: Record<string, AIConversation[]>; // userId -> AIConversation[]
   metadata: {
     createdAt: string;
     lastSavedAt: string;
@@ -47,6 +69,7 @@ class DatabaseService {
     users: {},
     userData: {},
     snapshots: [],
+    conversations: {},
     metadata: {
       createdAt: new Date().toISOString(),
       lastSavedAt: new Date().toISOString(),
@@ -107,6 +130,7 @@ class DatabaseService {
           users: parsed.users || {},
           userData: parsed.userData || {},
           snapshots: parsed.snapshots || [],
+          conversations: parsed.conversations || {},
           metadata: parsed.metadata || {
             createdAt: new Date().toISOString(),
             lastSavedAt: new Date().toISOString(),
@@ -265,6 +289,79 @@ class DatabaseService {
     // create safety snapshot of current state first
     this.createSnapshot(userId, 'Pre-restore safety snapshot');
     this.data.userData[userId] = JSON.parse(JSON.stringify(snapshot.data));
+    this.persist();
+    return true;
+  }
+
+  // --- AI Conversations Operations ---
+  public getConversations(userId: string): AIConversation[] {
+    const list = (this.data.conversations && this.data.conversations[userId]) || [];
+    return [...list].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  }
+
+  public getConversation(userId: string, conversationId: string): AIConversation | null {
+    const list = (this.data.conversations && this.data.conversations[userId]) || [];
+    return list.find((c) => c.id === conversationId) || null;
+  }
+
+  public createConversation(userId: string, title?: string): AIConversation {
+    if (!this.data.conversations) this.data.conversations = {};
+    if (!this.data.conversations[userId]) this.data.conversations[userId] = [];
+
+    const now = new Date().toISOString();
+    const newConv: AIConversation = {
+      id: `conv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+      userId,
+      title: title || 'مکالمه جدید',
+      createdAt: now,
+      updatedAt: now,
+      messages: [],
+    };
+
+    this.data.conversations[userId].unshift(newConv);
+    this.persist();
+    return newConv;
+  }
+
+  public updateConversationTitle(userId: string, conversationId: string, title: string): boolean {
+    const conv = this.getConversation(userId, conversationId);
+    if (!conv) return false;
+    conv.title = title.trim();
+    conv.updatedAt = new Date().toISOString();
+    this.persist();
+    return true;
+  }
+
+  public addMessageToConversation(userId: string, conversationId: string, message: AIChatMessage): AIConversation | null {
+    let conv = this.getConversation(userId, conversationId);
+    if (!conv) {
+      conv = this.createConversation(userId, message.text.slice(0, 35));
+    }
+    conv.messages.push(message);
+    conv.updatedAt = new Date().toISOString();
+    if (conv.title === 'مکالمه جدید' && message.sender === 'user') {
+      conv.title = message.text.trim().slice(0, 38) + (message.text.trim().length > 38 ? '...' : '');
+    }
+    this.persist();
+    return conv;
+  }
+
+  public deleteConversation(userId: string, conversationId: string): boolean {
+    if (!this.data.conversations || !this.data.conversations[userId]) return false;
+    const initialLen = this.data.conversations[userId].length;
+    this.data.conversations[userId] = this.data.conversations[userId].filter((c) => c.id !== conversationId);
+    if (this.data.conversations[userId].length !== initialLen) {
+      this.persist();
+      return true;
+    }
+    return false;
+  }
+
+  public clearConversation(userId: string, conversationId: string): boolean {
+    const conv = this.getConversation(userId, conversationId);
+    if (!conv) return false;
+    conv.messages = [];
+    conv.updatedAt = new Date().toISOString();
     this.persist();
     return true;
   }

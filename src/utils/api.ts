@@ -1,4 +1,4 @@
-import { AuthUser } from '../types';
+import { AuthUser, AIConversation, AIConversationSummary } from '../types';
 
 const TOKEN_KEY = 'pathly_auth_token_v3';
 
@@ -295,14 +295,141 @@ export async function apiBreakdownGoal(payload: {
   });
 }
 
-export async function apiSendAIChat(message: string, context?: any) {
+export async function apiGetAIConversations() {
+  return request<{ success: boolean; conversations: AIConversationSummary[] }>('/api/ai/conversations');
+}
+
+export async function apiCreateAIConversation(title?: string) {
+  return request<{ success: boolean; conversation: AIConversation }>('/api/ai/conversations', {
+    method: 'POST',
+    body: JSON.stringify({ title }),
+  });
+}
+
+export async function apiGetAIConversation(id: string) {
+  return request<{ success: boolean; conversation: AIConversation }>(`/api/ai/conversations/${id}`);
+}
+
+export async function apiDeleteAIConversation(id: string) {
+  return request<{ success: boolean; message: string }>(`/api/ai/conversations/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function apiClearAIConversation(id: string) {
+  return request<{ success: boolean; message: string }>(`/api/ai/conversations/${id}/clear`, {
+    method: 'POST',
+  });
+}
+
+export async function apiUpdateAIConversationTitle(id: string, title: string) {
+  return request<{ success: boolean; title: string }>(`/api/ai/conversations/${id}/title`, {
+    method: 'PATCH',
+    body: JSON.stringify({ title }),
+  });
+}
+
+export async function apiGetAIConfig() {
+  return request<{
+    provider: string;
+    availableModels: Array<{ id: string; name: string }>;
+    defaultModel: string;
+    isConfigured: boolean;
+  }>('/api/ai/config');
+}
+
+export interface StreamChatCallbacks {
+  onStart?: (meta: { conversationId: string; userMessage: any }) => void;
+  onChunk: (chunk: string) => void;
+  onDone?: (meta: { conversationId: string; assistantMessage: any; title?: string }) => void;
+  onError?: (errMessage: string) => void;
+  signal?: AbortSignal;
+}
+
+export async function apiStreamAIChat(
+  payload: { message: string; conversationId?: string; model?: string; tone?: string },
+  callbacks: StreamChatCallbacks
+): Promise<void> {
+  const token = getStoredToken();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch('/api/ai/chat/stream', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(payload),
+    signal: callbacks.signal,
+  });
+
+  if (!response.ok) {
+    const errorJson = await response.json().catch(() => ({}));
+    const errText = errorJson.error || `خطا در برقراری ارتباط (${response.status})`;
+    callbacks.onError?.(errText);
+    throw new Error(errText);
+  }
+
+  if (!response.body) {
+    throw new Error('ReadableStream not supported by browser.');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || !trimmed.startsWith('data:')) continue;
+
+        const dataStr = trimmed.slice(5).trim();
+        try {
+          const parsed = JSON.parse(dataStr);
+          if (parsed.type === 'start') {
+            callbacks.onStart?.(parsed);
+          } else if (parsed.type === 'chunk') {
+            callbacks.onChunk(parsed.text);
+          } else if (parsed.type === 'done') {
+            callbacks.onDone?.(parsed);
+          } else if (parsed.type === 'error') {
+            callbacks.onError?.(parsed.error);
+          }
+        } catch {
+          // ignore parsing error on malformed chunk
+        }
+      }
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      return;
+    }
+    callbacks.onError?.(err.message || 'خطا در دریافت جریان پاسخ');
+    throw err;
+  }
+}
+
+export async function apiSendAIChat(message: string, conversationId?: string, model?: string, tone?: string) {
   return request<{
     success: boolean;
-    source: 'gemini' | 'rule_based';
+    source: 'gemini';
+    model: string;
+    conversationId: string;
+    title: string;
     reply: string;
   }>('/api/ai/chat', {
     method: 'POST',
-    body: JSON.stringify({ message, context }),
+    body: JSON.stringify({ message, conversationId, model, tone }),
   });
 }
 
