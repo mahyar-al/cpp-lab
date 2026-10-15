@@ -65,6 +65,10 @@ export interface TaskItem {
   date?: string; // YYYY-MM-DD
   isRollover?: boolean;
   tags?: string[];
+  dependsOnTaskId?: string;
+  energyLevel?: 'low' | 'medium' | 'high';
+  importance?: 'critical' | 'high' | 'medium' | 'low';
+  isFixedTime?: boolean;
 }
 
 export interface SchoolHomework {
@@ -169,6 +173,7 @@ export interface Skill {
   status: 'active' | 'paused' | 'completed';
   streak: number;
   activeDates: string[]; // List of YYYY-MM-DD dates practiced
+  prerequisites?: string[]; // IDs or names of prerequisite skills
 }
 
 export type ProjectStatus = 'ideas' | 'todo' | 'in_progress' | 'waiting' | 'completed';
@@ -521,3 +526,98 @@ export interface TrashItem {
   deletedAt: string;
   data: any;
 }
+
+// ----------------- Life RPG Gamification -----------------
+export interface Quest {
+  id: string;
+  title: string;
+  description: string;
+  type: 'daily' | 'weekly' | 'special';
+  xpReward: number;
+  targetValue: number;
+  currentValue: number;
+  completed: boolean;
+  category: SectionType;
+  icon?: string;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlockedAt?: string;
+  category: 'general' | 'study' | 'habit' | 'project' | 'competition';
+  tier: 'bronze' | 'silver' | 'gold' | 'master';
+  progressPercentage?: number;
+}
+
+export interface UserRPGState {
+  enabled: boolean;
+  xp: number;
+  level: number;
+  title: string;
+  awardedEventIds: string[]; // Anti-cheat: prevent duplicate XP from same task completion
+  dailyQuests: Quest[];
+  weeklyQuests: Quest[];
+  achievements: Achievement[];
+}
+
+// ----------------- Rescue Mode & Adaptive Planner -----------------
+export type RescueModeType = '15_min' | '1_hour' | 'rebuild_day';
+
+export interface RescueScheduleStep {
+  id: string;
+  taskId?: string;
+  title: string;
+  timeSlot: string; // e.g. "17:30 - 18:00"
+  durationMin: number;
+  isBreak?: boolean;
+  note?: string;
+}
+
+export interface RescuePlan {
+  mode: RescueModeType;
+  smallestStep: string;
+  criticalTaskIds: string[];
+  deferredTaskIds: string[];
+  suggestedSchedule: RescueScheduleStep[];
+  message: string;
+  generatedAt: string;
+}
+
+export interface ScheduleSimulation {
+  totalRequiredMinutes: number;
+  availableMinutes: number;
+  varianceMinutes: number;
+  feasibilityStatus: 'comfortable' | 'tight' | 'impossible';
+  score: number; // 0 to 100
+  suggestions: string[];
+}
+
+// ----------------- Focus Session Active State -----------------
+export interface ActiveFocusSession {
+  id: string;
+  taskId?: string;
+  taskTitle: string;
+  section: SectionType;
+  mode: 'work' | 'short_break' | 'long_break';
+  targetMinutes: number;
+  elapsedSeconds: number;
+  isRunning: boolean;
+  lastUpdatedTimestamp: number;
+}
+
+// ----------------- AI Life Coach & Assistant -----------------
+export interface AIChatMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+  actionPayload?: {
+    type: 'apply_schedule' | 'apply_tasks' | 'breakdown_goal' | 'apply_rescue';
+    data: any;
+  };
+  isActionApplied?: boolean;
+}
+

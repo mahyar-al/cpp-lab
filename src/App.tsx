@@ -20,6 +20,8 @@ import { SettingsView } from './components/views/SettingsView';
 import { GlobalSearchModal } from './components/modals/GlobalSearchModal';
 import { QuickAddModal } from './components/modals/QuickAddModal';
 import { AuthModal } from './components/modals/AuthModal';
+import { RescueModeModal } from './components/modals/RescueModeModal';
+import { AIAssistantModal } from './components/modals/AIAssistantModal';
 import { BottomNav } from './components/layout/BottomNav';
 
 const TAB_TITLES: Record<NavTab, string> = {
@@ -198,6 +200,9 @@ const MainContent: React.FC = () => {
         onClose={() => setIsAuthModalOpen(false)}
         initialTab={authModalInitialTab}
       />
+
+      <RescueModeModal />
+      <AIAssistantModal />
 
       {/* Global Toast Notification */}
       {toastMessage && (

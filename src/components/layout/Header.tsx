@@ -17,12 +17,17 @@ import {
   Cloud,
   ShieldCheck,
   Palette,
+  LifeBuoy,
+  Sparkles,
+  Bot,
+  Trophy,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatJalaliFull, toPersianDigits } from '../../utils/jalali';
 import { SectionType } from '../../types';
 import { NavTab } from './Sidebar';
 import { AVATAR_OPTIONS, getAvatarOption } from '../../utils/avatars';
+import { RPGBanner } from '../common/RPGBanner';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -52,6 +57,9 @@ export const Header: React.FC<HeaderProps> = ({
     openAuthModal,
     logout,
     syncWithServer,
+    setIsRescueModalOpen,
+    setIsAIAssistantOpen,
+    rpg,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -133,7 +141,34 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Action buttons, Notifications, Theme, Profile on the left (in RTL) */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* RPG Level Badge */}
+          {rpg?.enabled && (
+            <div className="hidden sm:block">
+              <RPGBanner compact={true} />
+            </div>
+          )}
+
+          {/* Rescue Mode Trigger */}
+          <button
+            onClick={() => setIsRescueModalOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition-all cursor-pointer active:scale-95"
+            title="حالت نجات روز من (Rescue Mode)"
+          >
+            <LifeBuoy className="w-3.5 h-3.5 animate-pulse text-amber-500" />
+            <span className="hidden md:inline">نجات روز</span>
+          </button>
+
+          {/* AI Assistant Trigger */}
+          <button
+            onClick={() => setIsAIAssistantOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 hover:from-cyan-500/20 hover:to-purple-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 text-xs font-semibold rounded-xl transition-all cursor-pointer active:scale-95 shadow-sm"
+            title="دستیار هوشمند مسیر (AI Life Coach)"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
+            <span className="hidden lg:inline">دستیار هوش مصنوعی</span>
+          </button>
+
           {/* Unified Single Search Trigger (No duplicate empty bars, No ctrl+k text) */}
           <button
             onClick={onOpenSearch}

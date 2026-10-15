@@ -211,3 +211,116 @@ export async function apiCreateSnapshot(reason?: string) {
 export async function apiGetAdminUsers() {
   return request<{ users: Array<AuthUser> }>('/api/admin/users');
 }
+
+// ----------------- AI Assistant & Smart Planning APIs -----------------
+
+export async function apiGenerateSmartPlan(payload: {
+  tasks: any[];
+  availableMinutes?: number;
+  startTime?: string;
+  focusGoal?: string;
+}) {
+  return request<{
+    success: boolean;
+    source: 'gemini' | 'algorithmic';
+    schedule: Array<{
+      id: string;
+      taskId?: string;
+      title: string;
+      timeSlot: string;
+      durationMin: number;
+      isBreak?: boolean;
+      energy?: string;
+      note?: string;
+    }>;
+    feasibilityStatus: 'comfortable' | 'tight' | 'impossible';
+    feasibilityScore: number;
+    totalScheduledMinutes: number;
+    advice: string;
+    suggestions: string[];
+  }>('/api/ai/smart-plan', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function apiGenerateRescuePlan(payload: {
+  mode: '15_min' | '1_hour' | 'rebuild_day';
+  remainingTasks: any[];
+  currentTime?: string;
+}) {
+  return request<{
+    success: boolean;
+    source: 'gemini' | 'algorithmic';
+    plan: {
+      mode: '15_min' | '1_hour' | 'rebuild_day';
+      smallestStep: string;
+      criticalTaskIds: string[];
+      deferredTaskIds: string[];
+      suggestedSchedule: Array<{
+        id: string;
+        taskId?: string;
+        title: string;
+        timeSlot: string;
+        durationMin: number;
+        isBreak?: boolean;
+        note?: string;
+      }>;
+      message: string;
+      generatedAt: string;
+    };
+  }>('/api/ai/rescue-plan', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function apiBreakdownGoal(payload: {
+  title: string;
+  description?: string;
+  targetLevel?: string;
+  category?: string;
+}) {
+  return request<{
+    success: boolean;
+    source: 'gemini' | 'algorithmic';
+    milestones: Array<{ title: string; description: string }>;
+    requiredSkills: string[];
+    prerequisites: string[];
+    immediateTasks: Array<{ title: string; estimatedMinutes: number; priority: 'high' | 'medium' | 'low' }>;
+    advice: string;
+  }>('/api/ai/goal-breakdown', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function apiSendAIChat(message: string, context?: any) {
+  return request<{
+    success: boolean;
+    source: 'gemini' | 'rule_based';
+    reply: string;
+  }>('/api/ai/chat', {
+    method: 'POST',
+    body: JSON.stringify({ message, context }),
+  });
+}
+
+// ----------------- Server-Validated RPG XP Award -----------------
+
+export async function apiAwardXP(eventId: string, xpAmount: number, reason: string) {
+  return request<{
+    awarded: boolean;
+    xpGained?: number;
+    totalXp: number;
+    level: number;
+    title: string;
+    leveledUp?: boolean;
+    reason?: string;
+    message?: string;
+  }>('/api/rpg/award-xp', {
+    method: 'POST',
+    body: JSON.stringify({ eventId, xpAmount, reason }),
+  });
+}
+

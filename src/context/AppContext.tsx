@@ -38,6 +38,14 @@ import {
   AccentColor,
   FontSize,
   LayoutDensity,
+  UserRPGState,
+  Quest,
+  Achievement,
+  RescueModeType,
+  RescuePlan,
+  ScheduleSimulation,
+  ActiveFocusSession,
+  AIChatMessage,
 } from '../types';
 import {
   initialProfile,
@@ -66,6 +74,7 @@ import {
   DEFAULT_NAV_ORDER,
   DEFAULT_DASHBOARD_CARDS,
   initialCustomization,
+  initialRPGState,
 } from '../utils/initialData';
 import { toPersianDigits } from '../utils/jalali';
 import {
@@ -88,6 +97,11 @@ import {
   apiCreateSnapshot,
   apiExportBackup,
   apiImportBackup,
+  apiGenerateSmartPlan,
+  apiGenerateRescuePlan,
+  apiBreakdownGoal,
+  apiSendAIChat,
+  apiAwardXP,
 } from '../utils/api';
 
 const STORAGE_KEY = 'pathly_app_data_v3_clean';
@@ -311,6 +325,44 @@ export interface AppContextType {
   updateCustomization: (updates: Partial<UserCustomization>, notify?: boolean) => void;
   resetCustomization: (part?: 'all' | 'names' | 'appearance' | 'dashboard' | 'nav') => void;
   getSectionTitle: (tab: NavTab) => string;
+
+  // Life RPG Gamification
+  rpg: UserRPGState;
+  awardXP: (eventId: string, amount: number, reason: string) => Promise<void>;
+  toggleRPG: (enabled: boolean) => void;
+
+  // Rescue Mode
+  rescuePlan: RescuePlan | null;
+  isRescueModalOpen: boolean;
+  setIsRescueModalOpen: (open: boolean) => void;
+  generateRescuePlan: (mode: RescueModeType) => Promise<RescuePlan | null>;
+  applyRescuePlan: (plan: RescuePlan) => void;
+  clearRescuePlan: () => void;
+
+  // Smart Daily Planning & Feasibility Simulation
+  smartSchedule: any[];
+  simulationResult: ScheduleSimulation | null;
+  generateSmartSchedule: (availableMinutes?: number, startTime?: string, focusGoal?: string) => Promise<any>;
+  applyProposedSchedule: (schedule: any[]) => void;
+  simulateSchedule: (tasks: TaskItem[], availableMinutes: number) => ScheduleSimulation;
+
+  // Active Focus Session (Persistent across reload)
+  activeFocus: ActiveFocusSession | null;
+  startActiveFocus: (params: { taskId?: string; taskTitle: string; section: SectionType; targetMinutes: number; mode: 'work' | 'short_break' | 'long_break' }) => void;
+  pauseActiveFocus: () => void;
+  resumeActiveFocus: () => void;
+  tickActiveFocus: (elapsedSeconds: number) => void;
+  finishActiveFocus: (actualMinutes?: number, focusScore?: number) => void;
+  cancelActiveFocus: () => void;
+
+  // AI Life Coach & Assistant
+  isAIAssistantOpen: boolean;
+  setIsAIAssistantOpen: (open: boolean) => void;
+  aiMessages: AIChatMessage[];
+  isAILoading: boolean;
+  sendAIMessage: (text: string) => Promise<string>;
+  breakdownGoalWithAI: (title: string, description?: string, targetLevel?: string, category?: string) => Promise<any>;
+  clearAIMessages: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -340,6 +392,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     inboxItems: initialInboxItems,
     widgetConfig: initialWidgetConfig,
     trash: [] as TrashItem[],
+    rpg: initialRPGState,
+    activeFocus: null as ActiveFocusSession | null,
+    rescuePlan: null as RescuePlan | null,
+    smartSchedule: [] as any[],
   });
 
   const loadInitialData = () => {
@@ -382,6 +438,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           inboxItems: parsed.inboxItems ?? initialInboxItems,
           widgetConfig: parsed.widgetConfig ? { ...initialWidgetConfig, ...parsed.widgetConfig } : initialWidgetConfig,
           trash: parsed.trash ?? [],
+          rpg: parsed.rpg ? { ...initialRPGState, ...parsed.rpg } : initialRPGState,
+          activeFocus: parsed.activeFocus ?? null,
+          rescuePlan: parsed.rescuePlan ?? null,
+          smartSchedule: parsed.smartSchedule ?? [],
         };
       }
     } catch (e) {
@@ -2346,31 +2406,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('pathly_app_data_v1');
     localStorage.removeItem('pathly_app_data_v2_clean');
-    setState({
-      profile: initialProfile,
-      subjects: initialSubjects,
-      grades: initialGrades,
-      weeklyCells: initialWeeklyCells,
-      dayData: initialDayDataMap,
-      homeworks: initialHomeworks,
-      exams: initialExams,
-      studySessions: initialStudySessions,
-      skills: initialSkills,
-      projects: initialProjects,
-      competitions: initialCompetitions,
-      goals: initialGoals,
-      weeklyReviews: initialWeeklyReviews,
-      calendarEvents: initialCalendarEvents,
-      notes: initialNotes,
-      activityLogs: initialActivityLogs,
-      notifications: initialNotifications,
-      habits: initialHabits,
-      reviews: initialReviews,
-      resources: initialResources,
-      inboxItems: initialInboxItems,
-      widgetConfig: initialWidgetConfig,
-      trash: [],
-    });
+    setState(getDefaultData());
     showToast('داده‌ها به حالت اولیه پیش‌فرض بازنشانی شدند.');
   };
 
@@ -2405,6 +2441,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       inboxItems: [],
       widgetConfig: initialWidgetConfig,
       trash: [],
+      rpg: initialRPGState,
+      activeFocus: null,
+      rescuePlan: null,
+      smartSchedule: [],
     });
     showToast('تمامی اطلاعات با موفقیت پاکسازی شدند.');
   };
@@ -2659,6 +2699,422 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('مورد برای همیشه حذف شد.');
   };
 
+  // ----------------- Life RPG Gamification -----------------
+  const awardXP = async (eventId: string, amount: number, reason: string) => {
+    const currentRpg = state.rpg || initialRPGState;
+    if (currentRpg.awardedEventIds?.includes(eventId)) {
+      return;
+    }
+
+    const safeAmount = Math.min(amount, 150);
+    const newXp = (currentRpg.xp || 0) + safeAmount;
+    const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
+    const titles = [
+      'نوآموز مسیر',
+      'پوینده متمرکز',
+      'شاگرد منضبط',
+      'پژوهشگر سخت‌کوش',
+      'استاد بهره‌وری',
+      'قهرمان استمرار',
+      'معمار موفقیت',
+      'اسطوره پیشرفت',
+    ];
+    const newTitle = titles[Math.min(newLevel - 1, titles.length - 1)];
+    const leveledUp = newLevel > (currentRpg.level || 1);
+
+    setState((prev: any) => {
+      const prevRpg = prev.rpg || initialRPGState;
+      const awarded = [...(prevRpg.awardedEventIds || []), eventId];
+      return {
+        ...prev,
+        rpg: {
+          ...prevRpg,
+          xp: newXp,
+          level: newLevel,
+          title: newTitle,
+          awardedEventIds: awarded.slice(-500),
+        },
+      };
+    });
+
+    if (leveledUp) {
+      showToast(`🌟 ارتقای سطح! تبریک! شما به سطح ${toPersianDigits(newLevel)} (${newTitle}) رسیدید!`);
+    } else {
+      showToast(`⚡ +${toPersianDigits(safeAmount)} امتیاز تجربه (${reason})`);
+    }
+
+    if (currentUser) {
+      try {
+        await apiAwardXP(eventId, safeAmount, reason);
+      } catch (e) {
+        console.warn('Server XP award sync:', e);
+      }
+    }
+  };
+
+  const toggleRPG = (enabled: boolean) => {
+    setState((prev: any) => ({
+      ...prev,
+      rpg: {
+        ...(prev.rpg || initialRPGState),
+        enabled,
+      },
+    }));
+    showToast(enabled ? 'سیستم بازی‌وارسازی فعال شد.' : 'سیستم بازی‌وارسازی غیرفعال شد.');
+  };
+
+  // ----------------- Rescue Mode -----------------
+  const [isRescueModalOpen, setIsRescueModalOpen] = useState(false);
+
+  const generateRescuePlan = async (mode: RescueModeType): Promise<RescuePlan | null> => {
+    const todayIndex = new Date().getDay() === 6 ? 0 : (new Date().getDay() + 1) % 7;
+    const dayTasks = [
+      ...(state.dayData?.[todayIndex]?.preSchoolTasks || []),
+      ...(state.dayData?.[todayIndex]?.postSchoolTasks || []),
+    ].filter((t: TaskItem) => !t.completed);
+
+    const pendingHw = (state.homeworks || [])
+      .filter((h: SchoolHomework) => !h.completed)
+      .map((h: SchoolHomework) => ({
+        id: h.id,
+        title: `تکلیف ${h.subjectName}: ${h.title}`,
+        priority: h.priority,
+        estimatedMinutes: h.estimatedMinutes || 35,
+        importance: 'high',
+      }));
+
+    const allIncomplete = [...dayTasks, ...pendingHw];
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    try {
+      const res = await apiGenerateRescuePlan({
+        mode,
+        remainingTasks: allIncomplete,
+        currentTime,
+      });
+
+      if (res.success && res.plan) {
+        setState((prev: any) => ({
+          ...prev,
+          rescuePlan: res.plan,
+        }));
+        return res.plan;
+      }
+    } catch (err: any) {
+      showToast(err.message || 'خطا در ارتباط با مشاور نجات روز');
+    }
+    return null;
+  };
+
+  const applyRescuePlan = (plan: RescuePlan) => {
+    const todayIndex = new Date().getDay() === 6 ? 0 : (new Date().getDay() + 1) % 7;
+    const newSteps: TaskItem[] = plan.suggestedSchedule.map((step) => ({
+      id: `rescue-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      title: step.title,
+      completed: false,
+      priority: 'high',
+      startTime: step.timeSlot.split('-')[0]?.trim(),
+      endTime: step.timeSlot.split('-')[1]?.trim(),
+      estimatedMinutes: step.durationMin,
+      notes: step.note || 'تولید شده توسط حالت نجات روز',
+      section: 'general',
+    }));
+
+    setState((prev: any) => {
+      const curDay = prev.dayData?.[todayIndex] || { dayIndex: todayIndex, preSchoolTasks: [], postSchoolTasks: [], notes: '', reflectionReport: '', overallRating: null };
+      return {
+        ...prev,
+        rescuePlan: plan,
+        dayData: {
+          ...prev.dayData,
+          [todayIndex]: {
+            ...curDay,
+            postSchoolTasks: [...curDay.postSchoolTasks, ...newSteps],
+          },
+        },
+      };
+    });
+
+    awardXP(`rescue_${Date.now()}`, 30, 'اقدام در حالت نجات روز');
+    showToast('برنامه اضطراری با موفقیت در جدول کارهای امروز اعمال شد.');
+    setIsRescueModalOpen(false);
+  };
+
+  const clearRescuePlan = () => {
+    setState((prev: any) => ({
+      ...prev,
+      rescuePlan: null,
+    }));
+  };
+
+  // ----------------- Smart Daily Planning & Feasibility Simulation -----------------
+  const simulateSchedule = (tasks: TaskItem[], availableMinutes: number): ScheduleSimulation => {
+    const totalRequiredMinutes = tasks.reduce((acc, t) => acc + (Number(t.estimatedMinutes) || 30), 0);
+    const varianceMinutes = availableMinutes - totalRequiredMinutes;
+    let feasibilityStatus: 'comfortable' | 'tight' | 'impossible' = 'comfortable';
+    let score = 100;
+    const suggestions: string[] = [];
+
+    if (varianceMinutes < 0) {
+      feasibilityStatus = 'impossible';
+      score = Math.max(10, Math.round((availableMinutes / (totalRequiredMinutes || 1)) * 100));
+      suggestions.push(`کمبود زمان: ${toPersianDigits(Math.abs(varianceMinutes))} دقیقه کم دارید. کارهای کم‌اهمیت‌تر را به فردا منتقل کنید.`);
+      suggestions.push('مدت‌زمان برخی وظایف را به بازه‌های متمرکز ۲۰ دقیقه‌ای کاهش دهید.');
+    } else if (varianceMinutes < 45) {
+      feasibilityStatus = 'tight';
+      score = 75;
+      suggestions.push('برنامه شما فشرده است. زمان‌های استراحت کوتاه‌تری خواهید داشت.');
+    } else {
+      suggestions.push('تطابق عالی! زمان آزاد کافی برای تمام وظایف و استراحت‌ها وجود دارد.');
+    }
+
+    return {
+      totalRequiredMinutes,
+      availableMinutes,
+      varianceMinutes,
+      feasibilityStatus,
+      score,
+      suggestions,
+    };
+  };
+
+  const [simulationResult, setSimulationResult] = useState<ScheduleSimulation | null>(null);
+
+  const generateSmartSchedule = async (availableMinutes: number = 240, startTime: string = '16:00', focusGoal: string = '') => {
+    const todayIndex = new Date().getDay() === 6 ? 0 : (new Date().getDay() + 1) % 7;
+    const tasks = [
+      ...(state.dayData?.[todayIndex]?.preSchoolTasks || []),
+      ...(state.dayData?.[todayIndex]?.postSchoolTasks || []),
+    ];
+
+    const sim = simulateSchedule(tasks, availableMinutes);
+    setSimulationResult(sim);
+
+    try {
+      const res = await apiGenerateSmartPlan({
+        tasks,
+        availableMinutes,
+        startTime,
+        focusGoal,
+      });
+
+      if (res.success && res.schedule) {
+        setState((prev: any) => ({
+          ...prev,
+          smartSchedule: res.schedule,
+        }));
+        showToast(`برنامه هوشمند آماده شد (${res.source === 'gemini' ? 'هوش مصنوعی' : 'الگوریتم بهینه‌ساز'}).`);
+        return res;
+      }
+    } catch (err: any) {
+      showToast(err.message || 'خطا در برنامه‌ریزی هوشمند');
+    }
+    return null;
+  };
+
+  const applyProposedSchedule = (schedule: any[]) => {
+    const todayIndex = new Date().getDay() === 6 ? 0 : (new Date().getDay() + 1) % 7;
+    setState((prev: any) => {
+      const curDay = prev.dayData?.[todayIndex] || { dayIndex: todayIndex, preSchoolTasks: [], postSchoolTasks: [], notes: '', reflectionReport: '', overallRating: null };
+      const updatedPost = curDay.postSchoolTasks.map((t: TaskItem) => {
+        const match = schedule.find((s) => s.taskId === t.id);
+        if (match && match.timeSlot) {
+          const parts = match.timeSlot.split('-');
+          return {
+            ...t,
+            startTime: parts[0]?.trim(),
+            endTime: parts[1]?.trim(),
+          };
+        }
+        return t;
+      });
+      return {
+        ...prev,
+        dayData: {
+          ...prev.dayData,
+          [todayIndex]: {
+            ...curDay,
+            postSchoolTasks: updatedPost,
+          },
+        },
+      };
+    });
+    awardXP(`plan_apply_${Date.now()}`, 20, 'برنامه‌ریزی دقیق روز');
+    showToast('برنامه پیشنهادی با موفقیت در وظایف امروز اعمال شد.');
+  };
+
+  // ----------------- Active Focus Session (Pomodoro) -----------------
+  const startActiveFocus = (params: {
+    taskId?: string;
+    taskTitle: string;
+    section: SectionType;
+    targetMinutes: number;
+    mode: 'work' | 'short_break' | 'long_break';
+  }) => {
+    const session: ActiveFocusSession = {
+      id: `foc-${Date.now()}`,
+      taskId: params.taskId,
+      taskTitle: params.taskTitle,
+      section: params.section,
+      mode: params.mode,
+      targetMinutes: params.targetMinutes,
+      elapsedSeconds: 0,
+      isRunning: true,
+      lastUpdatedTimestamp: Date.now(),
+    };
+    setState((prev: any) => ({
+      ...prev,
+      activeFocus: session,
+    }));
+    showToast(`جلسه تمرکز روی «${params.taskTitle}» آغاز شد.`);
+  };
+
+  const pauseActiveFocus = () => {
+    setState((prev: any) => {
+      if (!prev.activeFocus) return prev;
+      return {
+        ...prev,
+        activeFocus: { ...prev.activeFocus, isRunning: false },
+      };
+    });
+  };
+
+  const resumeActiveFocus = () => {
+    setState((prev: any) => {
+      if (!prev.activeFocus) return prev;
+      return {
+        ...prev,
+        activeFocus: { ...prev.activeFocus, isRunning: true, lastUpdatedTimestamp: Date.now() },
+      };
+    });
+  };
+
+  const tickActiveFocus = (elapsedSeconds: number) => {
+    setState((prev: any) => {
+      if (!prev.activeFocus) return prev;
+      return {
+        ...prev,
+        activeFocus: {
+          ...prev.activeFocus,
+          elapsedSeconds,
+          lastUpdatedTimestamp: Date.now(),
+        },
+      };
+    });
+  };
+
+  const finishActiveFocus = (actualMinutes?: number, focusScore: number = 5) => {
+    const active = state.activeFocus;
+    if (!active) return;
+    const finalMinutes = actualMinutes ?? Math.max(1, Math.round(active.elapsedSeconds / 60));
+
+    const studySession: Omit<StudySession, 'id'> = {
+      subjectName: active.taskTitle,
+      topic: active.mode === 'work' ? 'تمرکز عمیق (پومودورو)' : 'استراحت',
+      date: new Date().toISOString().slice(0, 10),
+      startTime: new Date(Date.now() - finalMinutes * 60000).toTimeString().slice(0, 5),
+      expectedDurationMin: active.targetMinutes,
+      actualDurationMin: finalMinutes,
+      focusScore,
+      outcomeNotes: `جلسه تمرکز ثبت‌شده روی «${active.taskTitle}»`,
+      type: active.section,
+    };
+
+    addStudySession(studySession);
+    awardXP(`focus_${active.id}`, Math.round(finalMinutes * 1.5), `تکمیل ${toPersianDigits(finalMinutes)} دقیقه تمرکز عمیق`);
+
+    setState((prev: any) => ({
+      ...prev,
+      activeFocus: null,
+    }));
+    showToast(`🎉 تبریک! جلسه تمرکز ${toPersianDigits(finalMinutes)} دقیقه‌ای ثبت شد.`);
+  };
+
+  const cancelActiveFocus = () => {
+    setState((prev: any) => ({
+      ...prev,
+      activeFocus: null,
+    }));
+    showToast('جلسه تمرکز متوقف گردید.');
+  };
+
+  // ----------------- AI Assistant & Chat -----------------
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [aiMessages, setAiMessages] = useState<AIChatMessage[]>([
+    {
+      id: 'welcome',
+      sender: 'assistant',
+      text: 'سلام! من دستیار هوشمند Pathly هستم. می‌توانم به شما در تنظیم برنامه روزانه، نجات روز پس از عقب‌افتادگی، شکستن اهداف بزرگ به گام‌های کوچک و مرور هفتگی کمک کنم. چطور می‌توانم یاری‌تان کنم؟',
+      timestamp: new Date().toISOString(),
+    },
+  ]);
+  const [isAILoading, setIsAILoading] = useState(false);
+
+  const sendAIMessage = async (text: string): Promise<string> => {
+    const userMsg: AIChatMessage = {
+      id: `msg-${Date.now()}`,
+      sender: 'user',
+      text,
+      timestamp: new Date().toISOString(),
+    };
+    setAiMessages((prev) => [...prev, userMsg]);
+    setIsAILoading(true);
+
+    try {
+      const todayIndex = new Date().getDay() === 6 ? 0 : (new Date().getDay() + 1) % 7;
+      const todayTasks = [
+        ...(state.dayData?.[todayIndex]?.preSchoolTasks || []),
+        ...(state.dayData?.[todayIndex]?.postSchoolTasks || []),
+      ];
+      const context = {
+        todayTasksCount: todayTasks.length,
+        completedTasksCount: todayTasks.filter((t) => t.completed).length,
+        streak: (state.habits || []).reduce((max: number, h: Habit) => Math.max(max, h.streak || 0), 0),
+        activeGoalsCount: (state.goals || []).filter((g: Goal) => g.status !== 'completed').length,
+        weeklyStudyHours: Math.round(
+          (state.studySessions || []).reduce((acc: number, s: StudySession) => acc + (s.actualDurationMin || 0), 0) / 60
+        ),
+      };
+
+      const res = await apiSendAIChat(text, context);
+      const assistantMsg: AIChatMessage = {
+        id: `msg-ai-${Date.now()}`,
+        sender: 'assistant',
+        text: res.reply || 'پاسخی دریافت نشد.',
+        timestamp: new Date().toISOString(),
+      };
+      setAiMessages((prev) => [...prev, assistantMsg]);
+      return res.reply;
+    } catch (err: any) {
+      const errorMsg: AIChatMessage = {
+        id: `msg-err-${Date.now()}`,
+        sender: 'assistant',
+        text: 'متأسفانه در برقراری ارتباط مشکلی پیش آمد. لطفاً دوباره امتحان کنید.',
+        timestamp: new Date().toISOString(),
+      };
+      setAiMessages((prev) => [...prev, errorMsg]);
+      return errorMsg.text;
+    } finally {
+      setIsAILoading(false);
+    }
+  };
+
+  const breakdownGoalWithAI = async (title: string, description?: string, targetLevel?: string, category?: string) => {
+    try {
+      const res = await apiBreakdownGoal({ title, description, targetLevel, category });
+      showToast('هدف با موفقیت توسط هوش مصنوعی تجزیه شد.');
+      return res;
+    } catch (err: any) {
+      showToast(err.message || 'خطا در تجزیه هوشمند هدف');
+      return null;
+    }
+  };
+
+  const clearAIMessages = () => {
+    setAiMessages([]);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -2812,6 +3268,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateCustomization,
         resetCustomization,
         getSectionTitle,
+        rpg: state.rpg || initialRPGState,
+        awardXP,
+        toggleRPG,
+        rescuePlan: state.rescuePlan || null,
+        isRescueModalOpen,
+        setIsRescueModalOpen,
+        generateRescuePlan,
+        applyRescuePlan,
+        clearRescuePlan,
+        smartSchedule: state.smartSchedule || [],
+        simulationResult,
+        generateSmartSchedule,
+        applyProposedSchedule,
+        simulateSchedule,
+        activeFocus: state.activeFocus || null,
+        startActiveFocus,
+        pauseActiveFocus,
+        resumeActiveFocus,
+        tickActiveFocus,
+        finishActiveFocus,
+        cancelActiveFocus,
+        isAIAssistantOpen,
+        setIsAIAssistantOpen,
+        aiMessages,
+        isAILoading,
+        sendAIMessage,
+        breakdownGoalWithAI,
+        clearAIMessages,
       }}
     >
       {children}

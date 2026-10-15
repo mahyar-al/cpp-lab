@@ -28,6 +28,8 @@ import {
   Eye,
   EyeOff,
   Palette,
+  LifeBuoy,
+  Bot,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { DEFAULT_DASHBOARD_CARDS } from '../../utils/initialData';
@@ -43,6 +45,7 @@ import {
 } from '../../utils/jalali';
 import { NavTab } from '../layout/Sidebar';
 import { Habit, Priority, SectionType } from '../../types';
+import { RPGBanner } from '../common/RPGBanner';
 
 interface DashboardViewProps {
   onNavigate: (tab: NavTab) => void;
@@ -75,6 +78,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     getSectionTitle,
     customization,
     updateCustomization,
+    setIsRescueModalOpen,
+    setIsAIAssistantOpen,
+    startActiveFocus,
+    rpg,
   } = useApp();
 
   const isCardHidden = (id: string) => (customization.hiddenDashboardCards || []).includes(id);
@@ -243,6 +250,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
   return (
     <div className="space-y-6">
+      {/* Gamification Life RPG Banner */}
+      {rpg?.enabled && <RPGBanner />}
+
       {/* Top Futuristic Command Center Strip */}
       <div className="bg-white dark:bg-[#111827] rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-[#263247] shadow-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -270,6 +280,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           </div>
 
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 flex-wrap">
+            {/* Rescue Mode Button */}
+            <button
+              onClick={() => setIsRescueModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-95"
+              title="حالت نجات روز من (Rescue Mode)"
+            >
+              <LifeBuoy className="w-4 h-4 text-amber-500 animate-pulse" />
+              <span>نجات روز</span>
+            </button>
+
+            {/* AI Assistant Button */}
+            <button
+              onClick={() => setIsAIAssistantOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-cyan-500 dark:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-95"
+              title="دستیار هوش مصنوعی (AI Life Coach)"
+            >
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <span>دستیار هوشمند</span>
+            </button>
+
             <button
               onClick={() => setShowConfigModal(true)}
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-[#172033] hover:bg-slate-200 dark:hover:bg-[#1f2b45] border border-slate-200 dark:border-[#263247] rounded-xl transition-all cursor-pointer whitespace-nowrap"

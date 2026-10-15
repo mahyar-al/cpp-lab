@@ -20,6 +20,12 @@ import {
   Layers,
   Flame,
   Info,
+  Play,
+  LifeBuoy,
+  Bot,
+  Zap,
+  TrendingUp,
+  BrainCircuit,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -45,6 +51,13 @@ export const DailyPlannerView: React.FC = () => {
     homeworks,
     rolloverOverdueTasks,
     showToast,
+    generateSmartSchedule,
+    applyProposedSchedule,
+    simulateSchedule,
+    smartSchedule,
+    setIsRescueModalOpen,
+    startActiveFocus,
+    setIsAIAssistantOpen,
   } = useApp();
 
   const today = new Date();
@@ -61,6 +74,21 @@ export const DailyPlannerView: React.FC = () => {
   const [taskEndTime, setTaskEndTime] = useState('17:00');
   const [taskEstMinutes, setTaskEstMinutes] = useState(60);
   const [taskNotes, setTaskNotes] = useState('');
+  const [taskEnergy, setTaskEnergy] = useState<'low' | 'medium' | 'high'>('medium');
+  const [taskImportance, setTaskImportance] = useState<'critical' | 'high' | 'medium' | 'low'>('medium');
+  const [taskDependsOn, setTaskDependsOn] = useState<string>('');
+  const [taskIsFixed, setTaskIsFixed] = useState(false);
+
+  // Smart & Adaptive Planning states
+  const [isSmartPlannerModalOpen, setIsSmartPlannerModalOpen] = useState(false);
+  const [smartAvailMinutes, setSmartAvailMinutes] = useState(240);
+  const [smartStartTime, setSmartStartTime] = useState('16:00');
+  const [smartFocusGoal, setSmartFocusGoal] = useState('');
+  const [isSmartPlanLoading, setIsSmartPlanLoading] = useState(false);
+  const [proposedSchedule, setProposedSchedule] = useState<any[] | null>(null);
+  const [proposedAdvice, setProposedAdvice] = useState<string>('');
+  const [showAdaptiveModal, setShowAdaptiveModal] = useState(false);
+  const [delayMinutes, setDelayMinutes] = useState<number>(90);
 
   // Reschedule state
   const [rescheduleTaskId, setRescheduleTaskId] = useState<string | null>(null);
@@ -154,6 +182,10 @@ export const DailyPlannerView: React.FC = () => {
         estimatedMinutes: Number(taskEstMinutes) || 45,
         actualMinutes: 0,
         notes: taskNotes.trim() || undefined,
+        energyLevel: taskEnergy,
+        importance: taskImportance,
+        dependsOnTaskId: taskDependsOn || undefined,
+        isFixedTime: taskIsFixed,
         subtasks: [],
       },
       selectedDayIdx
@@ -161,6 +193,8 @@ export const DailyPlannerView: React.FC = () => {
 
     setTaskTitle('');
     setTaskNotes('');
+    setTaskDependsOn('');
+    setTaskIsFixed(false);
     setIsAddModalOpen(false);
   };
 
@@ -202,21 +236,49 @@ export const DailyPlannerView: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setIsRescueModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 dark:text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm hover:shadow-[0_0_12px_rgba(245,158,11,0.25)]"
+              title="کاهش استرس و بازسازی کارهای امروز"
+            >
+              <LifeBuoy className="w-3.5 h-3.5 animate-pulse text-amber-400" />
+              <span>حالت نجات روز</span>
+            </button>
+
+            <button
+              onClick={() => setIsSmartPlannerModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-purple-500/15 to-cyan-500/15 hover:from-purple-500/25 hover:to-cyan-500/25 text-purple-600 dark:text-cyan-300 border border-purple-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              title="چینش خودکار فعالیت‌ها با هوش مصنوعی"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <span>برنامه‌ریزی خودکار</span>
+            </button>
+
+            <button
+              onClick={() => setIsAIAssistantOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              title="گفتگو با مربی و مشاور هوشمند"
+            >
+              <Bot className="w-3.5 h-3.5" />
+              <span>مشاور AI</span>
+            </button>
+
             <button
               onClick={() => rolloverOverdueTasks()}
               className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-[#121829] dark:hover:bg-[#1a233a] text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-200 dark:border-slate-800"
               title="انتقال کارهای عقب‌افتاده"
             >
               <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
-              <span>انتقال کارهای معوق</span>
+              <span>معوقه‌ها</span>
             </button>
+
             <button
               onClick={() => setIsAddModalOpen(true)}
               className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_16px_rgba(6,182,212,0.35)] hover:shadow-[0_0_22px_rgba(6,182,212,0.5)] transition-all cursor-pointer active:scale-95"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>افزودن فعالیت به برنامه</span>
+              <span>افزودن فعالیت</span>
             </button>
           </div>
         </div>
@@ -459,6 +521,34 @@ export const DailyPlannerView: React.FC = () => {
                               >
                                 {task.priority === 'high' ? 'ضروری' : task.priority === 'medium' ? 'متوسط' : 'عادی'}
                               </span>
+
+                              {task.importance && task.importance !== 'medium' && (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-medium ${
+                                  task.importance === 'critical'
+                                    ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                                    : 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
+                                }`}>
+                                  {task.importance === 'critical' ? '🔥 بحرانی' : '★ بااهمیت'}
+                                </span>
+                              )}
+
+                              {task.energyLevel && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                                  ⚡ {task.energyLevel === 'high' ? 'انرژی بالا' : task.energyLevel === 'low' ? 'انرژی کم' : 'انرژی متوسط'}
+                                </span>
+                              )}
+
+                              {task.isFixedTime && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-700/40 text-slate-300 border border-slate-600/40">
+                                  🔒 ساعت ثابت
+                                </span>
+                              )}
+
+                              {task.dependsOnTaskId && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 truncate max-w-[120px]" title="وابسته به انجام تسک قبلی">
+                                  🔗 وابسته
+                                </span>
+                              )}
                             </div>
 
                             {/* Time & Duration comparison */}
@@ -526,6 +616,21 @@ export const DailyPlannerView: React.FC = () => {
 
                         {/* Task Actions */}
                         <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => {
+                              startActiveFocus({
+                                taskId: task.id,
+                                taskTitle: task.title,
+                                section: task.section || 'school',
+                                targetMinutes: task.estimatedMinutes || 25,
+                                mode: 'work',
+                              });
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-emerald-400 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033] transition-colors cursor-pointer"
+                            title="ورود به حالت تمرکز عمیق روی این فعالیت"
+                          >
+                            <Play className="w-4 h-4 text-emerald-400" />
+                          </button>
                           <button
                             onClick={() => {
                               setRescheduleTaskId(task.id);
@@ -732,6 +837,70 @@ export const DailyPlannerView: React.FC = () => {
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    سطح انرژی موردنیاز:
+                  </label>
+                  <select
+                    value={taskEnergy}
+                    onChange={(e) => setTaskEnergy(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  >
+                    <option value="high">⚡ انرژی بالا و تمرکز عمیق</option>
+                    <option value="medium">⚡ انرژی متوسط</option>
+                    <option value="low">⚡ سبک یا روتین (انرژی کم)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    اهمیت استراتژیک:
+                  </label>
+                  <select
+                    value={taskImportance}
+                    onChange={(e) => setTaskImportance(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  >
+                    <option value="critical">🔥 بحرانی (عدم انجام پیامد فوری دارد)</option>
+                    <option value="high">★ بااهمیت بالا</option>
+                    <option value="medium">متوسط</option>
+                    <option value="low">کم (اختیاری یا تاخیرپذیر)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  وابستگی به فعالیت دیگر (اختیاری):
+                </label>
+                <select
+                  value={taskDependsOn}
+                  onChange={(e) => setTaskDependsOn(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                >
+                  <option value="">-- بدون وابستگی مستقیم --</option>
+                  {tasks.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      پس از: {t.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247]">
+                <input
+                  type="checkbox"
+                  id="task-is-fixed"
+                  checked={taskIsFixed}
+                  onChange={(e) => setTaskIsFixed(e.target.checked)}
+                  className="w-4 h-4 rounded text-cyan-500 focus:ring-cyan-400 bg-transparent border-slate-300 dark:border-slate-600"
+                />
+                <label htmlFor="task-is-fixed" className="text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                  این فعالیت دارای زمان ثابت است (تعهد غیرقابل جابجایی توسط هوش مصنوعی)
+                </label>
+              </div>
+
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   یادداشت یا دستور کار:
@@ -807,6 +976,236 @@ export const DailyPlannerView: React.FC = () => {
               >
                 تایید و انتقال
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Smart Planner & AI Schedule Modal */}
+      {isSmartPlannerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in" dir="rtl">
+          <div className="relative w-full max-w-xl bg-slate-900 border border-cyan-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-800 bg-slate-900/90 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-lg shadow-purple-500/10">
+                  <Sparkles className="w-5 h-5 text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    برنامه‌ریزی خودکار و بهینه‌ساز روز
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium">
+                      AI Schedule
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    چینش بهینه وظایف بر اساس فوریت، انرژی، تعهدات ثابت و زمان‌های استراحت
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsSmartPlannerModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-slate-300 flex-1">
+              {/* Parameters Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/40 p-3.5 rounded-xl border border-slate-800">
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">
+                    زمان مفید در دسترس امروز (دقیقه):
+                  </label>
+                  <input
+                    type="number"
+                    min="30"
+                    step="15"
+                    value={smartAvailMinutes}
+                    onChange={(e) => setSmartAvailMinutes(Number(e.target.value) || 180)}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-mono text-cyan-400 font-bold"
+                  />
+                  <div className="flex gap-1.5 mt-1.5">
+                    {[120, 180, 240, 300].map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setSmartAvailMinutes(m)}
+                        className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                          smartAvailMinutes === m
+                            ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300'
+                            : 'border-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {toPersianDigits(m / 60)} ساعت
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">
+                    ساعت شروع فعالیت‌ها:
+                  </label>
+                  <input
+                    type="time"
+                    value={smartStartTime}
+                    onChange={(e) => setSmartStartTime(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs font-mono text-white"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    پس از بازگشت از مدرسه و استراحت اولیه
+                  </span>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-semibold text-slate-300 mb-1">
+                    تمرکز ویژه امروز (اختیاری):
+                  </label>
+                  <input
+                    type="text"
+                    value={smartFocusGoal}
+                    onChange={(e) => setSmartFocusGoal(e.target.value)}
+                    placeholder="مثلاً: جمع‌بندی مبحث فیزیک، تمرین کدنویسی C++"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Live Feasibility Simulation Card */}
+              {(() => {
+                const sim = simulateSchedule(tasks, smartAvailMinutes);
+                return (
+                  <div className={`p-3.5 rounded-xl border flex flex-col gap-2 ${
+                    sim.feasibilityStatus === 'comfortable'
+                      ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+                      : sim.feasibilityStatus === 'tight'
+                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-300'
+                      : 'bg-rose-500/10 border-rose-500/25 text-rose-300'
+                  }`}>
+                    <div className="flex items-center justify-between font-bold">
+                      <span className="flex items-center gap-1.5">
+                        <BrainCircuit className="w-4 h-4" />
+                        سنجش امکان‌پذیری و ظرفیت (Feasibility Score): {toPersianDigits(sim.score)}٪
+                      </span>
+                      <span className="text-[11px] font-mono">
+                        {toPersianDigits(sim.totalRequiredMinutes)} از {toPersianDigits(sim.availableMinutes)} دقیقه
+                      </span>
+                    </div>
+                    {sim.suggestions.map((s, idx) => (
+                      <p key={idx} className="text-[11px] opacity-90 leading-relaxed">
+                        • {s}
+                      </p>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              {/* Generate Button */}
+              <button
+                type="button"
+                disabled={isSmartPlanLoading}
+                onClick={async () => {
+                  setIsSmartPlanLoading(true);
+                  try {
+                    const res = await generateSmartSchedule(smartAvailMinutes, smartStartTime, smartFocusGoal);
+                    if (res && res.schedule) {
+                      setProposedSchedule(res.schedule);
+                      if (res.advice) setProposedAdvice(res.advice);
+                    }
+                  } finally {
+                    setIsSmartPlanLoading(false);
+                  }
+                }}
+                className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isSmartPlanLoading ? (
+                  <>
+                    <Sparkles className="w-4 h-4 animate-spin text-slate-950" />
+                    <span>در حال چینش و بهینه‌سازی الگوریتمی برنامه...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-slate-950" />
+                    <span>تولید پیشنهاد زمان‌بندی با هوش مصنوعی</span>
+                  </>
+                )}
+              </button>
+
+              {/* Proposed Schedule Preview */}
+              {proposedSchedule && proposedSchedule.length > 0 && (
+                <div className="space-y-3 pt-3 border-t border-slate-800">
+                  <div className="flex items-center justify-between font-bold text-white">
+                    <span className="flex items-center gap-1.5 text-cyan-400">
+                      <CheckCircle2 className="w-4 h-4" />
+                      برنامه پیشنهادی برای بررسی و تایید:
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      {toPersianDigits(proposedSchedule.length)} آیتم
+                    </span>
+                  </div>
+
+                  {proposedAdvice && (
+                    <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-[11px] text-purple-200 leading-relaxed">
+                      💡 {proposedAdvice}
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    {proposedSchedule.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
+                          item.isBreak
+                            ? 'bg-amber-500/5 border-amber-500/20 text-amber-300'
+                            : 'bg-slate-950/70 border-slate-800 text-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-5 h-5 rounded-md bg-slate-800 text-cyan-400 flex items-center justify-center text-[10px] font-mono">
+                            {toPersianDigits(idx + 1)}
+                          </span>
+                          <div>
+                            <span className="font-semibold block">{item.title}</span>
+                            {item.reason && (
+                              <span className="text-[10px] text-slate-400">{item.reason}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-cyan-400 text-[11px]">
+                            {item.timeSlot}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Apply Schedule Button */}
+                  <div className="flex items-center gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        applyProposedSchedule(proposedSchedule);
+                        setIsSmartPlannerModalOpen(false);
+                      }}
+                      className="flex-1 py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    >
+                      <Check className="w-4 h-4 stroke-[2.5]" />
+                      <span>تأیید و اعمال این زمان‌بندی در جدول امروز</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProposedSchedule(null)}
+                      className="px-3 py-2.5 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold"
+                    >
+                      تنظیم مجدد
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
