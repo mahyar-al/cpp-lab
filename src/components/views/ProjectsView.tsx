@@ -161,7 +161,7 @@ export const ProjectsView: React.FC = () => {
             مدیریت پروژه‌های نرم‌افزاری
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            پیگیری تسک‌ها با برد کانبان، ردیابی باگ‌ها، ددلاین‌ها، پشته فناوری و مستندات فنی
+            برد کانبان، پیگیری وظایف، ددلاین‌ها و مستندات فنی
           </p>
         </div>
         <button
@@ -177,7 +177,7 @@ export const ProjectsView: React.FC = () => {
         <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
           <FolderGit2 className="w-12 h-12 mx-auto text-slate-400 mb-3" />
           <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز پروژه‌ای ثبت نشده است</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-4">اولین پروژه برنامه‌نویسی یا تحصیلی خود را تعریف کنید.</p>
+          <p className="text-sm text-slate-500 mt-1 mb-4">اولین پروژه خود را برای سازماندهی وظایف و مراحل کار ایجاد کنید.</p>
           <button
             onClick={() => setShowAddProjectModal(true)}
             className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl text-sm font-bold cursor-pointer"

@@ -27,21 +27,21 @@ import {
 } from '../types';
 
 export const DEFAULT_SECTION_NAMES: Record<NavTab, string> = {
-  dashboard: 'داشبورد اصلی',
+  dashboard: 'داشبورد',
   daily_planner: 'برنامه‌ریز روزانه',
   school: 'مدرسه و درس‌ها',
-  skills: 'توسعه مهارت‌ها',
-  projects: 'پروژه‌ها و کانبان',
+  skills: 'مهارت‌ها',
+  projects: 'پروژه‌ها',
   competitions: 'مسابقات و المپیاد',
-  habits: 'عادت‌های روزانه',
+  habits: 'عادت‌ها',
   reviews: 'مرور فاصله‌دار',
   focus_timer: 'تایمر تمرکز',
   resources: 'کتابخانه منابع',
   calendar: 'تقویم رویدادها',
-  goals: 'اهداف و مرور',
+  goals: 'اهداف',
   notes: 'یادداشت‌ها',
   analytics: 'آمار و عملکرد',
-  settings: 'تنظیمات و پشتیبان‌گیری',
+  settings: 'تنظیمات',
 };
 
 export const DEFAULT_NAV_ORDER: NavTab[] = [
@@ -63,16 +63,16 @@ export const DEFAULT_NAV_ORDER: NavTab[] = [
 ];
 
 export const DEFAULT_DASHBOARD_CARDS = [
-  { id: 'quick_stats', label: 'خلاصه آمار سریع و ساعات مطالعه', category: 'آمار' },
-  { id: 'today_priority', label: 'اولویت‌های کلیدی امروز (وظایف و مهلت‌ها)', category: 'برنامه و وظایف' },
-  { id: 'school_schedule', label: 'برنامه زنگ‌های مدرسه امروز', category: 'مدرسه' },
-  { id: 'habits', label: 'پیگیری عادت‌ها و استریک‌های روزانه', category: 'عادت‌ها' },
-  { id: 'active_projects', label: 'پروژه‌های فعال و تسک‌های جاری', category: 'پروژه‌ها' },
-  { id: 'reviews_due', label: 'مرورهای فاصله‌دار موعد امروز', category: 'یادگیری' },
-  { id: 'study_chart', label: 'نمودار ساعات مطالعه ۷ روز اخیر', category: 'آمار مطالعه' },
-  { id: 'mini_calendar', label: 'تقویمچه شمسی ماه جاری', category: 'تقویم' },
-  { id: 'section_progress', label: 'خلاصه وضعیت مهارت‌ها، پروژه‌ها و مسابقات', category: 'پیشرفت' },
-  { id: 'recent_activity', label: 'گزارش فعالیت‌های اخیر سیستم', category: 'سیستم' },
+  { id: 'quick_stats', label: 'خلاصه ساعات مطالعه و آمار', category: 'آمار' },
+  { id: 'today_priority', label: 'اولویت‌های امروز', category: 'وظایف' },
+  { id: 'school_schedule', label: 'برنامه مدرسه امروز', category: 'مدرسه' },
+  { id: 'habits', label: 'عادت‌ها و استمرار', category: 'عادت‌ها' },
+  { id: 'active_projects', label: 'پروژه‌های جاری', category: 'پروژه‌ها' },
+  { id: 'reviews_due', label: 'مرورهای امروز', category: 'یادگیری' },
+  { id: 'study_chart', label: 'نمودار مطالعه هفتگی', category: 'آمار' },
+  { id: 'mini_calendar', label: 'تقویم ماه جاری', category: 'تقویم' },
+  { id: 'section_progress', label: 'پیشرفت مهارت‌ها و اهداف', category: 'پیشرفت' },
+  { id: 'recent_activity', label: 'فعالیت‌های اخیر', category: 'سیستم' },
 ];
 
 export const initialCustomization: UserCustomization = {

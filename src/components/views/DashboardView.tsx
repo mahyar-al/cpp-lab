@@ -264,18 +264,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <CalendarIcon className="w-3.5 h-3.5 text-cyan-500" />
               <span>{formatJalaliFull(today)}</span>
               <span aria-hidden="true">·</span>
-              <span>روز {getIranianDayName(today)}</span>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-500/10 text-cyan-600 dark:text-[#00F5FF] border border-cyan-500/30">
-                مرکز کنترل فعال
-              </span>
+              <span>{getIranianDayName(today)}</span>
             </div>
             <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-[#F1F5F9]">
               {greeting}، {profile.name || 'کاربر عزیز'}
             </h2>
             <p className="mt-1 text-xs md:text-sm text-slate-600 dark:text-[#94A3B8] max-w-xl leading-relaxed">
-              مرکز فرماندهی هوشمند؛ {toPersianDigits(todayPriorities.length)} اولویت کاری برای امروز،{' '}
-              {toPersianDigits(overdueHomeworks.length)} مورد نیازمند پیگیری و{' '}
-              {toPersianDigits(weeklyGoals.length)} هدف هفتگی فعال ثبت شده است.
+              {toPersianDigits(todayPriorities.length)} اولویت کاری،{' '}
+              {toPersianDigits(overdueHomeworks.length)} کار در انتظار و{' '}
+              {toPersianDigits(weeklyGoals.length)} هدف فعال برای این هفته دارید.
             </p>
           </div>
 
@@ -284,7 +281,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             <button
               onClick={() => setIsRescueModalOpen(true)}
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-95"
-              title="حالت نجات روز من (Rescue Mode)"
+              title="نجات روز"
             >
               <LifeBuoy className="w-4 h-4 text-amber-500 animate-pulse" />
               <span>نجات روز</span>
@@ -294,7 +291,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             <button
               onClick={() => setIsAIAssistantOpen(true)}
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-cyan-500 dark:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-95"
-              title="دستیار هوش مصنوعی (AI Life Coach)"
+              title="دستیار هوشمند"
             >
               <Sparkles className="w-4 h-4 text-cyan-400" />
               <span>دستیار هوشمند</span>
@@ -303,7 +300,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             <button
               onClick={() => setShowConfigModal(true)}
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-[#172033] hover:bg-slate-200 dark:hover:bg-[#1f2b45] border border-slate-200 dark:border-[#263247] rounded-xl transition-all cursor-pointer whitespace-nowrap"
-              title="شخصی‌سازی ویجت‌های داشبورد"
+              title="تنظیم ویجت‌ها"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500 dark:text-cyan-400" />
               <span className="hidden sm:inline">تنظیم ویجت‌ها</span>
@@ -313,7 +310,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(0,245,255,0.35)] transition-all cursor-pointer whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>+ ثبت سریع رویداد</span>
+              <span>ثبت سریع</span>
             </button>
           </div>
         </div>
@@ -329,7 +326,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
             <div className="text-right truncate">
               <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">{getSectionTitle('daily_planner')}</div>
-              <div className="text-[9px] text-slate-400">زمان‌بندی دقیق</div>
+              <div className="text-[9px] text-slate-400">زمان‌بندی روز</div>
             </div>
           </button>
 
@@ -342,7 +339,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
             <div className="text-right truncate">
               <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">{getSectionTitle('focus_timer')}</div>
-              <div className="text-[9px] text-slate-400">پومودورو نئون</div>
+              <div className="text-[9px] text-slate-400">پومودورو</div>
             </div>
           </button>
 
@@ -355,7 +352,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
             <div className="text-right truncate">
               <div className="text-[11px] font-bold truncate group-hover:text-amber-500">{getSectionTitle('habits')}</div>
-              <div className="text-[9px] text-slate-400">{toPersianDigits(habits.length)} عادت تعریف‌شده</div>
+              <div className="text-[9px] text-slate-400">{toPersianDigits(habits.length)} عادت فعال</div>
             </div>
           </button>
 
@@ -396,10 +393,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
             <div>
               <div className="text-xs font-bold text-slate-900 dark:text-indigo-200">
-                {toPersianDigits(dueReviews.length)} مبحث آموزشی به موعد مرور تکرار فاصله‌دار (Spaced Repetition) رسیده‌اند
-              </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                تثبیت حافظه بلندمدت با مرور به موقع بازدهی یادگیری شما را چندین برابر می‌کند.
+                {toPersianDigits(dueReviews.length)} مبحث در انتظار مرور است
               </div>
             </div>
           </div>
@@ -407,7 +401,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             onClick={() => onNavigate('reviews')}
             className="px-3.5 py-2 sm:py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm text-center"
           >
-            ورود به مرورها
+            شروع مرور
           </button>
         </div>
       )}
@@ -594,7 +588,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-cyan-500 dark:text-[#00F5FF]" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    اولویت‌های امروز (وظایف کلیدی)
+                    اولویت‌های امروز
                   </h3>
                   <span className="text-xs text-slate-500 dark:text-slate-400 font-mono tabular-nums">
                     ({toPersianDigits(todayPriorities.length)} مورد · تخمین {toPersianDigits(totalRequiredHours)} ساعت)
@@ -632,7 +626,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <div className="space-y-2">
                 {todayPriorities.length === 0 ? (
                   <div className="py-8 text-center text-xs text-slate-400 dark:text-slate-500">
-                    عالی است! هیچ وظیفه یا تکلیف معوقه‌ای برای امروز ندارید. از دکمه «+ ثبت سریع» می‌توانید وظیفه جدید بیفزایید.
+                    هیچ وظیفه معوقه‌ای برای امروز ثبت نشده است.
                   </div>
                 ) : (
                   todayPriorities.map((item) => (
@@ -706,7 +700,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 <div className="flex items-center gap-2">
                   <GraduationCap className="w-4 h-4 text-blue-500" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    برنامه زنگ‌های مدرسه امروز ({getIranianDayName(today)})
+                    برنامه مدرسه امروز ({getIranianDayName(today)})
                   </h3>
                 </div>
                 <button
@@ -742,7 +736,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 </div>
               ) : (
                 <div className="py-6 text-center text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-[#172033]/30 rounded-xl">
-                  امروز روز تعطیل است. زمان مناسبی برای مطالعه عمیق، استراحت یا پیگیری پروژه‌های مهارتی است.
+                  امروز کلاس درسی ثبت نشده است.
                 </div>
               )}
             </div>
@@ -777,7 +771,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
               {habits.length === 0 ? (
                 <div className="py-6 text-center text-xs text-slate-400 dark:text-slate-500">
-                  هنوز عادتی تعریف نشده است. با دکمه «+ عادت جدید» عادت‌هایی مثل مطالعه روزانه، کدنویسی یا ورزش را ثبت کنید.
+                  هنوز عادتی ثبت نشده است.
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1074,13 +1068,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               </button>
             </div>
 
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              ویجت‌هایی را که مایلید در صفحه اصلی داشبورد نمایش داده شوند، فعال یا غیرفعال کنید:
-            </p>
-
             <div className="flex items-center justify-between pb-1">
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                ترتیب کارت‌ها را تغییر دهید، موارد دلخواه را مخفی کنید یا تعداد ستون‌ها را برگزینید:
+                چینش، نمایش و اولویت کارت‌های داشبورد را تنظیم کنید:
               </p>
               <button
                 onClick={() => {

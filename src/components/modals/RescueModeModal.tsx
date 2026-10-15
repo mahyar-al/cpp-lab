@@ -56,14 +56,11 @@ export const RescueModeModal: React.FC = () => {
               <LifeBuoy className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                حالت نجات روز من
-                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-medium">
-                  Rescue Mode
-                </span>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                حالت نجات روز
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                وقتی از برنامه عقب افتاده‌اید، خسته‌اید یا نمی‌دانید از کجا شروع کنید
+                سازماندهی اولویت‌ها و جبران عقب‌افتادگی روزانه
               </p>
             </div>
           </div>
@@ -77,13 +74,10 @@ export const RescueModeModal: React.FC = () => {
 
         {/* Modal Body */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-6 relative z-10 flex-1">
-          {/* Supportive Mindset Banner */}
-          <div className="p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-slate-100 dark:via-slate-800/60 to-cyan-500/10 border border-amber-500/20 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-semibold text-amber-700 dark:text-amber-300 block mb-0.5">هیچ شکستی در کار نیست!</span>
-              عقب‌افتادن از برنامه کاملاً طبیعی است. هدف این بخش کاهش اضطراب، حذف کارهای غیرضروری امروز و ایجاد یک پیروزی فوری برای بازگشت به مسیر است.
-            </div>
+          {/* Supportive Guidance Hint */}
+          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-slate-700 dark:text-slate-300 leading-relaxed flex items-center gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
+            <span>اولویت‌های ضروری امروز را مشخص کنید تا کارهای غیرفوری به روزهای بعد موکول شوند.</span>
           </div>
 
           {/* Mode Selector */}

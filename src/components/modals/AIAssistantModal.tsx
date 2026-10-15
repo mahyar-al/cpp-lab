@@ -143,16 +143,16 @@ export const AIAssistantModal: React.FC = () => {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
-                  {activeConversationTitle || 'مسیرساز هوشمند (AI Life Coach)'}
+                  {activeConversationTitle || 'مسیرساز هوشمند'}
                 </h2>
-                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 font-mono font-medium">
+                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 font-medium">
                   <Sparkles className="w-2.5 h-2.5 text-cyan-500" />
-                  Gemini 3.8 Flash
+                  دستیار هوشمند
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1.5">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                متصل به اطلاعات واقعی، تکالیف و اهداف شما در Pathly
+                هماهنگ با برنامه‌ها و اهداف شما
               </p>
             </div>
           </div>
@@ -411,7 +411,7 @@ export const AIAssistantModal: React.FC = () => {
                       <span className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce delay-150" />
                       <span className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce delay-300" />
                     </div>
-                    <span>در حال فراخوانی مدل زنده Gemini و پردازش اطلاعات برنامه‌ریز...</span>
+                    <span>در حال بررسی و پاسخ‌دهی...</span>
                   </div>
                 </div>
               )}
@@ -492,12 +492,9 @@ export const AIAssistantModal: React.FC = () => {
                 )}
               </div>
 
-              <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400 px-1">
+              <div className="mt-2 text-[10px] text-slate-400 px-1">
                 <span>
-                  کلید <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Enter</kbd> برای ارسال • <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Shift+Enter</kbd> برای خط جدید
-                </span>
-                <span className="hidden sm:inline">
-                  پاسخ‌ها به صورت زنده و مستقیماً از مدل زبانی تولید می‌شوند.
+                  کلید <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Enter</kbd> برای ارسال · <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono">Shift+Enter</kbd> برای خط جدید
                 </span>
               </div>
             </form>

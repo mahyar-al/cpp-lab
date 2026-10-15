@@ -468,8 +468,8 @@ export const SettingsView: React.FC = () => {
                       <Sun className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold">حالت روشن (Light)</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سفید و شفاف، مناسب مطالعه روز</div>
+                      <div className="text-xs font-bold">حالت روشن</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">مناسب محیط‌های پرنور</div>
                     </div>
                   </button>
 
@@ -487,8 +487,8 @@ export const SettingsView: React.FC = () => {
                       <Moon className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold">حالت تاریک نئونی (Dark)</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سرمه‌ای مشکی با هایلایت فیروزه‌ای</div>
+                      <div className="text-xs font-bold">حالت تاریک</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سرمه‌ای با هایلایت فیروزه‌ای</div>
                     </div>
                   </button>
 
@@ -506,8 +506,8 @@ export const SettingsView: React.FC = () => {
                       <Monitor className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold">هماهنگ با سیستم (System)</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">تطبیق پویا با تنظیمات ویندوز/مک</div>
+                      <div className="text-xs font-bold">هماهنگ با سیستم</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">تطبیق خودکار با سیستم‌عامل</div>
                     </div>
                   </button>
                 </div>
@@ -811,10 +811,10 @@ export const SettingsView: React.FC = () => {
               <div>
                 <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <Database className="w-4 h-4 text-cyan-400" />
-                  وضعیت ذخیره‌سازی ابری و نقاط بازگردانی (Snapshots)
+                  پشتیبان‌گیری ابری و نقاط بازگردانی
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  پایگاه داده سرور تمامی اطلاعات شما را به صورت خودکار و ایزوله ذخیره می‌کند.
+                  پایگاه داده سرور اطلاعات شما را به صورت خودکار و مستقل ذخیره می‌کند.
                 </p>
               </div>
 
@@ -844,7 +844,7 @@ export const SettingsView: React.FC = () => {
                   disabled={snapshotLoading}
                   className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap shadow-[0_0_12px_rgba(16,185,129,0.2)]"
                 >
-                  {snapshotLoading ? 'در حال ثبت...' : 'ایجاد نسخه پشتیبان لحظه‌ای (Snapshot)'}
+                  {snapshotLoading ? 'در حال ثبت...' : 'ایجاد نسخه پشتیبان لحظه‌ای'}
                 </button>
               </form>
             )}
@@ -881,7 +881,7 @@ export const SettingsView: React.FC = () => {
                           className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
-                          <span>بازگردانی (Restore)</span>
+                          <span>بازگردانی</span>
                         </button>
                       </div>
                     ))}
@@ -895,7 +895,7 @@ export const SettingsView: React.FC = () => {
           <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
             <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Download className="w-4 h-4 text-emerald-400" />
-              خروجی و ورودی فایل پشتیبان JSON (آفلاین / قابل انتقال)
+              خروجی و ورود فایل پشتیبان JSON
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
@@ -979,10 +979,10 @@ export const SettingsView: React.FC = () => {
             <div>
               <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Trash2 className="w-4 h-4 text-rose-400" />
-                سطل بازیافت و محافظت در برابر حذف تصادفی (Soft Delete)
+                سطل بازیافت
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                تمام مواردی که در بخش‌های مختلف حذف می‌کنید به این سطل منتقل می‌شوند و تا زمان تخلیه نهایی، قابل بازیابی هستند.
+                موارد حذف‌شده تا زمان تخلیه نهایی در این بخش نگهداری می‌شوند.
               </p>
             </div>
 

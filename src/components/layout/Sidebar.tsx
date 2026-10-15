@@ -88,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const rawNavGroups: NavGroup[] = [
     {
-      groupTitle: 'مرکز فرماندهی',
+      groupTitle: 'پیشخوان',
       items: [
         {
           id: 'dashboard',
@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      groupTitle: 'چهار ستون اصلی',
+      groupTitle: 'ستون‌های اصلی',
       items: [
         {
           id: 'school',
@@ -142,7 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      groupTitle: 'ابزارهای رشد و تمرکز',
+      groupTitle: 'تمرکز و استمرار',
       items: [
         {
           id: 'habits',
@@ -176,7 +176,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      groupTitle: 'سازمان‌دهی و بینش',
+      groupTitle: 'برنامه‌ریزی و ارزیابی',
       items: [
         {
           id: 'calendar',

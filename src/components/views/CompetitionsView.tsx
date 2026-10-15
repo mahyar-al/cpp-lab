@@ -130,7 +130,7 @@ export const CompetitionsView: React.FC = () => {
             آمادگی برای مسابقات و المپیادها
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            شمارش معکوس، مدیریت مراحل آزمون، آزمون‌های آزمایشی، حل مسئله و ارزیابی آمادگی
+            مدیریت مراحل آزمون، آزمون‌های آزمایشی و ارزیابی آمادگی
           </p>
         </div>
         <button
@@ -145,8 +145,8 @@ export const CompetitionsView: React.FC = () => {
       {competitions.length === 0 ? (
         <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
           <Trophy className="w-12 h-12 mx-auto text-slate-400 mb-3" />
-          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">مسابقه‌ای تعریف نشده است</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-4">المپیاد دانش‌آموزی، هکاتون یا مسابقه علمی خود را ثبت کنید.</p>
+          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز مسابقه‌ای ثبت نشده است</h3>
+          <p className="text-sm text-slate-500 mt-1 mb-4">مسابقه علمی، هکاتون یا المپیاد خود را ثبت کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
             className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 rounded-xl text-sm font-bold cursor-pointer"

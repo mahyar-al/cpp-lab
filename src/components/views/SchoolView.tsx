@@ -301,18 +301,18 @@ export const SchoolView: React.FC = () => {
             مدیریت تحصیلی و مدرسه
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            برنامه هفتگی ۲۵ زنگ، چک‌لیست روزانه، مدیریت امتحانات و تاریخ مرور، کارنامه و پومودورو
+            برنامه هفتگی، تکالیف روزانه و مدیریت دروس و آزمون‌ها
           </p>
         </div>
 
         {/* Navigation Tabs */}
         <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-x-auto">
           {[
-            { id: 'timetable', label: 'جدول برنامه هفتگی' },
-            { id: 'daily', label: 'صفحه روزانه (۵ روز)' },
+            { id: 'timetable', label: 'برنامه هفتگی' },
+            { id: 'daily', label: 'برنامه روزانه' },
             { id: 'subjects', label: 'درس‌ها و نمرات' },
             { id: 'exams', label: 'امتحانات و مرور', badge: exams.filter((e) => !e.completed).length },
-            { id: 'pomodoro', label: 'تایمر پومودورو و مطالعه' },
+            { id: 'pomodoro', label: 'تایمر پومودورو' },
           ].map((tab) => (
             <button
               key={tab.id}

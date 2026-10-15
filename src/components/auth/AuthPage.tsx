@@ -551,7 +551,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <span className="inline-block animate-wave">👋</span>
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    جهت دسترسی به داشبورد، کارنامه‌ها، پروژه‌ها و برنامه‌های شخصی وارد شوید.
+                    برای دسترسی به داشبورد و برنامه‌ها وارد حساب خود شوید.
                   </p>
                 </div>
 
@@ -629,7 +629,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">مرا به خاطر بسپار</span>
                   </label>
 
-                  <span className="text-[11px] text-slate-400 dark:text-slate-500">احراز هویت ایمن با JWT</span>
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500">احراز هویت امن</span>
                 </div>
 
                 {/* Submit Button */}
@@ -680,11 +680,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               >
                 <div>
                   <h3 className="text-xl font-black text-white flex items-center gap-2">
-                    <span>ایجاد حساب مستقل جدید</span>
+                    <span>ایجاد حساب کاربری</span>
                     <Sparkles className="w-4 h-4 text-cyan-400" />
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    یک حساب ابری شخصی برای ذخیره دائمی کلیه داده‌ها در دیتابیس سرور.
+                    ثبت‌نام برای ذخیره دائمی و همگام‌سازی اطلاعات
                   </p>
                 </div>
 
@@ -998,19 +998,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
                 </div>
 
-                {/* Infrastructure Transparency Box */}
-                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-2 text-xs">
-                  <div className="flex items-center gap-2 text-amber-300 font-bold">
-                    <Server className="w-4 h-4 text-amber-400" />
-                    <span>وضعیت زیرساخت امن بازیابی رمز</span>
-                  </div>
-                  <p className="text-slate-300 text-[11px] leading-relaxed">
-                    این پلتفرم از دو متد معتبر بازیابی پشتیبانی می‌کند:
-                    <br />
-                    ۱. <strong>کد تأیید ۶ رقمی با توکن زمان‌دار (۱۵ دقیقه)</strong>: شبیه‌سازی مطمئن و فوری جهت تست و استفاده بدون وابستگی به سرورهای پولی ایمیل.
-                    <br />
-                    ۲. <strong>سؤال امنیتی اختصاصی حساب</strong>: بازیابی آفلاین و بدون نیاز به اینترنت یا ایمیل.
-                  </p>
+                <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400">
+                  کد تأیید به ایمیل ارسال می‌شود؛ همچنین می‌توانید از سؤال امنیتی برای بازنشانی رمز استفاده کنید.
                 </div>
 
                 <button
@@ -1129,20 +1118,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       autoFocus
                     />
 
-                    {/* Simulated Token Badge for Immediate Testing */}
+                    {/* Temporary Token Display */}
                     {recoverySimulatedToken && (
                       <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-                          <span className="text-slate-300">کد دریافتی از سرور:</span>
+                          <span className="text-slate-300">کد بازیابی:</span>
                           <span className="font-mono font-bold text-cyan-300 text-sm tracking-widest">{recoverySimulatedToken}</span>
                         </div>
                         <button
                           type="button"
                           onClick={() => setRecoveryCode(recoverySimulatedToken)}
-                          className="px-2 py-0.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 text-[11px] font-bold cursor-pointer"
+                          className="px-2.5 py-1 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 text-xs font-bold cursor-pointer"
                         >
-                          درج خودکار
+                          درج کد
                         </button>
                       </div>
                     )}
@@ -1254,12 +1242,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           </div>
 
           {/* Form Footer Note */}
-          <div className="pt-6 mt-6 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500">
+          <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              سرور ابری فعال و آنلاین
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              سرور ابری فعال
             </span>
-            <span>ایزولاسیون کامل حریم خصوصی</span>
+            <span>حفظ کامل حریم خصوصی</span>
           </div>
         </div>
 
@@ -1281,75 +1269,55 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
             <div>
               <h2 className="text-2xl font-black text-white leading-snug tracking-tight">
-                داشبورد یکپارچه رشد،
+                مسیر یکپارچه رشد،
                 <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">
                   یادگیری و مهارت‌های آینده
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
-                تنها با یک حساب کاربری، برنامه‌ریزی درسی، پروژه‌های فنی، چالش‌های المپیاد و مرور فاصله‌دار خود را به‌صورت دائمی همگام‌سازی کنید.
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                برنامه‌ریزی درسی، پروژه‌ها، چالش‌های مسابقات و مرور فاصله‌دار در یک محیط یکپارچه
               </p>
             </div>
 
-            {/* Interactive Futuristic Feature Showcase Cards */}
+            {/* Feature Showcase Cards */}
             <div className="space-y-2.5">
-              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3 hover:border-cyan-500/50 transition-all group">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
+              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                   <GraduationCap className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-white flex items-center justify-between">
-                    <span>مدرسه و نمرات تحلیلی</span>
-                    <span className="text-[10px] text-emerald-400 font-mono">معدل ۱۹.۸۵</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">محاسبه هوشمند کارنامه و برنامه هفتگی هوشمند</span>
+                  <div className="text-xs font-bold text-white">مدرسه و نمرات تحلیلی</div>
+                  <span className="text-[10px] text-slate-400">کارنامه، برنامه هفتگی و پیگیری تکالیف</span>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3 hover:border-cyan-500/50 transition-all group">
-                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-105 transition-transform">
+              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
                   <FolderGit2 className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-white flex items-center justify-between">
-                    <span>کانبان پروژه‌ها و مهارت‌ها</span>
-                    <span className="text-[10px] text-cyan-400">۴ پروژه فعال</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">نقشه‌راه گام‌به‌گام و ثبت مستمر پیشرفت کدنویسی</span>
+                  <div className="text-xs font-bold text-white">پروژه‌ها و مهارت‌ها</div>
+                  <span className="text-[10px] text-slate-400">برد کانبان و نقشه‌راه گام‌به‌گام یادگیری</span>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3 hover:border-cyan-500/50 transition-all group">
-                <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
+              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
                   <Trophy className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-white flex items-center justify-between">
-                    <span>مسابقات و المپیادها</span>
-                    <span className="text-[10px] text-amber-400 font-bold">سطح پیشرفته</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">تحلیل نقاط ضعف و زمان‌بندی روز مسابقه</span>
+                  <div className="text-xs font-bold text-white">مسابقات و آزمون‌ها</div>
+                  <span className="text-[10px] text-slate-400">زمان‌بندی مراحل و ارزیابی آمادگی</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Security / Trust Metrics */}
-          <div className="relative z-10 pt-6 mt-6 border-t border-slate-800/80 space-y-2.5">
-            <div className="grid grid-cols-2 gap-2 text-center">
-              <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                <div className="text-base font-black text-cyan-400 font-mono">100%</div>
-                <div className="text-[10px] text-slate-400">ایزولاسیون داده‌ها</div>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                <div className="text-base font-black text-emerald-400 font-mono">0ms</div>
-                <div className="text-[10px] text-slate-400">تأخیر همگام‌سازی</div>
-              </div>
-            </div>
-
-            <p className="text-[10px] text-slate-500 text-center leading-normal">
-              داده‌های هر کاربر دارای شناسه اختصاصی بوده و تحت هیچ شرایطی با حساب‌های دیگر تداخل پیدا نخواهد کرد.
+          {/* Bottom Trust Note */}
+          <div className="relative z-10 pt-4 mt-4 border-t border-slate-800/80">
+            <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+              ذخیره‌سازی امن و دسترسی پیوسته به اطلاعات در تمام دستگاه‌ها
             </p>
           </div>
         </div>

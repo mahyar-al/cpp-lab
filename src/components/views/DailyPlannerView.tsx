@@ -232,7 +232,7 @@ export const DailyPlannerView: React.FC = () => {
               </h1>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              مدیریت واقع‌بینانه زمان، تخمین دقایق، شناسایی تداخل‌ها و هدایت گام‌به‌گام کارها
+              مدیریت زمان، اولویت‌ها و فعالیت‌های روزانه
             </p>
           </div>
 
@@ -258,10 +258,10 @@ export const DailyPlannerView: React.FC = () => {
             <button
               onClick={() => setIsAIAssistantOpen(true)}
               className="flex items-center gap-1.5 px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer"
-              title="گفتگو با مربی و مشاور هوشمند"
+              title="گفتگو با مشاور هوشمند"
             >
               <Bot className="w-3.5 h-3.5" />
-              <span>مشاور AI</span>
+              <span>مشاور هوشمند</span>
             </button>
 
             <button

@@ -25,21 +25,21 @@ import { AIAssistantModal } from './components/modals/AIAssistantModal';
 import { BottomNav } from './components/layout/BottomNav';
 
 const TAB_TITLES: Record<NavTab, string> = {
-  dashboard: 'داشبورد اصلی و مرکز کنترل',
-  daily_planner: 'برنامه‌ریز هوشمند روزانه',
-  school: 'مدرسه و برنامه هفتگی',
-  skills: 'توسعه مهارت‌ها و نقشه‌راه',
-  projects: 'مدیریت پروژه‌ها و کانبان',
-  competitions: 'آمادگی برای مسابقات و المپیاد',
-  habits: 'سیستم عادت‌ها و استمرار روزانه',
-  reviews: 'مرور و تکرار فاصله‌دار (Spaced Repetition)',
-  focus_timer: 'تایمر تمرکز و پومودورو',
-  resources: 'کتابخانه منابع و یادگیری',
-  calendar: 'تقویم جامع رویدادها',
-  goals: 'اهداف و مرور هفتگی',
+  dashboard: 'داشبورد',
+  daily_planner: 'برنامه‌ریز روزانه',
+  school: 'مدرسه و درس‌ها',
+  skills: 'توسعه مهارت‌ها',
+  projects: 'مدیریت پروژه‌ها',
+  competitions: 'مسابقات و المپیاد',
+  habits: 'عادت‌ها و استمرار',
+  reviews: 'مرور فاصله‌دار',
+  focus_timer: 'تایمر تمرکز',
+  resources: 'کتابخانه منابع',
+  calendar: 'تقویم رویدادها',
+  goals: 'اهداف و مرور',
   notes: 'یادداشت‌ها و وقایع',
-  analytics: 'آمار و گزارش عملکرد تحلیلی',
-  settings: 'تنظیمات، نمایه و پشتیبان‌گیری',
+  analytics: 'آمار و عملکرد',
+  settings: 'تنظیمات و حساب',
 };
 
 const MainContent: React.FC = () => {

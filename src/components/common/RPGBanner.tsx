@@ -58,20 +58,20 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-cyan-500/20 border border-amber-500/40 flex flex-col items-center justify-center text-amber-400 shadow-lg shadow-amber-500/10">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="text-[10px] font-bold text-amber-300 mt-0.5">
-                LVL {toPersianDigits(level)}
+                سطح {toPersianDigits(level)}
               </span>
             </div>
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-amber-400/90 font-medium">رتبه و لقب کنونی:</span>
+              <span className="text-xs text-amber-400/90 font-medium">لقب:</span>
               <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-bold">
                 {rpg.title || 'نوآموز مسیر'}
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-300 mt-1">
-              <span>{toPersianDigits(xp)} امتیاز تجربه کل (XP)</span>
+              <span>{toPersianDigits(xp)} XP کل</span>
               <span className="text-slate-600">·</span>
               <span className="text-slate-400">
                 {toPersianDigits(Math.max(0, nextLevelXp - xp))} XP تا سطح بعدی
@@ -93,10 +93,10 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
           <div className="flex items-center justify-between text-xs font-bold text-slate-300 mb-2">
             <span className="flex items-center gap-1.5 text-cyan-400">
               <Zap className="w-3.5 h-3.5" />
-              مأموریت‌های روزانه (Daily Quests)
+              مأموریت‌های روزانه
             </span>
             <span className="text-[11px] text-slate-500">
-              +{toPersianDigits((rpg.dailyQuests || []).reduce((acc, q) => acc + q.xpReward, 0))} XP در دسترس
+              +{toPersianDigits((rpg.dailyQuests || []).reduce((acc, q) => acc + q.xpReward, 0))} XP
             </span>
           </div>
 

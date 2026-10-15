@@ -139,7 +139,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             <Menu className="w-5 h-5" />
           </div>
           <span className="text-[10px] mt-1 font-medium">
-            منو کامل
+            منو
           </span>
         </button>
       </div>

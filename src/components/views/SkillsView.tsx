@@ -209,7 +209,7 @@ export const SkillsView: React.FC = () => {
             مدیریت و توسعه مهارت‌ها
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            پیگیری نقشه‌های راه یادگیری، منابع آموزشی، ساعات تمرین و استمرار مهارت‌آموزی
+            نقشه‌های راه، منابع آموزشی و ثبت ساعات تمرین
           </p>
         </div>
         <button
@@ -225,7 +225,7 @@ export const SkillsView: React.FC = () => {
         <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
           <Sparkles className="w-12 h-12 mx-auto text-slate-400 mb-3" />
           <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز مهارتی تعریف نشده است</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-4">مهارت‌های برنامه‌نویسی، زبان، ابزارها یا هوش مصنوعی خود را اضافه کنید.</p>
+          <p className="text-sm text-slate-500 mt-1 mb-4">اولین مهارت خود را برای ثبت پیشرفت و نقشه یادگیری اضافه کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
             className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-bold cursor-pointer"
