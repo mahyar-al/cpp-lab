@@ -1,0 +1,64 @@
+{
+  "id": "49c102c0-74fe-4453-9716-1996da0ed293",
+  "userId": "38c989d7-62f2-4075-a00a-1e2e7696d3b7",
+  "createdAt": "2026-10-14T20:32:40.211Z",
+  "reason": "نسخه اختصاصی الف قبل از تست نفوذ",
+  "data": {
+    "profile": {
+      "name": "کاربر آزمایشی الف",
+      "theme": "dark"
+    },
+    "subjects": [
+      {
+        "id": "sub-1792009959516",
+        "name": "هندسه تحلیلی و جبر خطی",
+        "teacher": "استاد حسینی",
+        "color": "#00F5FF"
+      }
+    ],
+    "projects": [
+      {
+        "id": "proj-1792009959516",
+        "title": "سامانه پایش هوشمند",
+        "status": "in_progress",
+        "priority": "high"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note-1792009959516",
+        "title": "یادداشت محرمانه کاربر الف",
+        "content": "اطلاعات سری پروژه الف",
+        "tags": [
+          "محرمانه"
+        ]
+      }
+    ],
+    "calendarEvents": [
+      {
+        "id": "cev-1792009959516",
+        "title": "جلسه تمرینی المپیاد",
+        "date": "1405-02-15",
+        "section": "competition"
+      }
+    ],
+    "homeworks": [],
+    "exams": [],
+    "studySessions": [],
+    "skills": [],
+    "competitions": [],
+    "goals": [],
+    "weeklyReviews": [],
+    "weeklyCells": [],
+    "dayData": {},
+    "activityLogs": [],
+    "notifications": [],
+    "habits": [],
+    "reviews": [],
+    "resources": [],
+    "inboxItems": [],
+    "trash": [],
+    "userId": "38c989d7-62f2-4075-a00a-1e2e7696d3b7",
+    "_lastModified": "2026-10-14T20:32:40.089Z"
+  }
+}

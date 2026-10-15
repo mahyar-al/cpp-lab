@@ -41,7 +41,16 @@ const TAB_TITLES: Record<NavTab, string> = {
 };
 
 const MainContent: React.FC = () => {
-  const { profile, toastMessage, isAuthModalOpen, setIsAuthModalOpen } = useApp();
+  const {
+    profile,
+    toastMessage,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+    authModalInitialTab,
+    openAuthModal,
+    getSectionTitle,
+    customization,
+  } = useApp();
   const [currentTab, setCurrentTab] = useState<NavTab>('dashboard');
   const [isOpenMobile, setIsOpenMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -50,12 +59,41 @@ const MainContent: React.FC = () => {
 
   // Sync dark theme class on document.documentElement
   useEffect(() => {
-    if (profile.theme === 'dark') {
+    const isDark = customization.themeMode ? customization.themeMode !== 'light' : profile.theme === 'dark';
+    if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [profile.theme]);
+  }, [profile.theme, customization.themeMode]);
+
+  // Handle URL hash for quick auth routing (#login, #register, #forgot-password)
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#login') {
+        openAuthModal('login');
+      } else if (hash === '#register') {
+        openAuthModal('register');
+      } else if (hash === '#recovery' || hash === '#forgot-password' || hash === '#forgot_password') {
+        openAuthModal('recovery');
+      }
+    };
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, [openAuthModal]);
+
+  // Global event listener for opening auth modal from any deep component
+  useEffect(() => {
+    const handleOpenAuth = (e: any) => {
+      const tab = e.detail?.tab || 'login';
+      openAuthModal(tab);
+    };
+    window.addEventListener('pathly_open_auth', handleOpenAuth);
+    return () => window.removeEventListener('pathly_open_auth', handleOpenAuth);
+  }, [openAuthModal]);
 
   // Global keyboard shortcuts (Ctrl+K or Cmd+K for search, Alt+N for quick add)
   useEffect(() => {
@@ -99,7 +137,7 @@ const MainContent: React.FC = () => {
         isCollapsed ? 'lg:mr-20' : 'lg:mr-64'
       }`}>
         <Header
-          activeSectionTitle={TAB_TITLES[currentTab]}
+          activeSectionTitle={getSectionTitle(currentTab)}
           onToggleSidebar={() => setIsOpenMobile((prev) => !prev)}
           onOpenQuickAdd={() => setIsQuickAddOpen(true)}
           onOpenSearch={() => setIsSearchOpen(true)}
@@ -158,6 +196,7 @@ const MainContent: React.FC = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+        initialTab={authModalInitialTab}
       />
 
       {/* Global Toast Notification */}

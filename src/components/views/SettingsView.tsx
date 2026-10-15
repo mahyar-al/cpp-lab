@@ -21,12 +21,15 @@ import {
   CheckCircle2,
   LogIn,
   LogOut,
+  UserPlus,
   Calendar,
+  Palette,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits, formatJalaliFull } from '../../utils/jalali';
 import { SchoolBellTime, TrashItem } from '../../types';
 import { AVATAR_OPTIONS } from '../../utils/avatars';
+import { CustomizationView } from './CustomizationView';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -43,6 +46,7 @@ export const SettingsView: React.FC = () => {
     deleteAccount,
     logout,
     setIsAuthModalOpen,
+    openAuthModal,
     serverSnapshots,
     refreshSnapshots,
     restoreServerSnapshot,
@@ -56,8 +60,16 @@ export const SettingsView: React.FC = () => {
     showToast,
   } = useApp();
 
-  type SettingsTab = 'profile' | 'account' | 'cloud' | 'trash';
+  type SettingsTab = 'profile' | 'customization' | 'account' | 'cloud' | 'trash';
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+
+  useEffect(() => {
+    const handleOpenCustomization = () => {
+      setActiveTab('customization');
+    };
+    window.addEventListener('pathly_open_customization', handleOpenCustomization);
+    return () => window.removeEventListener('pathly_open_customization', handleOpenCustomization);
+  }, []);
 
   // Profile states
   const [name, setName] = useState(profile.name);
@@ -274,7 +286,7 @@ export const SettingsView: React.FC = () => {
             </div>
             {!currentUser && (
               <button
-                onClick={() => setIsAuthModalOpen(true)}
+                onClick={() => openAuthModal('login')}
                 className="mr-2 px-2.5 py-1 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg text-xs transition-colors cursor-pointer"
               >
                 ورود
@@ -294,7 +306,19 @@ export const SettingsView: React.FC = () => {
             }`}
           >
             <User className="w-4 h-4" />
-            <span>مشخصات و پوسته</span>
+            <span>مشخصات و نمایه</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('customization')}
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'customization'
+                ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033]'
+            }`}
+          >
+            <Palette className="w-4 h-4 text-cyan-400" />
+            <span>شخصی‌سازی سایت و ظاهر</span>
           </button>
 
           <button
@@ -513,6 +537,9 @@ export const SettingsView: React.FC = () => {
         </div>
       )}
 
+      {/* Tab: User Customization */}
+      {activeTab === 'customization' && <CustomizationView />}
+
       {/* Tab 2: Multi-User Account & Security */}
       {activeTab === 'account' && (
         <div className="space-y-6">
@@ -713,12 +740,22 @@ export const SettingsView: React.FC = () => {
               <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
                 برای ذخیره دائمی کلیه اطلاعات در پایگاه داده سرور، دسترسی از دستگاه‌های دیگر و امکان استفاده همزمان با دوستان، لطفاً حساب مستقل خود را ایجاد کنید یا وارد شوید.
               </p>
-              <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer"
-              >
-                ورود / ساخت حساب کاربری مستقل
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <button
+                  onClick={() => openAuthModal('login')}
+                  className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all cursor-pointer flex items-center gap-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>ورود به حساب کاربری</span>
+                </button>
+                <button
+                  onClick={() => openAuthModal('register')}
+                  className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>ثبت‌نام حساب مستقل</span>
+                </button>
+              </div>
             </div>
           )}
         </div>

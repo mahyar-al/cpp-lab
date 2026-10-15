@@ -4,6 +4,17 @@ import {
   Clock,
   GraduationCap,
   Sparkles,
+  FolderGit2,
+  Trophy,
+  Flame,
+  RotateCcw,
+  Zap,
+  BookOpen,
+  CalendarDays,
+  Target,
+  FileText,
+  BarChart3,
+  Settings,
   Menu,
 } from 'lucide-react';
 import { NavTab } from './Sidebar';
@@ -16,12 +27,30 @@ interface BottomNavProps {
   onOpenMenu: () => void;
 }
 
+const TAB_ICONS: Record<NavTab, React.ElementType> = {
+  dashboard: LayoutDashboard,
+  daily_planner: Clock,
+  school: GraduationCap,
+  skills: Sparkles,
+  projects: FolderGit2,
+  competitions: Trophy,
+  habits: Flame,
+  reviews: RotateCcw,
+  focus_timer: Zap,
+  resources: BookOpen,
+  calendar: CalendarDays,
+  goals: Target,
+  notes: FileText,
+  analytics: BarChart3,
+  settings: Settings,
+};
+
 export const BottomNav: React.FC<BottomNavProps> = ({
   currentTab,
   onSelectTab,
   onOpenMenu,
 }) => {
-  const { homeworks, dayData } = useApp();
+  const { homeworks, dayData, getSectionTitle, customization } = useApp();
 
   const todayIso = new Date().toISOString().slice(0, 10);
   const pendingHw = homeworks.filter((h) => !h.completed && h.dueDate <= todayIso).length;
@@ -29,30 +58,32 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   const currentIranianDay = (new Date().getDay() + 1) % 7;
   const todayTasks = (dayData[currentIranianDay]?.postSchoolTasks || []).filter((t) => !t.completed).length;
 
-  const navItems = [
-    {
-      id: 'dashboard' as NavTab,
-      label: 'داشبورد',
-      icon: LayoutDashboard,
-    },
-    {
-      id: 'daily_planner' as NavTab,
-      label: 'برنامه‌ریز',
-      icon: Clock,
-      badge: todayTasks > 0 ? todayTasks : undefined,
-    },
-    {
-      id: 'school' as NavTab,
-      label: 'مدرسه',
-      icon: GraduationCap,
-      badge: pendingHw > 0 ? pendingHw : undefined,
-    },
-    {
-      id: 'skills' as NavTab,
-      label: 'مهارت‌ها',
-      icon: Sparkles,
-    },
-  ];
+  const getBadge = (tab: NavTab) => {
+    if (tab === 'school' && pendingHw > 0) return pendingHw;
+    if (tab === 'daily_planner' && todayTasks > 0) return todayTasks;
+    return undefined;
+  };
+
+  // Derive top 4 visible tabs from user customization navOrder & hiddenSections
+  const visibleOrder = (customization.navOrder || []).filter(
+    (tab) => !(customization.hiddenSections || []).includes(tab) && tab !== 'settings'
+  );
+
+  // If currentTab is not in visible top 4, ensure it's visible by replacing 4th item if needed
+  let topTabs = visibleOrder.slice(0, 4);
+  if (topTabs.length === 0) {
+    topTabs = ['dashboard', 'daily_planner', 'school', 'skills'];
+  }
+  if (currentTab !== 'settings' && !topTabs.includes(currentTab) && !customization.hiddenSections?.includes(currentTab)) {
+    topTabs = [...topTabs.slice(0, 3), currentTab];
+  }
+
+  const navItems = topTabs.map((tab) => ({
+    id: tab,
+    label: getSectionTitle(tab),
+    icon: TAB_ICONS[tab] || LayoutDashboard,
+    badge: getBadge(tab),
+  }));
 
   return (
     <nav

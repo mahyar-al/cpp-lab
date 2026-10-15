@@ -110,6 +110,43 @@ export async function apiResetPassword(payload: {
   });
 }
 
+export async function apiCheckAvailability(params: { email?: string; username?: string }) {
+  const query = new URLSearchParams();
+  if (params.email) query.set('email', params.email);
+  if (params.username) query.set('username', params.username);
+  return request<{ emailAvailable?: boolean; usernameAvailable?: boolean }>(`/api/auth/check-availability?${query.toString()}`);
+}
+
+export async function apiForgotPasswordRequest(identifier: string) {
+  return request<{
+    success: boolean;
+    message: string;
+    securityQuestion: string;
+    maskedEmail: string;
+    expiresInMinutes: number;
+    mockVerificationToken?: string;
+    infrastructureStatus: {
+      smtpConfigured: boolean;
+      mode: string;
+      notice: string;
+    };
+  }>('/api/auth/forgot-password-request', {
+    method: 'POST',
+    body: JSON.stringify({ identifier }),
+  });
+}
+
+export async function apiResetPasswordToken(payload: {
+  identifier: string;
+  token: string;
+  newPassword: string;
+}) {
+  return request<{ success: boolean; message: string }>('/api/auth/reset-password-token', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function apiDeleteAccount(password: string) {
   const res = await request<{ message: string }>('/api/auth/account', {
     method: 'DELETE',

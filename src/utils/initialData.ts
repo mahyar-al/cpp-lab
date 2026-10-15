@@ -63,12 +63,15 @@ export const DEFAULT_NAV_ORDER: NavTab[] = [
 ];
 
 export const DEFAULT_DASHBOARD_CARDS = [
+  { id: 'quick_stats', label: 'خلاصه آمار سریع و ساعات مطالعه', category: 'آمار' },
   { id: 'today_priority', label: 'اولویت‌های کلیدی امروز (وظایف و مهلت‌ها)', category: 'برنامه و وظایف' },
   { id: 'school_schedule', label: 'برنامه زنگ‌های مدرسه امروز', category: 'مدرسه' },
   { id: 'habits', label: 'پیگیری عادت‌ها و استریک‌های روزانه', category: 'عادت‌ها' },
+  { id: 'active_projects', label: 'پروژه‌های فعال و تسک‌های جاری', category: 'پروژه‌ها' },
+  { id: 'reviews_due', label: 'مرورهای فاصله‌دار موعد امروز', category: 'یادگیری' },
   { id: 'study_chart', label: 'نمودار ساعات مطالعه ۷ روز اخیر', category: 'آمار مطالعه' },
   { id: 'mini_calendar', label: 'تقویمچه شمسی ماه جاری', category: 'تقویم' },
-  { id: 'section_progress', label: 'خلاصه وضعیت مهارت‌ها و پروژه‌ها', category: 'پیشرفت' },
+  { id: 'section_progress', label: 'خلاصه وضعیت مهارت‌ها، پروژه‌ها و مسابقات', category: 'پیشرفت' },
   { id: 'recent_activity', label: 'گزارش فعالیت‌های اخیر سیستم', category: 'سیستم' },
 ];
 
@@ -78,10 +81,14 @@ export const initialCustomization: UserCustomization = {
   navOrder: [...DEFAULT_NAV_ORDER],
   themeMode: 'dark',
   accentColor: 'cyan',
+  secondaryAccent: 'violet',
+  borderRadius: 'medium',
+  glowIntensity: 'subtle',
   fontSize: 'normal',
   density: 'comfortable',
   dashboardCardsOrder: DEFAULT_DASHBOARD_CARDS.map((c) => c.id),
   hiddenDashboardCards: [],
+  dashboardColumns: 'auto',
 };
 
 export const initialWidgetConfig: DashboardWidgetConfig = {

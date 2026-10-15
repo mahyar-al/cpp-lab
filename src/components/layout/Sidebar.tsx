@@ -71,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   onToggleCollapse,
 }) => {
-  const { homeworks, skills, goals, habits, reviews, dayData } = useApp();
+  const { homeworks, skills, goals, habits, reviews, dayData, getSectionTitle, customization } = useApp();
 
   const pendingHomeworkCount = homeworks.filter((h) => !h.completed).length;
 
@@ -85,20 +85,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const todayTasks = dayData[currentIranianDayIdx]?.postSchoolTasks || [];
   const pendingTasksCount = todayTasks.filter((t) => !t.completed).length;
 
-  const navGroups: NavGroup[] = [
+  const rawNavGroups: NavGroup[] = [
     {
       groupTitle: 'مرکز فرماندهی',
       items: [
         {
           id: 'dashboard',
-          label: 'داشبورد اصلی',
+          label: getSectionTitle('dashboard'),
           icon: LayoutDashboard,
           activeBorderClass: 'border-cyan-500/40 text-cyan-600 dark:text-[#00F5FF] bg-cyan-500/10 dark:bg-cyan-500/15 shadow-[0_0_15px_-3px_rgba(0,245,255,0.3)]',
           colorClass: 'text-cyan-500 dark:text-[#00F5FF]',
         },
         {
           id: 'daily_planner',
-          label: 'برنامه‌ریز هوشمند روزانه',
+          label: getSectionTitle('daily_planner'),
           icon: Clock,
           badge: pendingTasksCount > 0 ? pendingTasksCount : undefined,
           activeBorderClass: 'border-cyan-400/40 text-cyan-600 dark:text-[#00F5FF] bg-cyan-500/10 dark:bg-cyan-500/15 shadow-[0_0_15px_-3px_rgba(0,245,255,0.3)]',
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         {
           id: 'school',
-          label: 'مدرسه و درس‌ها',
+          label: getSectionTitle('school'),
           icon: GraduationCap,
           badge: pendingHomeworkCount > 0 ? pendingHomeworkCount : undefined,
           activeBorderClass: 'border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]',
@@ -119,21 +119,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
         },
         {
           id: 'skills',
-          label: 'توسعه مهارت‌ها',
+          label: getSectionTitle('skills'),
           icon: Sparkles,
           activeBorderClass: 'border-emerald-500/40 text-emerald-600 dark:text-[#39FF88] bg-emerald-500/10 dark:bg-emerald-500/15 shadow-[0_0_15px_-3px_rgba(57,255,136,0.3)]',
           colorClass: 'text-emerald-500 dark:text-[#39FF88]',
         },
         {
           id: 'projects',
-          label: 'پروژه‌ها و کانبان',
+          label: getSectionTitle('projects'),
           icon: FolderGit2,
           activeBorderClass: 'border-purple-500/40 text-purple-600 dark:text-[#C084FC] bg-purple-500/10 dark:bg-purple-500/15 shadow-[0_0_15px_-3px_rgba(168,85,247,0.3)]',
           colorClass: 'text-purple-500 dark:text-[#C084FC]',
         },
         {
           id: 'competitions',
-          label: 'مسابقات و المپیاد',
+          label: getSectionTitle('competitions'),
           icon: Trophy,
           activeBorderClass: 'border-pink-500/40 text-pink-600 dark:text-[#FF4FD8] bg-pink-500/10 dark:bg-pink-500/15 shadow-[0_0_15px_-3px_rgba(255,79,216,0.3)]',
           colorClass: 'text-pink-500 dark:text-[#FF4FD8]',
@@ -145,14 +145,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         {
           id: 'habits',
-          label: 'سیستم عادت‌ها',
+          label: getSectionTitle('habits'),
           icon: Flame,
           activeBorderClass: 'border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/15 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]',
           colorClass: 'text-amber-500 dark:text-amber-400',
         },
         {
           id: 'reviews',
-          label: 'مرور و یادگیری',
+          label: getSectionTitle('reviews'),
           icon: RotateCcw,
           badge: dueReviewsCount > 0 ? dueReviewsCount : undefined,
           activeBorderClass: 'border-indigo-500/40 text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 dark:bg-indigo-500/15 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)]',
@@ -160,14 +160,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         },
         {
           id: 'focus_timer',
-          label: 'تمرکز و پومودورو',
+          label: getSectionTitle('focus_timer'),
           icon: Zap,
           activeBorderClass: 'border-cyan-500/40 text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 dark:bg-cyan-500/15 shadow-[0_0_15px_-3px_rgba(0,245,255,0.3)]',
           colorClass: 'text-cyan-500 dark:text-cyan-400',
         },
         {
           id: 'resources',
-          label: 'کتابخانه منابع',
+          label: getSectionTitle('resources'),
           icon: BookOpen,
           activeBorderClass: 'border-teal-500/40 text-teal-600 dark:text-teal-400 bg-teal-500/10 dark:bg-teal-500/15 shadow-[0_0_15px_-3px_rgba(20,184,166,0.3)]',
           colorClass: 'text-teal-500 dark:text-teal-400',
@@ -179,35 +179,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         {
           id: 'calendar',
-          label: 'تقویم جامع',
+          label: getSectionTitle('calendar'),
           icon: CalendarDays,
           activeBorderClass: 'border-cyan-500/40 text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 dark:bg-cyan-500/15 shadow-[0_0_15px_-3px_rgba(0,245,255,0.25)]',
           colorClass: 'text-cyan-500 dark:text-cyan-400',
         },
         {
           id: 'goals',
-          label: 'اهداف و بازبینی',
+          label: getSectionTitle('goals'),
           icon: Target,
           activeBorderClass: 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/15 shadow-[0_0_15px_-3px_rgba(16,185,129,0.25)]',
           colorClass: 'text-emerald-500 dark:text-emerald-400',
         },
         {
           id: 'notes',
-          label: 'یادداشت‌ها و وقایع',
+          label: getSectionTitle('notes'),
           icon: FileText,
           activeBorderClass: 'border-purple-500/40 text-purple-600 dark:text-purple-400 bg-purple-500/10 dark:bg-purple-500/15 shadow-[0_0_15px_-3px_rgba(168,85,247,0.25)]',
           colorClass: 'text-purple-500 dark:text-purple-400',
         },
         {
           id: 'analytics',
-          label: 'آمار و گزارش‌ها',
+          label: getSectionTitle('analytics'),
           icon: BarChart3,
           activeBorderClass: 'border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15 shadow-[0_0_15px_-3px_rgba(59,130,246,0.25)]',
           colorClass: 'text-blue-500 dark:text-blue-400',
         },
         {
           id: 'settings',
-          label: 'تنظیمات و داده‌ها',
+          label: getSectionTitle('settings'),
           icon: Settings,
           activeBorderClass: 'border-slate-400 text-slate-800 dark:text-slate-200 bg-slate-200/50 dark:bg-[#172033]',
           colorClass: 'text-slate-500 dark:text-slate-400',
@@ -215,6 +215,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
   ];
+
+  // Filter hidden sections & sort by user custom navOrder (Settings is never hidden)
+  const userNavOrder = customization?.navOrder || [];
+  const getNavOrderIndex = (tab: NavTab) => {
+    const idx = userNavOrder.indexOf(tab);
+    return idx === -1 ? 999 : idx;
+  };
+
+  const navGroups: NavGroup[] = rawNavGroups
+    .map((grp) => ({
+      ...grp,
+      items: grp.items
+        .filter(
+          (it) => it.id === 'settings' || !(customization?.hiddenSections || []).includes(it.id)
+        )
+        .sort((a, b) => getNavOrderIndex(a.id) - getNavOrderIndex(b.id)),
+    }))
+    .filter((grp) => grp.items.length > 0);
 
   const allStreaks = [...(skills || []).map((s) => s.streak || 0), ...(habits || []).map((h) => h.streak || 0)];
   const maxStreak = Math.max(0, ...allStreaks);

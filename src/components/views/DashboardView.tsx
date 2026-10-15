@@ -23,8 +23,14 @@ import {
   Layers,
   ArrowRight,
   TrendingUp,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  EyeOff,
+  Palette,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { DEFAULT_DASHBOARD_CARDS } from '../../utils/initialData';
 import {
   formatJalaliFull,
   getIranianDayOfWeek,
@@ -66,7 +72,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     updateWidgetConfig,
     rolloverOverdueTasks,
     activityLogs,
+    getSectionTitle,
+    customization,
+    updateCustomization,
   } = useApp();
+
+  const isCardHidden = (id: string) => (customization.hiddenDashboardCards || []).includes(id);
 
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showNewHabitModal, setShowNewHabitModal] = useState(false);
@@ -287,7 +298,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <Clock className="w-3.5 h-3.5" />
             </div>
             <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">برنامه‌ریز روزانه</div>
+              <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">{getSectionTitle('daily_planner')}</div>
               <div className="text-[9px] text-slate-400">زمان‌بندی دقیق</div>
             </div>
           </button>
@@ -300,7 +311,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <Zap className="w-3.5 h-3.5" />
             </div>
             <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">تایمر تمرکز</div>
+              <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">{getSectionTitle('focus_timer')}</div>
               <div className="text-[9px] text-slate-400">پومودورو نئون</div>
             </div>
           </button>
@@ -313,7 +324,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <Flame className="w-3.5 h-3.5" />
             </div>
             <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-amber-500">سیستم عادت‌ها</div>
+              <div className="text-[11px] font-bold truncate group-hover:text-amber-500">{getSectionTitle('habits')}</div>
               <div className="text-[9px] text-slate-400">{toPersianDigits(habits.length)} عادت تعریف‌شده</div>
             </div>
           </button>
@@ -326,7 +337,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <RotateCcw className="w-3.5 h-3.5" />
             </div>
             <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-indigo-400">مرور فاصله‌دار</div>
+              <div className="text-[11px] font-bold truncate group-hover:text-indigo-400">{getSectionTitle('reviews')}</div>
               <div className="text-[9px] text-slate-400">{dueReviews.length > 0 ? `${toPersianDigits(dueReviews.length)} موعد امروز` : 'به‌روز'}</div>
             </div>
           </button>
@@ -339,7 +350,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <BookOpen className="w-3.5 h-3.5" />
             </div>
             <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-teal-400">کتابخانه منابع</div>
+              <div className="text-[11px] font-bold truncate group-hover:text-teal-400">{getSectionTitle('resources')}</div>
               <div className="text-[9px] text-slate-400">کتب و دوره‌ها</div>
             </div>
           </button>
@@ -380,7 +391,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">مدرسه و درس‌ها</span>
+            <span className="font-medium">{getSectionTitle('school')}</span>
             <div className="p-2 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
               <GraduationCap className="w-4 h-4" />
             </div>
@@ -412,7 +423,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">توسعه مهارت‌ها</span>
+            <span className="font-medium">{getSectionTitle('skills')}</span>
             <div className="p-2 rounded-xl bg-purple-500/10 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.25)]">
               <Sparkles className="w-4 h-4" />
             </div>
@@ -438,7 +449,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">پروژه‌ها و کانبان</span>
+            <span className="font-medium">{getSectionTitle('projects')}</span>
             <div className="p-2 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.25)]">
               <FolderGit2 className="w-4 h-4" />
             </div>
@@ -464,7 +475,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">مسابقات و المپیاد</span>
+            <span className="font-medium">{getSectionTitle('competitions')}</span>
             <div className="p-2 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
               <Trophy className="w-4 h-4" />
             </div>
@@ -485,61 +496,69 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       </div>
 
       {/* Secondary Performance Telemetry Ribbon */}
-      <div className="p-3 bg-white/80 dark:bg-[#0D1222]/80 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-          <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 shrink-0">
-            <Target className="w-4 h-4" />
+      {!isCardHidden('quick_stats') && (
+        <div className="p-3 bg-white/80 dark:bg-[#0D1222]/80 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 shrink-0">
+              <Target className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">تحقق اهداف هفتگی</div>
+              <div className="font-mono font-bold text-slate-900 dark:text-emerald-400 tabular-nums">
+                {toPersianDigits(weeklyGoalsPercent)}٪ ({toPersianDigits(completedWeeklyGoals)} از {toPersianDigits(weeklyGoals.length)})
+              </div>
+            </div>
           </div>
-          <div className="min-w-0">
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">تحقق اهداف هفتگی</div>
-            <div className="font-mono font-bold text-slate-900 dark:text-emerald-400 tabular-nums">
-              {toPersianDigits(weeklyGoalsPercent)}٪ ({toPersianDigits(completedWeeklyGoals)} از {toPersianDigits(weeklyGoals.length)})
+
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 dark:text-purple-400 shrink-0">
+              <Clock className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">ساعت مطالعه ۷ روز اخیر</div>
+              <div className="font-mono font-bold text-slate-900 dark:text-purple-400 tabular-nums">
+                {toPersianDigits(totalRecentHours)} ساعت تمرکزی
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
+              <Flame className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">استمرار یادگیری متوالی</div>
+              <div className="font-mono font-bold text-slate-900 dark:text-amber-400 tabular-nums">
+                {toPersianDigits(maxStreak)} روز متوالی
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
+            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 shrink-0">
+              <Zap className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">زمان آزاد باقیمانده امروز</div>
+              <div className="font-mono font-bold text-slate-900 dark:text-cyan-400 tabular-nums">
+                {toPersianDigits(freeHoursRemaining)} ساعت آزاد
+              </div>
             </div>
           </div>
         </div>
+      )}
 
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-          <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 dark:text-purple-400 shrink-0">
-            <Clock className="w-4 h-4" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">ساعت مطالعه ۷ روز اخیر</div>
-            <div className="font-mono font-bold text-slate-900 dark:text-purple-400 tabular-nums">
-              {toPersianDigits(totalRecentHours)} ساعت تمرکزی
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-          <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
-            <Flame className="w-4 h-4" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">استمرار یادگیری متوالی</div>
-            <div className="font-mono font-bold text-slate-900 dark:text-amber-400 tabular-nums">
-              {toPersianDigits(maxStreak)} روز متوالی
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-          <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 shrink-0">
-            <Zap className="w-4 h-4" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">زمان آزاد باقیمانده امروز</div>
-            <div className="font-mono font-bold text-slate-900 dark:text-cyan-400 tabular-nums">
-              {toPersianDigits(freeHoursRemaining)} ساعت آزاد
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid: Left 2 Cols (Tasks, Schedule & Habits), Right 1 Col (Calendar & Snapshots) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+      {/* Main Grid: Columns customized per user preference */}
+      <div className={`grid gap-6 ${
+        customization.dashboardColumns === '1'
+          ? 'grid-cols-1'
+          : customization.dashboardColumns === '2'
+          ? 'grid-cols-1 lg:grid-cols-2'
+          : 'grid-cols-1 lg:grid-cols-3'
+      }`}>
+        <div className={`${customization.dashboardColumns === '1' ? 'col-span-1' : 'lg:col-span-2'} space-y-6`}>
           {/* 1. Today's Priority Section (اولویت امروز) */}
-          {widgetConfig.showTodayPriority && (
+          {!isCardHidden('today_priority') && widgetConfig.showTodayPriority && (
             <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#263247] gap-2">
                 <div className="flex items-center gap-2">
@@ -1029,98 +1048,144 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               ویجت‌هایی را که مایلید در صفحه اصلی داشبورد نمایش داده شوند، فعال یا غیرفعال کنید:
             </p>
 
-            <div className="space-y-2.5">
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  اولویت‌های کلیدی امروز (وظایف و مهلت‌ها)
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showTodayPriority}
-                  onChange={(e) => updateWidgetConfig({ showTodayPriority: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  برنامه زنگ‌های روز مدرسه
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showTodaySchedule}
-                  onChange={(e) => updateWidgetConfig({ showTodaySchedule: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  پیگیری عادت‌ها و استریک‌های روزانه
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showHabits}
-                  onChange={(e) => updateWidgetConfig({ showHabits: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  نمودار ساعات مطالعه ۷ روز اخیر
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showStudyHoursChart}
-                  onChange={(e) => updateWidgetConfig({ showStudyHoursChart: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  تقویمچه شمسی کوچک
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showMiniCalendar}
-                  onChange={(e) => updateWidgetConfig({ showMiniCalendar: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  وضعیت پیشرفت مهارت‌ها و پروژه‌ها
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showSectionProgress}
-                  onChange={(e) => updateWidgetConfig({ showSectionProgress: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]/50 cursor-pointer">
-                <span className="text-xs font-medium text-slate-800 dark:text-slate-200">
-                  گزارش فعالیت‌های اخیر
-                </span>
-                <input
-                  type="checkbox"
-                  checked={widgetConfig.showRecentActivity}
-                  onChange={(e) => updateWidgetConfig({ showRecentActivity: e.target.checked })}
-                  className="w-4 h-4 text-cyan-500 rounded accent-cyan-500"
-                />
-              </label>
+            <div className="flex items-center justify-between pb-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                ترتیب کارت‌ها را تغییر دهید، موارد دلخواه را مخفی کنید یا تعداد ستون‌ها را برگزینید:
+              </p>
+              <button
+                onClick={() => {
+                  setShowConfigModal(false);
+                  onNavigate('settings');
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('pathly_open_customization'));
+                  }, 50);
+                }}
+                className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer whitespace-nowrap"
+              >
+                <Palette className="w-3.5 h-3.5" />
+                <span>شخصی‌سازی کامل</span>
+              </button>
             </div>
 
-            <div className="pt-2 flex justify-end">
+            {/* Column Selector */}
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-xs">
+              <span className="font-bold text-slate-700 dark:text-slate-300">چیدمان ستون‌ها:</span>
+              <div className="flex items-center gap-1">
+                {(['auto', '1', '2', '3'] as const).map((col) => (
+                  <button
+                    key={col}
+                    type="button"
+                    onClick={() => updateCustomization({ dashboardColumns: col })}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      (customization.dashboardColumns || 'auto') === col
+                        ? 'bg-cyan-500 text-slate-950 shadow-xs'
+                        : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-[#111827]'
+                    }`}
+                  >
+                    {col === 'auto' ? 'خودکار' : `${toPersianDigits(col)} ستونه`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Cards List with Up/Down and Eye Toggle */}
+            <div className="space-y-2 max-h-72 overflow-y-auto cyber-scrollbar pr-1">
+              {customization.dashboardCardsOrder.map((cardId, index) => {
+                const cardDef = DEFAULT_DASHBOARD_CARDS.find((c) => c.id === cardId) || {
+                  id: cardId,
+                  label: cardId,
+                  category: 'عمومی',
+                };
+                const isHidden = (customization.hiddenDashboardCards || []).includes(cardId);
+
+                return (
+                  <div
+                    key={cardId}
+                    className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                      isHidden
+                        ? 'bg-slate-100/50 dark:bg-[#0B0F19]/50 border-dashed border-slate-300 dark:border-[#1E293B] opacity-60'
+                        : 'bg-slate-50 dark:bg-[#172033]/70 border-slate-200 dark:border-[#263247]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-5 h-5 rounded-md bg-slate-200 dark:bg-[#0D1220] text-slate-600 dark:text-slate-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                        {toPersianDigits(index + 1)}
+                      </span>
+                      <span className={`text-xs font-semibold truncate ${isHidden ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                        {cardDef.label}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => {
+                          const newOrder = [...customization.dashboardCardsOrder];
+                          const temp = newOrder[index];
+                          newOrder[index] = newOrder[index - 1];
+                          newOrder[index - 1] = temp;
+                          updateCustomization({ dashboardCardsOrder: newOrder });
+                        }}
+                        className="p-1 text-slate-400 hover:text-cyan-400 disabled:opacity-20 rounded cursor-pointer"
+                        title="بالا"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={index === customization.dashboardCardsOrder.length - 1}
+                        onClick={() => {
+                          const newOrder = [...customization.dashboardCardsOrder];
+                          const temp = newOrder[index];
+                          newOrder[index] = newOrder[index + 1];
+                          newOrder[index + 1] = temp;
+                          updateCustomization({ dashboardCardsOrder: newOrder });
+                        }}
+                        className="p-1 text-slate-400 hover:text-cyan-400 disabled:opacity-20 rounded cursor-pointer"
+                        title="پایین"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentHidden = customization.hiddenDashboardCards || [];
+                          const nextHidden = isHidden
+                            ? currentHidden.filter((id) => id !== cardId)
+                            : [...currentHidden, cardId];
+                          updateCustomization({ hiddenDashboardCards: nextHidden });
+                        }}
+                        className={`p-1 rounded cursor-pointer ${
+                          isHidden ? 'text-slate-400 hover:text-emerald-400' : 'text-cyan-500'
+                        }`}
+                        title={isHidden ? 'نمایش مجدد' : 'مخفی کردن'}
+                      >
+                        {isHidden ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-[#263247]">
+              <button
+                type="button"
+                onClick={() => updateCustomization({ dashboardCardsOrder: DEFAULT_DASHBOARD_CARDS.map((c) => c.id), hiddenDashboardCards: [] })}
+                className="text-xs text-rose-500 hover:underline cursor-pointer flex items-center gap-1"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>بازنشانی چیدمان</span>
+              </button>
+
               <button
                 onClick={() => setShowConfigModal(false)}
                 className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 text-xs font-bold rounded-xl cursor-pointer shadow-sm"
               >
-                تأیید و ذخیره
+                تأیید و بستن
               </button>
             </div>
           </div>

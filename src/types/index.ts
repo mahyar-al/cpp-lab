@@ -463,10 +463,13 @@ export type NavTab =
   | 'analytics'
   | 'settings';
 
-export type ThemeMode = 'dark' | 'light' | 'cyber-purple' | 'emerald-matrix' | 'ocean-deep' | 'sunset-gold';
+export type ThemeMode = 'dark' | 'light' | 'cyber-purple' | 'emerald-matrix' | 'ocean-deep' | 'sunset-gold' | 'rose-quartz';
 export type AccentColor = 'cyan' | 'emerald' | 'violet' | 'rose' | 'amber' | 'blue';
 export type FontSize = 'small' | 'normal' | 'large';
 export type LayoutDensity = 'compact' | 'comfortable' | 'spacious';
+export type BorderRadius = 'subtle' | 'medium' | 'rounded';
+export type GlowIntensity = 'none' | 'subtle' | 'high';
+export type DashboardColumns = '1' | '2' | '3' | 'auto';
 
 export interface UserCustomization {
   sectionNames: Partial<Record<NavTab, string>>;
@@ -474,10 +477,14 @@ export interface UserCustomization {
   navOrder: NavTab[];
   themeMode: ThemeMode;
   accentColor: AccentColor;
+  secondaryAccent?: AccentColor;
+  borderRadius?: BorderRadius;
+  glowIntensity?: GlowIntensity;
   fontSize: FontSize;
   density: LayoutDensity;
   dashboardCardsOrder: string[];
   hiddenDashboardCards: string[];
+  dashboardColumns?: DashboardColumns;
 }
 
 export interface UserProfile {

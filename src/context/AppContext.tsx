@@ -77,6 +77,9 @@ import {
   apiUpdateProfile,
   apiChangePassword,
   apiResetPassword,
+  apiCheckAvailability,
+  apiForgotPasswordRequest,
+  apiResetPasswordToken,
   apiDeleteAccount,
   apiFetchUserData,
   apiSaveUserData,
@@ -271,12 +274,25 @@ export interface AppContextType {
   syncStatus: SyncStatus;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
+  authModalInitialTab: 'login' | 'register' | 'recovery';
+  openAuthModal: (tab?: 'login' | 'register' | 'recovery') => void;
   login: (identifier: string, pass: string) => Promise<void>;
   register: (email: string, username: string, name: string, pass: string, question?: string, answer?: string) => Promise<void>;
   logout: () => void;
   updateAuthProfile: (payload: { name?: string; avatarUrl?: string; securityQuestion?: string; securityAnswer?: string }) => Promise<void>;
   changePassword: (oldPass: string, newPass: string) => Promise<void>;
   resetPassword: (identifier: string, answer: string, newPass: string) => Promise<void>;
+  requestPasswordResetToken: (identifier: string) => Promise<{
+    success: boolean;
+    message: string;
+    securityQuestion: string;
+    maskedEmail: string;
+    expiresInMinutes: number;
+    mockVerificationToken?: string;
+    infrastructureStatus: { smtpConfigured: boolean; mode: string; notice: string };
+  }>;
+  resetPasswordWithToken: (identifier: string, token: string, newPass: string) => Promise<void>;
+  checkAvailability: (params: { email?: string; username?: string }) => Promise<{ emailAvailable?: boolean; usernameAvailable?: boolean }>;
   deleteAccount: (pass: string) => Promise<void>;
   syncWithServer: () => Promise<void>;
   serverSnapshots: Array<{ id: string; createdAt: string; reason: string }>;
@@ -292,7 +308,7 @@ export interface AppContextType {
 
   // Full User Customization
   customization: UserCustomization;
-  updateCustomization: (updates: Partial<UserCustomization>) => void;
+  updateCustomization: (updates: Partial<UserCustomization>, notify?: boolean) => void;
   resetCustomization: (part?: 'all' | 'names' | 'appearance' | 'dashboard' | 'nav') => void;
   getSectionTitle: (tab: NavTab) => string;
 }
@@ -379,6 +395,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('synced');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalInitialTab, setAuthModalInitialTab] = useState<'login' | 'register' | 'recovery'>('login');
+
+  const openAuthModal = useCallback((tab: 'login' | 'register' | 'recovery' = 'login') => {
+    setAuthModalInitialTab(tab);
+    setIsAuthModalOpen(true);
+  }, []);
   const [serverSnapshots, setServerSnapshots] = useState<Array<{ id: string; createdAt: string; reason: string }>>([]);
 
   // Initialize session and pull persistent user records from server
@@ -486,15 +508,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       : [...initialCustomization.navOrder],
     themeMode: state.profile?.customization?.themeMode || (state.profile?.theme === 'light' ? 'light' : 'dark'),
     accentColor: state.profile?.customization?.accentColor || 'cyan',
+    secondaryAccent: state.profile?.customization?.secondaryAccent || 'violet',
+    borderRadius: state.profile?.customization?.borderRadius || 'medium',
+    glowIntensity: state.profile?.customization?.glowIntensity || 'subtle',
     fontSize: state.profile?.customization?.fontSize || 'normal',
     density: state.profile?.customization?.density || 'comfortable',
     dashboardCardsOrder: state.profile?.customization?.dashboardCardsOrder?.length
       ? state.profile.customization.dashboardCardsOrder
       : [...initialCustomization.dashboardCardsOrder],
     hiddenDashboardCards: state.profile?.customization?.hiddenDashboardCards || [],
+    dashboardColumns: state.profile?.customization?.dashboardColumns || 'auto',
   };
 
-  // Sync theme, accent color, font size and density to the HTML element
+  // Sync theme, accent color, font size, density, border radius, and glow to the HTML element
   useEffect(() => {
     const cust = customization;
     const isDark = cust.themeMode !== 'light';
@@ -507,12 +533,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     document.documentElement.setAttribute('data-theme', cust.themeMode);
     document.documentElement.setAttribute('data-accent', cust.accentColor);
+    document.documentElement.setAttribute('data-secondary-accent', cust.secondaryAccent || 'violet');
+    document.documentElement.setAttribute('data-border-radius', cust.borderRadius || 'medium');
+    document.documentElement.setAttribute('data-glow', cust.glowIntensity || 'subtle');
     document.documentElement.setAttribute('data-font-size', cust.fontSize);
     document.documentElement.setAttribute('data-density', cust.density);
   }, [
     state.profile?.theme,
     state.profile?.customization?.themeMode,
     state.profile?.customization?.accentColor,
+    state.profile?.customization?.secondaryAccent,
+    state.profile?.customization?.borderRadius,
+    state.profile?.customization?.glowIntensity,
     state.profile?.customization?.fontSize,
     state.profile?.customization?.density,
   ]);
@@ -528,7 +560,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [state.profile?.customization?.sectionNames]
   );
 
-  const updateCustomization = (updates: Partial<UserCustomization>) => {
+  const updateCustomization = (updates: Partial<UserCustomization>, notify: boolean = true) => {
     setState((prev: any) => {
       const currentCust = prev.profile?.customization || initialCustomization;
       const updatedCust: UserCustomization = {
@@ -555,7 +587,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         },
       };
     });
-    showToast('تنظیمات شخصی‌سازی ذخیره شد.');
+    if (notify) {
+      showToast('تنظیمات شخصی‌سازی با موفقیت ذخیره شد.');
+    }
   };
 
   const resetCustomization = (part: 'all' | 'names' | 'appearance' | 'dashboard' | 'nav' = 'all') => {
@@ -575,11 +609,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } else if (part === 'appearance') {
         newCust.themeMode = initialCustomization.themeMode;
         newCust.accentColor = initialCustomization.accentColor;
+        newCust.secondaryAccent = initialCustomization.secondaryAccent;
+        newCust.borderRadius = initialCustomization.borderRadius;
+        newCust.glowIntensity = initialCustomization.glowIntensity;
         newCust.fontSize = initialCustomization.fontSize;
         newCust.density = initialCustomization.density;
       } else if (part === 'dashboard') {
         newCust.dashboardCardsOrder = [...initialCustomization.dashboardCardsOrder];
         newCust.hiddenDashboardCards = [];
+        newCust.dashboardColumns = initialCustomization.dashboardColumns;
       } else if (part === 'nav') {
         newCust.navOrder = [...initialCustomization.navOrder];
         newCust.hiddenSections = [];
@@ -2436,6 +2474,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await apiResetPassword({ identifier, securityAnswer: answer, newPassword: newPass });
   };
 
+  const requestPasswordResetToken = async (identifier: string) => {
+    return await apiForgotPasswordRequest(identifier);
+  };
+
+  const resetPasswordWithToken = async (identifier: string, token: string, newPass: string) => {
+    const res = await apiResetPasswordToken({ identifier, token, newPassword: newPass });
+    showToast(res.message || 'رمز عبور با موفقیت بازنشانی شد.');
+  };
+
+  const checkAvailability = async (params: { email?: string; username?: string }) => {
+    return await apiCheckAvailability(params);
+  };
+
   const deleteAccount = async (pass: string) => {
     await apiDeleteAccount(pass);
     logout();
@@ -2618,12 +2669,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         syncStatus,
         isAuthModalOpen,
         setIsAuthModalOpen,
+        authModalInitialTab,
+        openAuthModal,
         login,
         register,
         logout,
         updateAuthProfile,
         changePassword,
         resetPassword,
+        requestPasswordResetToken,
+        resetPasswordWithToken,
+        checkAvailability,
         deleteAccount,
         syncWithServer,
         serverSnapshots,

@@ -49,6 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
     currentUser,
     syncStatus,
     setIsAuthModalOpen,
+    openAuthModal,
     logout,
     syncWithServer,
   } = useApp();
@@ -273,7 +274,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Login CTA if guest */}
           {!currentUser && (
             <button
-              onClick={() => setIsAuthModalOpen(true)}
+              onClick={() => openAuthModal('login')}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-cyan-500/15 to-blue-500/15 hover:from-cyan-500/25 hover:to-blue-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs active:scale-95"
               title="ورود یا ثبت‌نام حساب چندکاربره"
             >
@@ -370,7 +371,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <button
                       onClick={() => {
                         setShowProfileMenu(false);
-                        setIsAuthModalOpen(true);
+                        openAuthModal('login');
                       }}
                       className="w-full py-2 px-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer"
                     >
@@ -445,6 +446,9 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => {
                       setShowProfileMenu(false);
                       if (onSelectTab) onSelectTab('settings');
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent('pathly_open_customization'));
+                      }, 50);
                     }}
                     className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 rounded-xl transition-all cursor-pointer shadow-xs"
                   >
