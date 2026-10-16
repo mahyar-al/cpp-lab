@@ -199,12 +199,11 @@ export const SkillsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-purple-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <span className="p-2.5 rounded-xl bg-purple-500/10 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <Sparkles className="w-5 h-5" />
             </span>
             مدیریت و توسعه مهارت‌ها
           </h1>
@@ -214,7 +213,7 @@ export const SkillsView: React.FC = () => {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(168,85,247,0.35)] hover:shadow-[0_0_22px_rgba(168,85,247,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
+          className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
         >
           <Plus className="w-4 h-4" />
           افزودن مهارت جدید
@@ -222,13 +221,13 @@ export const SkillsView: React.FC = () => {
       </div>
 
       {skills.length === 0 ? (
-        <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
-          <Sparkles className="w-12 h-12 mx-auto text-slate-400 mb-3" />
-          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز مهارتی تعریف نشده است</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-4">اولین مهارت خود را برای ثبت پیشرفت و نقشه یادگیری اضافه کنید.</p>
+        <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-xl border border-dashed border-slate-300 dark:border-slate-800">
+          <Sparkles className="w-10 h-10 mx-auto text-slate-400 mb-3" />
+          <h3 className="text-base font-bold text-slate-700 dark:text-slate-200">هنوز مهارتی تعریف نشده است</h3>
+          <p className="text-xs text-slate-500 mt-1 mb-4">اولین مهارت خود را برای ثبت پیشرفت و نقشه یادگیری اضافه کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-bold cursor-pointer"
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer"
           >
             افزودن اولین مهارت
           </button>
@@ -240,7 +239,7 @@ export const SkillsView: React.FC = () => {
             <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
               فهرست مهارت‌ها ({toPersianDigits(skills.length)})
             </h2>
-            <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto cyber-scrollbar pr-0.5">
+            <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto pr-0.5">
               {skills.map((skill) => {
                 const isSelected = activeSkill && activeSkill.id === skill.id;
                 const mastery = calculateMastery(skill);
@@ -250,10 +249,10 @@ export const SkillsView: React.FC = () => {
                   <div
                     key={skill.id}
                     onClick={() => setSelectedSkillId(skill.id)}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    className={`p-4 rounded-xl border cursor-pointer transition-colors ${
                       isSelected
-                        ? 'bg-purple-500/10 dark:bg-purple-950/40 border-purple-400 dark:border-purple-500/60 shadow-[0_0_20px_-3px_rgba(168,85,247,0.25)]'
-                        : 'bg-white dark:bg-[#0D1222] border-slate-200 dark:border-slate-800 hover:border-purple-500/30'
+                        ? 'bg-slate-50 dark:bg-slate-800/60 border-slate-900 dark:border-slate-100 shadow-xs'
+                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -268,12 +267,12 @@ export const SkillsView: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <h3 className="font-bold text-base text-slate-900 dark:text-white mt-1.5">
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white mt-1.5">
                           {skill.name}
                         </h3>
                       </div>
-                      <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-xl text-xs font-bold border border-amber-500/20">
-                        <Flame className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-1 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-md text-xs font-medium border border-amber-200 dark:border-amber-800/50">
+                        <Flame className="w-3.5 h-3.5 text-amber-500" />
                         <span>{toPersianDigits(skill.streak)} روز</span>
                       </div>
                     </div>
@@ -281,11 +280,11 @@ export const SkillsView: React.FC = () => {
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
                         <span>میزان تسلط نقشه راه</span>
-                        <span className="font-bold text-purple-600 dark:text-purple-400">{toPersianDigits(mastery)}٪</span>
+                        <span className="font-mono tabular-nums font-semibold text-slate-700 dark:text-slate-300">{toPersianDigits(mastery)}٪</span>
                       </div>
                       <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full shadow-[0_0_8px_rgba(168,85,247,0.4)]"
+                          className="bg-slate-700 dark:bg-slate-300 h-full rounded-full transition-all"
                           style={{ width: `${mastery}%` }}
                         />
                       </div>

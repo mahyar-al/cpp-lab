@@ -317,9 +317,9 @@ export const SchoolView: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-white dark:bg-cyan-500/15 text-cyan-700 dark:text-[#00F5FF] border border-slate-200 dark:border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-200 dark:border-slate-700 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
@@ -413,7 +413,7 @@ export const SchoolView: React.FC = () => {
                             >
                               {hasContent ? (
                                 <div
-                                  className="h-24 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-between transition-all group-hover:border-cyan-500/50 group-hover:shadow-[0_0_15px_-3px_rgba(6,182,212,0.2)] bg-slate-50/60 dark:bg-[#12192B]/80 relative overflow-hidden"
+                                  className="h-24 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex flex-col justify-between transition-colors group-hover:border-slate-400 dark:group-hover:border-slate-600 bg-slate-50/60 dark:bg-slate-900/60 relative overflow-hidden"
                                 >
                                   <div
                                     className="absolute top-0 right-0 left-0 h-[2px] opacity-80"

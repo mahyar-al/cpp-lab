@@ -19,17 +19,12 @@ import {
   X,
   BookOpen,
   Zap,
-  BookMarked,
-  Layers,
-  ArrowRight,
-  TrendingUp,
   ArrowUp,
   ArrowDown,
   Eye,
   EyeOff,
   Palette,
-  LifeBuoy,
-  Bot,
+  ChevronDown,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { DEFAULT_DASHBOARD_CARDS } from '../../utils/initialData';
@@ -44,8 +39,7 @@ import {
   getPersianMonthName,
 } from '../../utils/jalali';
 import { NavTab } from '../layout/Sidebar';
-import { Habit, Priority, SectionType } from '../../types';
-import { RPGBanner } from '../common/RPGBanner';
+import { SectionType } from '../../types';
 
 interface DashboardViewProps {
   onNavigate: (tab: NavTab) => void;
@@ -72,22 +66,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     addHabit,
     reviews,
     widgetConfig,
-    updateWidgetConfig,
     rolloverOverdueTasks,
     activityLogs,
     getSectionTitle,
     customization,
     updateCustomization,
-    setIsRescueModalOpen,
     setIsAIAssistantOpen,
-    startActiveFocus,
-    rpg,
   } = useApp();
 
   const isCardHidden = (id: string) => (customization.hiddenDashboardCards || []).includes(id);
 
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showNewHabitModal, setShowNewHabitModal] = useState(false);
+  const [showMoreDetails, setShowMoreDetails] = useState(false);
   const [newHabitTitle, setNewHabitTitle] = useState('');
   const [newHabitCategory, setNewHabitCategory] = useState<SectionType>('school');
   const [newHabitDays, setNewHabitDays] = useState(5);
@@ -108,7 +99,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           subject: sub,
           subjectName: cell?.customSubjectName || sub?.name,
           room: cell?.room || sub?.room,
-          color: cell?.color || sub?.color || '#00F5FF',
+          color: cell?.color || sub?.color || '#0284C7',
           notes: cell?.notes,
         };
       })
@@ -137,7 +128,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       .map((t) => ({
         id: t.id,
         title: t.title,
-        subtitle: 'برنامه برنامه‌ریز روزانه',
+        subtitle: 'برنامه‌ریز روزانه',
         estimatedMin: t.estimatedMinutes || 30,
         priority: t.priority,
         isOverdue: false,
@@ -165,8 +156,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   // Time metrics
   const totalRequiredMinutes = todayPriorities.reduce((acc, curr) => acc + curr.estimatedMin, 0);
   const totalRequiredHours = (totalRequiredMinutes / 60).toFixed(1);
-  const schoolMinutes = isSchoolDay ? 360 : 0; // 6 hours school
-  const wakingMinutes = 16 * 60; // 16 waking hours
+  const schoolMinutes = isSchoolDay ? 360 : 0;
+  const wakingMinutes = 16 * 60;
   const freeMinutesRemaining = Math.max(0, wakingMinutes - schoolMinutes - totalRequiredMinutes);
   const freeHoursRemaining = (freeMinutesRemaining / 60).toFixed(1);
   const isOverloaded = totalRequiredMinutes > 360;
@@ -207,11 +198,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
   // 4 Pillars Key Data Calculations
   const activeSkillsCount = skills.length;
-  const totalSkillPracticeMinutes = skills.reduce(
-    (sum, s) => sum + (s.practiceLogs || []).reduce((acc, p) => acc + (p.minutes || 0), 0),
-    0
-  );
-  const totalSkillPracticeHours = (totalSkillPracticeMinutes / 60).toFixed(1);
   const avgSkillProgress =
     skills.length > 0
       ? Math.round(
@@ -224,7 +210,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       : 0;
 
   const activeProjects = projects.filter((p) => p.status !== 'completed');
-  const pendingProjectTasks = projects.flatMap((p) => p.tasks).filter((t) => t.status !== 'completed').length;
   const avgProjectProgress =
     projects.length > 0
       ? Math.round(projects.reduce((acc, p) => acc + p.progressPercentage, 0) / projects.length)
@@ -250,392 +235,232 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
   return (
     <div className="space-y-6">
-      {/* Gamification Life RPG Banner */}
-      {rpg?.enabled && <RPGBanner />}
-
-      {/* Top Futuristic Command Center Strip */}
-      <div className="bg-white dark:bg-[#111827] rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-[#263247] shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-32 bg-purple-500/5 dark:bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5 text-xs text-slate-500 dark:text-slate-400">
-              <CalendarIcon className="w-3.5 h-3.5 text-cyan-500" />
-              <span>{formatJalaliFull(today)}</span>
-              <span aria-hidden="true">·</span>
-              <span>{getIranianDayName(today)}</span>
-            </div>
-            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-[#F1F5F9]">
-              {greeting}، {profile.name || 'کاربر عزیز'}
-            </h2>
-            <p className="mt-1 text-xs md:text-sm text-slate-600 dark:text-[#94A3B8] max-w-xl leading-relaxed">
-              {toPersianDigits(todayPriorities.length)} اولویت کاری،{' '}
-              {toPersianDigits(overdueHomeworks.length)} کار در انتظار و{' '}
-              {toPersianDigits(weeklyGoals.length)} هدف فعال برای این هفته دارید.
-            </p>
+      {/* Calm, Minimal Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <CalendarIcon className="w-3.5 h-3.5" />
+            <span>{formatJalaliFull(today)}</span>
+            <span aria-hidden="true">·</span>
+            <span>{getIranianDayName(today)}</span>
           </div>
-
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 flex-wrap">
-            {/* Rescue Mode Button */}
-            <button
-              onClick={() => setIsRescueModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-95"
-              title="نجات روز"
-            >
-              <LifeBuoy className="w-4 h-4 text-amber-500 animate-pulse" />
-              <span>نجات روز</span>
-            </button>
-
-            {/* AI Assistant Button */}
-            <button
-              onClick={() => setIsAIAssistantOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-cyan-500 dark:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 rounded-xl transition-all cursor-pointer whitespace-nowrap active:scale-95"
-              title="دستیار هوشمند"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>دستیار هوشمند</span>
-            </button>
-
-            <button
-              onClick={() => setShowConfigModal(true)}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-[#172033] hover:bg-slate-200 dark:hover:bg-[#1f2b45] border border-slate-200 dark:border-[#263247] rounded-xl transition-all cursor-pointer whitespace-nowrap"
-              title="تنظیم ویجت‌ها"
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500 dark:text-cyan-400" />
-              <span className="hidden sm:inline">تنظیم ویجت‌ها</span>
-            </button>
-            <button
-              onClick={onOpenQuickAdd}
-              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(0,245,255,0.35)] transition-all cursor-pointer whitespace-nowrap"
-            >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>ثبت سریع</span>
-            </button>
-          </div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+            {greeting}، {profile.name || 'کاربر عزیز'}
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            {toPersianDigits(todayPriorities.length)} اولویت کاری برای امروز داری · {toPersianDigits(weeklyGoals.length)} هدف هفتگی فعال
+          </p>
         </div>
 
-        {/* Quick Launch Station Strip */}
-        <div className="mt-5 pt-4 border-t border-slate-100 dark:border-[#263247] grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5">
+        <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={() => onNavigate('daily_planner')}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220]/80 hover:bg-cyan-500/10 dark:hover:bg-[#172033] border border-slate-200 dark:border-[#263247] hover:border-cyan-500/40 text-slate-700 dark:text-slate-300 transition-all cursor-pointer group"
+            onClick={() => setIsAIAssistantOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors cursor-pointer"
+            title="دستیار هوشمند برنامه‌ریزی"
           >
-            <div className="w-7 h-7 rounded-lg bg-cyan-500/15 text-cyan-600 dark:text-[#00F5FF] flex items-center justify-center shrink-0">
-              <Clock className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">{getSectionTitle('daily_planner')}</div>
-              <div className="text-[9px] text-slate-400">زمان‌بندی روز</div>
-            </div>
+            <Sparkles className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+            <span>دستیار هوشمند</span>
           </button>
 
           <button
-            onClick={() => onNavigate('focus_timer')}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220]/80 hover:bg-cyan-500/10 dark:hover:bg-[#172033] border border-slate-200 dark:border-[#263247] hover:border-cyan-500/40 text-slate-700 dark:text-slate-300 transition-all cursor-pointer group"
+            onClick={() => setShowConfigModal(true)}
+            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors cursor-pointer"
+            title="تنظیم کارت‌های داشبورد"
           >
-            <div className="w-7 h-7 rounded-lg bg-cyan-500/15 text-cyan-600 dark:text-[#00F5FF] flex items-center justify-center shrink-0">
-              <Zap className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">{getSectionTitle('focus_timer')}</div>
-              <div className="text-[9px] text-slate-400">پومودورو</div>
-            </div>
+            <SlidersHorizontal className="w-4 h-4" />
           </button>
 
           <button
-            onClick={() => onNavigate('habits')}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220]/80 hover:bg-amber-500/10 dark:hover:bg-[#172033] border border-slate-200 dark:border-[#263247] hover:border-amber-500/40 text-slate-700 dark:text-slate-300 transition-all cursor-pointer group"
+            onClick={onOpenQuickAdd}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
           >
-            <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-              <Flame className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-amber-500">{getSectionTitle('habits')}</div>
-              <div className="text-[9px] text-slate-400">{toPersianDigits(habits.length)} عادت فعال</div>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onNavigate('reviews')}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220]/80 hover:bg-indigo-500/10 dark:hover:bg-[#172033] border border-slate-200 dark:border-[#263247] hover:border-indigo-500/40 text-slate-700 dark:text-slate-300 transition-all cursor-pointer group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-              <RotateCcw className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-indigo-400">{getSectionTitle('reviews')}</div>
-              <div className="text-[9px] text-slate-400">{dueReviews.length > 0 ? `${toPersianDigits(dueReviews.length)} موعد امروز` : 'به‌روز'}</div>
-            </div>
-          </button>
-
-          <button
-            onClick={() => onNavigate('resources')}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220]/80 hover:bg-teal-500/10 dark:hover:bg-[#172033] border border-slate-200 dark:border-[#263247] hover:border-teal-500/40 text-slate-700 dark:text-slate-300 transition-all cursor-pointer group col-span-2 sm:col-span-1"
-          >
-            <div className="w-7 h-7 rounded-lg bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
-              <BookOpen className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-right truncate">
-              <div className="text-[11px] font-bold truncate group-hover:text-teal-400">{getSectionTitle('resources')}</div>
-              <div className="text-[9px] text-slate-400">کتب و دوره‌ها</div>
-            </div>
+            <Plus className="w-4 h-4" />
+            <span>ثبت سریع</span>
           </button>
         </div>
       </div>
 
-      {/* Due Spaced Repetitions Prompt Banner if any */}
+      {/* Spaced Review Notification (Only if due) */}
       {dueReviews.length > 0 && (
-        <div className="p-3.5 sm:p-4 rounded-xl bg-indigo-500/10 dark:bg-indigo-950/30 border border-indigo-500/30 dark:border-indigo-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-[0_0_15px_-3px_rgba(99,102,241,0.25)]">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-              <RotateCcw className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-slate-900 dark:text-indigo-200">
-                {toPersianDigits(dueReviews.length)} مبحث در انتظار مرور است
-              </div>
+        <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <RotateCcw className="w-4 h-4 text-slate-600 dark:text-slate-300 shrink-0" />
+            <div className="text-xs font-medium text-slate-800 dark:text-slate-200">
+              {toPersianDigits(dueReviews.length)} مبحث آماده مرور فاصله‌دار است.
             </div>
           </div>
           <button
             onClick={() => onNavigate('reviews')}
-            className="px-3.5 py-2 sm:py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm text-center"
+            className="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white rounded-lg border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer text-center shrink-0"
           >
             شروع مرور
           </button>
         </div>
       )}
 
-      {/* 4 Core Pillars KPI Cards — School, Skills, Projects, Competitions */}
+      {/* 4 Pillars Unified Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Pillar 1: School (مدرسه و درس‌ها) — Electric Cyan */}
+        {/* Pillar 1: School */}
         <div
           onClick={() => onNavigate('school')}
-          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-cyan-500/20 hover:border-cyan-500/50 hover:shadow-[0_0_25px_-5px_rgba(6,182,212,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
+          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-xl pointer-events-none" />
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">{getSectionTitle('school')}</span>
-            <div className="p-2 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
-              <GraduationCap className="w-4 h-4" />
-            </div>
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <span>{getSectionTitle('school')}</span>
+            <GraduationCap className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
+            <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(pendingHomeworks.length)}
             </span>
-            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
               ورود <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
             <span>تکالیف در دست انجام</span>
             {overdueHomeworks.length > 0 ? (
-              <span className="text-rose-500 font-bold font-mono tabular-nums">
+              <span className="text-rose-600 dark:text-rose-400 font-medium">
                 {toPersianDigits(overdueHomeworks.length)} عقب‌افتاده
               </span>
             ) : (
-              <span className="text-emerald-500 dark:text-emerald-400 font-medium">به‌روز</span>
+              <span className="text-emerald-600 dark:text-emerald-400">به‌روز</span>
             )}
           </div>
         </div>
 
-        {/* Pillar 2: Skills (توسعه مهارت‌ها) — Radiant Violet */}
+        {/* Pillar 2: Skills */}
         <div
           onClick={() => onNavigate('skills')}
-          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_-5px_rgba(168,85,247,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
+          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">{getSectionTitle('skills')}</span>
-            <div className="p-2 rounded-xl bg-purple-500/10 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.25)]">
-              <Sparkles className="w-4 h-4" />
-            </div>
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <span>{getSectionTitle('skills')}</span>
+            <Sparkles className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
+            <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(activeSkillsCount)}
             </span>
-            <span className="text-xs text-purple-600 dark:text-purple-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
               نقشه‌راه <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-            <span>میانگین پیشرفت: <strong className="font-mono tabular-nums text-purple-400">{toPersianDigits(avgSkillProgress)}٪</strong></span>
-            <span className="font-mono tabular-nums">{toPersianDigits(totalSkillPracticeHours)}h تمرین</span>
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+            <span>میانگین پیشرفت</span>
+            <span className="font-mono tabular-nums font-semibold text-slate-700 dark:text-slate-300">
+              {toPersianDigits(avgSkillProgress)}٪
+            </span>
           </div>
         </div>
 
-        {/* Pillar 3: Projects (پروژه‌ها و کانبان) — Electric Blue */}
+        {/* Pillar 3: Projects */}
         <div
           onClick={() => onNavigate('projects')}
-          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-blue-500/20 hover:border-blue-500/50 hover:shadow-[0_0_25px_-5px_rgba(59,130,246,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
+          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-xl pointer-events-none" />
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">{getSectionTitle('projects')}</span>
-            <div className="p-2 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.25)]">
-              <FolderGit2 className="w-4 h-4" />
-            </div>
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <span>{getSectionTitle('projects')}</span>
+            <FolderGit2 className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
+            <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(activeProjects.length)}
             </span>
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
+            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
               کانبان <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-            <span>پیشرفت کل: <strong className="font-mono tabular-nums text-blue-400">{toPersianDigits(avgProjectProgress)}٪</strong></span>
-            <span className="font-mono tabular-nums">{toPersianDigits(pendingProjectTasks)} تسک فعال</span>
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+            <span>پیشرفت پروژه‌ها</span>
+            <span className="font-mono tabular-nums font-semibold text-slate-700 dark:text-slate-300">
+              {toPersianDigits(avgProjectProgress)}٪
+            </span>
           </div>
         </div>
 
-        {/* Pillar 4: Competitions (مسابقات و المپیاد) — Neon Amber */}
+        {/* Pillar 4: Competitions */}
         <div
           onClick={() => onNavigate('competitions')}
-          className="relative p-4 bg-white dark:bg-[#0D1222] rounded-2xl border border-slate-200 dark:border-amber-500/20 hover:border-amber-500/50 hover:shadow-[0_0_25px_-5px_rgba(245,158,11,0.3)] transition-all duration-200 cursor-pointer group overflow-hidden"
+          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
         >
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2.5">
-            <span className="font-medium">{getSectionTitle('competitions')}</span>
-            <div className="p-2 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
-              <Trophy className="w-4 h-4" />
-            </div>
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <span>{getSectionTitle('competitions')}</span>
+            <Trophy className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl sm:text-3xl font-black font-mono tabular-nums text-slate-900 dark:text-white">
+            <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {daysToNextCompetition !== null ? `${toPersianDigits(daysToNextCompetition)} روز` : '—'}
             </span>
-            <span className="text-xs text-amber-600 dark:text-amber-400 font-bold flex items-center gap-0.5 group-hover:-translate-x-1 transition-transform">
-              آمادگی <ChevronLeft className="w-3.5 h-3.5" />
+            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
+              رویدادها <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 truncate">
-            <span className="truncate">{nextCompetition ? nextCompetition.title : 'رویداد ثبت‌شده'}</span>
-            <span className="font-mono tabular-nums text-amber-500 shrink-0">موعد بعدی</span>
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 truncate">
+            <span className="truncate">{nextCompetition ? nextCompetition.title : 'رویداد پیش‌رو'}</span>
           </div>
         </div>
       </div>
 
-      {/* Secondary Performance Telemetry Ribbon */}
-      {!isCardHidden('quick_stats') && (
-        <div className="p-3 bg-white/80 dark:bg-[#0D1222]/80 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 shrink-0">
-              <Target className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">تحقق اهداف هفتگی</div>
-              <div className="font-mono font-bold text-slate-900 dark:text-emerald-400 tabular-nums">
-                {toPersianDigits(weeklyGoalsPercent)}٪ ({toPersianDigits(completedWeeklyGoals)} از {toPersianDigits(weeklyGoals.length)})
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-            <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 dark:text-purple-400 shrink-0">
-              <Clock className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">ساعت مطالعه ۷ روز اخیر</div>
-              <div className="font-mono font-bold text-slate-900 dark:text-purple-400 tabular-nums">
-                {toPersianDigits(totalRecentHours)} ساعت تمرکزی
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
-              <Flame className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">استمرار یادگیری متوالی</div>
-              <div className="font-mono font-bold text-slate-900 dark:text-amber-400 tabular-nums">
-                {toPersianDigits(maxStreak)} روز متوالی
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-[#121829] border border-slate-100 dark:border-slate-800/60">
-            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 shrink-0">
-              <Zap className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">زمان آزاد باقیمانده امروز</div>
-              <div className="font-mono font-bold text-slate-900 dark:text-cyan-400 tabular-nums">
-                {toPersianDigits(freeHoursRemaining)} ساعت آزاد
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Grid: Columns customized per user preference */}
-      <div className={`grid gap-6 ${
-        customization.dashboardColumns === '1'
-          ? 'grid-cols-1'
-          : customization.dashboardColumns === '2'
-          ? 'grid-cols-1 lg:grid-cols-2'
-          : 'grid-cols-1 lg:grid-cols-3'
-      }`}>
-        <div className={`${customization.dashboardColumns === '1' ? 'col-span-1' : 'lg:col-span-2'} space-y-6`}>
-          {/* 1. Today's Priority Section (اولویت امروز) */}
+      {/* Main Two-Column Working Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Right Area (8 cols on lg): Today's Priorities & Habit Check-in */}
+        <div className="lg:col-span-7 space-y-6">
+          {/* Today's Priorities */}
           {!isCardHidden('today_priority') && widgetConfig.showTodayPriority && (
-            <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#263247] gap-2">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800 gap-2">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-500 dark:text-[#00F5FF]" />
+                  <CheckCircle2 className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                     اولویت‌های امروز
                   </h3>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono tabular-nums">
-                    ({toPersianDigits(todayPriorities.length)} مورد · تخمین {toPersianDigits(totalRequiredHours)} ساعت)
+                  <span className="text-xs text-slate-400 font-mono tabular-nums">
+                    ({toPersianDigits(todayPriorities.length)} کار · {toPersianDigits(totalRequiredHours)} ساعت)
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
                   {overdueHomeworks.length > 0 && (
                     <button
                       onClick={rolloverOverdueTasks}
-                      className="flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-900/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors cursor-pointer"
+                      className="flex items-center gap-1 text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                       title="انتقال کارهای عقب‌افتاده به موعد امروز"
                     >
                       <RotateCcw className="w-3 h-3" />
                       <span>انتقال عقب‌افتاده‌ها</span>
                     </button>
                   )}
-                  <span className="text-xs text-slate-400 dark:text-slate-400">
-                    زمان آزاد روز: <span className="font-mono tabular-nums text-slate-700 dark:text-slate-200 font-bold">{toPersianDigits(freeHoursRemaining)} ساعت</span>
+                  <span className="text-xs text-slate-400">
+                    زمان آزاد: <strong className="text-slate-700 dark:text-slate-300 font-mono tabular-nums">{toPersianDigits(freeHoursRemaining)}h</strong>
                   </span>
                 </div>
               </div>
 
-              {/* Overload Alert */}
+              {/* Overload Alert (Subtle) */}
               {isOverloaded && (
-                <div className="mb-4 p-3 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-lg flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
+                <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 rounded-lg flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
                   <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
                   <div className="leading-relaxed">
-                    برنامه امروز شما بیش از {toPersianDigits(totalRequiredHours)} ساعت کار تمرکزی دارد. برای پیشگیری از خستگی، می‌توانید کارهای کم‌اهمیت‌تر را به روزهای بعد موکول کنید.
+                    حجم کاری امروز بیش از {toPersianDigits(totalRequiredHours)} ساعت است؛ می‌توانید اولویت‌های عادی را به روزهای بعد موکول کنید.
                   </div>
                 </div>
               )}
 
-              {/* Task Items */}
+              {/* Task list */}
               <div className="space-y-2">
                 {todayPriorities.length === 0 ? (
                   <div className="py-8 text-center text-xs text-slate-400 dark:text-slate-500">
-                    هیچ وظیفه معوقه‌ای برای امروز ثبت نشده است.
+                    همه کارهای امروز با موفقیت انجام شده‌اند.
                   </div>
                 ) : (
                   todayPriorities.map((item) => (
                     <div
                       key={item.id}
-                      className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                      className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
                         item.isOverdue
-                          ? 'bg-rose-50/40 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/50'
-                          : 'bg-white dark:bg-[#172033]/60 border-slate-200 dark:border-[#263247] hover:border-slate-300 dark:hover:border-cyan-500/30'
+                          ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/40'
+                          : 'bg-slate-50/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -655,20 +480,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                               );
                             }
                           }}
-                          className="w-4 h-4 text-cyan-500 rounded border-slate-300 dark:border-slate-600 cursor-pointer accent-cyan-500"
+                          className="w-4 h-4 text-slate-900 dark:text-slate-100 rounded border-slate-300 dark:border-slate-600 cursor-pointer accent-slate-800 dark:accent-slate-200"
                         />
                         <div className="min-w-0">
-                          <p className={`text-xs font-semibold truncate ${item.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-[#F1F5F9]'}`}>
+                          <p className={`text-xs font-medium truncate ${item.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
                             {item.title}
                           </p>
-                          <div className="flex items-center gap-2 text-[11px] text-slate-400 dark:text-slate-400 mt-0.5">
+                          <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
                             <span>{item.subtitle}</span>
                             <span aria-hidden="true">·</span>
-                            <span className="font-mono tabular-nums">تخمین: {toPersianDigits(item.estimatedMin)} دقیقه</span>
+                            <span className="font-mono tabular-nums">{toPersianDigits(item.estimatedMin)} دقیقه</span>
                             {item.isOverdue && (
                               <>
                                 <span aria-hidden="true">·</span>
-                                <span className="text-rose-500 dark:text-rose-400 font-bold">عقب‌افتاده</span>
+                                <span className="text-rose-600 dark:text-rose-400 font-medium">عقب‌افتاده</span>
                               </>
                             )}
                           </div>
@@ -676,12 +501,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${
+                        <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${
                           item.priority === 'high'
-                            ? 'bg-rose-500/10 text-rose-500 border border-rose-500/30'
+                            ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300'
                             : item.priority === 'medium'
-                            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                            ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         }`}>
                           {item.priority === 'high' ? 'فوری' : item.priority === 'medium' ? 'متوسط' : 'عادی'}
                         </span>
@@ -693,59 +518,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
           )}
 
-          {/* 2. Today's School Schedule */}
-          {widgetConfig.showTodaySchedule && (
-            <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#263247]">
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="w-4 h-4 text-blue-500" />
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    برنامه مدرسه امروز ({getIranianDayName(today)})
-                  </h3>
-                </div>
-                <button
-                  onClick={() => onNavigate('school')}
-                  className="text-xs text-cyan-600 dark:text-[#00F5FF] hover:underline flex items-center gap-0.5 cursor-pointer"
-                >
-                  جدول هفتگی مدرسه <ChevronLeft className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {isSchoolDay ? (
-                <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
-                  {todayBells.map((bell) => (
-                    <div
-                      key={bell.period}
-                      className="p-3 rounded-xl border border-slate-100 dark:border-[#263247] bg-slate-50/70 dark:bg-[#172033]/60 flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                          <span>زنگ {toPersianDigits(bell.period)}</span>
-                          <span className="font-mono tabular-nums text-[10px]">{toPersianDigits(bell.bellTime.startTime)}</span>
-                        </div>
-                        <div className="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">
-                          {bell.subjectName || '— بدون درس —'}
-                        </div>
-                      </div>
-                      <div className="mt-2 pt-2 border-t border-slate-200/50 dark:border-[#263247] flex items-center justify-between text-[10px] text-slate-400">
-                        <span>{bell.room || 'کلاس'}</span>
-                        <span className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: bell.color, color: bell.color }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-6 text-center text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-[#172033]/30 rounded-xl">
-                  امروز کلاس درسی ثبت نشده است.
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 3. Habit Tracker Widget (پیگیری عادت‌ها) */}
+          {/* Today's Habits Tracker */}
           {widgetConfig.showHabits && (
-            <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#263247]">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
                   <Flame className="w-4 h-4 text-amber-500" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -755,16 +531,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setShowNewHabitModal(true)}
-                    className="text-xs text-cyan-600 dark:text-[#00F5FF] hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>عادت جدید</span>
                   </button>
                   <button
                     onClick={() => onNavigate('habits')}
-                    className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-0.5 cursor-pointer"
+                    className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-0.5 cursor-pointer"
                   >
-                    نمای کامل <ChevronLeft className="w-3.5 h-3.5" />
+                    مشاهده همه <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -774,40 +550,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                   هنوز عادتی ثبت نشده است.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {habits.map((habit) => {
                     const isDoneToday = habit.completedDates.includes(todayIso);
                     return (
                       <div
                         key={habit.id}
-                        className={`p-3 rounded-xl border transition-all flex items-center justify-between ${
+                        className={`p-2.5 rounded-lg border transition-colors flex items-center justify-between ${
                           isDoneToday
-                            ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-900/50'
-                            : 'bg-white dark:bg-[#172033]/50 border-slate-200 dark:border-[#263247]'
+                            ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/40'
+                            : 'bg-slate-50/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'
                         }`}
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="flex items-center gap-2 min-w-0">
                           <button
                             onClick={() => toggleHabitToday(habit.id)}
-                            className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                            className={`w-5 h-5 rounded flex items-center justify-center transition-colors shrink-0 cursor-pointer ${
                               isDoneToday
-                                ? 'bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(57,255,136,0.4)]'
-                                : 'border border-slate-300 dark:border-slate-600 text-transparent hover:border-cyan-400'
+                                ? 'bg-emerald-600 text-white'
+                                : 'border border-slate-300 dark:border-slate-600 hover:border-slate-400 text-transparent'
                             }`}
                           >
-                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <Check className="w-3 h-3 stroke-[2.5]" />
                           </button>
                           <div className="min-w-0">
-                            <p className={`text-xs font-semibold truncate ${isDoneToday ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-[#F1F5F9]'}`}>
+                            <p className={`text-xs font-medium truncate ${isDoneToday ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
                               {habit.title}
                             </p>
-                            <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                              <span>هدف: {toPersianDigits(habit.targetDaysPerWeek)} روز/هفته</span>
-                              <span aria-hidden="true">·</span>
-                              <span className="flex items-center gap-0.5 text-amber-500 font-mono tabular-nums font-bold">
-                                <Flame className="w-3 h-3" /> {toPersianDigits(habit.streak)} روز استمرار
-                              </span>
-                            </div>
+                            <span className="text-[10px] text-slate-400 font-mono tabular-nums">
+                              {toPersianDigits(habit.streak)} روز استمرار
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -817,37 +589,92 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               )}
             </div>
           )}
+        </div>
 
-          {/* 4. Weekly Study Hours Graph */}
-          {widgetConfig.showStudyHoursChart && (
-            <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#263247]">
+        {/* Left Area (5 cols on lg): Today's Schedule & 7-Day Trend */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Today's School Schedule */}
+          {widgetConfig.showTodaySchedule && (
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-purple-400" />
+                  <GraduationCap className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    روند ساعت مطالعه در ۷ روز اخیر
+                    برنامه مدرسه امروز ({getIranianDayName(today)})
                   </h3>
                 </div>
-                <span className="text-xs text-slate-400 font-mono tabular-nums">
-                  مجموع: <span className="text-purple-400 font-bold">{toPersianDigits(totalRecentHours)}</span> ساعت
+                <button
+                  onClick={() => onNavigate('school')}
+                  className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center gap-0.5 cursor-pointer"
+                >
+                  جدول کامل <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {isSchoolDay ? (
+                <div className="space-y-2">
+                  {todayBells.map((bell) => (
+                    <div
+                      key={bell.period}
+                      className="p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between text-xs"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px] font-semibold flex items-center justify-center shrink-0">
+                          {toPersianDigits(bell.period)}
+                        </span>
+                        <div className="truncate">
+                          <span className="font-medium text-slate-800 dark:text-slate-200 truncate block">
+                            {bell.subjectName || '— بدون درس —'}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono tabular-nums">
+                            {toPersianDigits(bell.bellTime.startTime)} تا {toPersianDigits(bell.bellTime.endTime)}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[11px] text-slate-400 shrink-0">
+                        {bell.room || 'کلاس'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-6 text-center text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900/40 rounded-lg">
+                  امروز تعطیل یا بدون کلاس است.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 7-day study trend (Minimalist bars) */}
+          {widgetConfig.showStudyHoursChart && (
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    ساعت مطالعه ۷ روز اخیر
+                  </h3>
+                </div>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-mono tabular-nums">
+                  مجموع: <strong className="text-slate-800 dark:text-slate-200">{toPersianDigits(totalRecentHours)}h</strong>
                 </span>
               </div>
 
-              <div className="flex items-end justify-between gap-2 h-36 pt-4 px-2">
+              <div className="flex items-end justify-between gap-2 h-28 pt-2 px-1">
                 {last7DaysChart.map((d, idx) => {
                   const heightPercent = Math.round((d.hours / maxChartHours) * 100);
                   return (
-                    <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                      <span className="text-[10px] font-mono tabular-nums text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group">
+                      <span className="text-[9px] font-mono tabular-nums text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         {toPersianDigits(d.hours)}h
                       </span>
-                      <div className="w-full max-w-[32px] bg-slate-100 dark:bg-[#172033] rounded-t-lg overflow-hidden flex items-end h-24">
+                      <div className="w-full max-w-[24px] bg-slate-100 dark:bg-slate-800 rounded-t overflow-hidden flex items-end h-16">
                         <div
-                          className="w-full bg-gradient-to-t from-blue-600 via-cyan-500 to-[#00F5FF] hover:brightness-110 transition-all rounded-t-lg shadow-[0_0_10px_rgba(0,245,255,0.3)]"
+                          className="w-full bg-slate-700 dark:bg-slate-300 hover:opacity-80 transition-all rounded-t"
                           style={{ height: `${Math.max(6, heightPercent)}%` }}
                         />
                       </div>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-full">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
                         {d.dayName.slice(0, 3)}
                       </span>
                     </div>
@@ -856,26 +683,54 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               </div>
             </div>
           )}
-        </div>
 
-        {/* Right Column: Mini Calendar, Skills & Projects Snapshots, Recent Activity */}
-        <div className="space-y-6">
-          {/* Mini Shamsi Calendar */}
-          {widgetConfig.showMiniCalendar && (
-            <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-[#263247]">
+          {/* Quick Stats Ribbon */}
+          {!isCardHidden('quick_stats') && (
+            <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                <span className="text-[11px] text-slate-400 block mb-1">اهداف هفتگی</span>
+                <span className="font-mono font-bold text-slate-800 dark:text-slate-200 tabular-nums">
+                  {toPersianDigits(weeklyGoalsPercent)}٪ ({toPersianDigits(completedWeeklyGoals)}/{toPersianDigits(weeklyGoals.length)})
+                </span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                <span className="text-[11px] text-slate-400 block mb-1">استمرار روزانه</span>
+                <span className="font-mono font-bold text-slate-800 dark:text-slate-200 tabular-nums">
+                  {toPersianDigits(maxStreak)} روز متوالی
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Collapsible Secondary Details Area (Clean and Optional) */}
+      <div className="pt-2">
+        <button
+          onClick={() => setShowMoreDetails((prev) => !prev)}
+          className="w-full py-2.5 px-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <span>{showMoreDetails ? 'بستن تقویم و گزارش فعالیت‌ها' : 'مشاهده تقویم ماه و فعالیت‌های اخیر'}</span>
+          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showMoreDetails ? 'rotate-180' : ''}`} />
+        </button>
+
+        {showMoreDetails && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 animate-in fade-in duration-200">
+            {/* Mini Shamsi Calendar */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-xs font-bold text-slate-900 dark:text-white">
                   تقویم {monthName} {toPersianDigits(todayJalali.jy)}
                 </span>
                 <button
                   onClick={() => onNavigate('calendar')}
-                  className="text-xs text-cyan-600 dark:text-[#00F5FF] hover:underline flex items-center gap-0.5 cursor-pointer"
+                  className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-0.5 cursor-pointer"
                 >
                   تقویم کامل <ChevronLeft className="w-3 h-3" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-slate-400 mb-2">
+              <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-medium text-slate-400 mb-2">
                 <span>ش</span>
                 <span>ی</span>
                 <span>د</span>
@@ -892,10 +747,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                   return (
                     <div
                       key={dayNum}
-                      className={`h-7 flex items-center justify-center rounded-lg font-mono tabular-nums text-[11px] transition-colors ${
+                      className={`h-7 flex items-center justify-center rounded font-mono tabular-nums text-[11px] transition-colors ${
                         isCurrent
-                          ? 'bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 font-bold shadow-[0_0_10px_rgba(0,245,255,0.4)]'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#172033]'
+                          ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       {toPersianDigits(dayNum)}
@@ -904,139 +759,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 })}
               </div>
             </div>
-          )}
 
-          {/* 4 Pillars Snapshot */}
-          {widgetConfig.showSectionProgress && (
-            <>
-              {/* Active Skills Snapshot */}
-              <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-[#263247]">
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-[#39FF88]" />
-                    <span className="text-xs font-bold text-slate-900 dark:text-white">
-                      مسیر یادگیری مهارت‌ها
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => onNavigate('skills')}
-                    className="text-xs text-cyan-600 dark:text-[#00F5FF] hover:underline cursor-pointer"
-                  >
-                    تمام مهارت‌ها
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {skills.length === 0 ? (
-                    <div className="py-4 text-center text-xs text-slate-400 dark:text-slate-500">
-                      هنوز مهارتی تعریف نشده است.
-                    </div>
-                  ) : (
-                    skills.slice(0, 3).map((skill) => {
-                      const totalSteps = skill.roadmap.length;
-                      const doneSteps = skill.roadmap.filter((r) => r.completed).length;
-                      const percent = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
-                      return (
-                        <div key={skill.id} className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-semibold text-slate-800 dark:text-slate-200 truncate">
-                              {skill.name}
-                            </span>
-                            <span className="font-mono tabular-nums text-slate-400 text-[11px] font-bold">
-                              {toPersianDigits(percent)}٪
-                            </span>
-                          </div>
-                          <div className="w-full bg-slate-100 dark:bg-[#172033] h-1.5 rounded-full overflow-hidden">
-                            <div
-                              className="bg-emerald-500 h-full rounded-full shadow-[0_0_8px_rgba(57,255,136,0.3)]"
-                              style={{ width: `${percent}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-
-              {/* Active Projects Snapshot */}
-              <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-                <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-[#263247]">
-                  <div className="flex items-center gap-1.5">
-                    <FolderGit2 className="w-4 h-4 text-purple-400" />
-                    <span className="text-xs font-bold text-slate-900 dark:text-white">
-                      وضعیت پروژه‌های فعال
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => onNavigate('projects')}
-                    className="text-xs text-cyan-600 dark:text-[#00F5FF] hover:underline cursor-pointer"
-                  >
-                    برد کانبان
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {projects.length === 0 ? (
-                    <div className="py-4 text-center text-xs text-slate-400 dark:text-slate-500">
-                      هنوز پروژه‌ای ثبت نشده است.
-                    </div>
-                  ) : (
-                    projects.slice(0, 2).map((proj) => (
-                      <div
-                        key={proj.id}
-                        onClick={() => onNavigate('projects')}
-                        className="p-3 rounded-xl border border-slate-100 dark:border-[#263247] bg-slate-50/50 dark:bg-[#172033]/50 hover:border-purple-500/40 cursor-pointer transition-all"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
-                            {proj.title}
-                          </span>
-                          <span className="text-[10px] font-mono tabular-nums text-purple-500 dark:text-[#C084FC] font-bold">
-                            {toPersianDigits(proj.progressPercentage)}٪
-                          </span>
-                        </div>
-                        <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                          <div
-                            className="bg-purple-500 h-full rounded-full shadow-[0_0_8px_rgba(168,85,247,0.3)]"
-                            style={{ width: `${proj.progressPercentage}%` }}
-                          />
-                        </div>
-                        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
-                          <span className="font-mono tabular-nums">{toPersianDigits(proj.tasks.length)} وظیفه</span>
-                          <span>موعد: {getRelativeTimeString(proj.deadline)}</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Recent Activity Feed */}
-          {widgetConfig.showRecentActivity && (
-            <div className="bg-white dark:bg-[#111827] rounded-xl p-5 border border-slate-200 dark:border-[#263247] shadow-sm">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-[#263247]">
+            {/* Recent Activity Logs */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-1.5">
-                  <Activity className="w-4 h-4 text-cyan-400" />
+                  <Activity className="w-4 h-4 text-slate-500" />
                   <span className="text-xs font-bold text-slate-900 dark:text-white">
                     فعالیت‌های اخیر
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {activityLogs.length === 0 ? (
-                  <div className="py-4 text-center text-xs text-slate-400 dark:text-slate-500">
+                  <div className="py-6 text-center text-xs text-slate-400">
                     هنوز فعالیتی ثبت نشده است.
                   </div>
                 ) : (
                   activityLogs.slice(0, 5).map((log) => (
-                    <div key={log.id} className="text-xs flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0 shadow-[0_0_6px_rgba(0,245,255,0.6)]" />
+                    <div key={log.id} className="text-xs flex items-start gap-2 py-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 mt-1.5 shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-slate-700 dark:text-[#94A3B8] text-[11px] leading-relaxed">
+                        <p className="text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed">
                           {log.description}
                         </p>
                         <span className="text-[10px] text-slate-400 font-mono tabular-nums">
@@ -1048,17 +793,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 )}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Widget Customization Modal */}
       {showConfigModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#111827] rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-[#263247] shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-[#263247] pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                شخصی‌سازی ویجت‌های داشبورد
+                شخصی‌سازی کارت‌های داشبورد
               </h3>
               <button
                 onClick={() => setShowConfigModal(false)}
@@ -1070,7 +815,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
             <div className="flex items-center justify-between pb-1">
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                چینش، نمایش و اولویت کارت‌های داشبورد را تنظیم کنید:
+                چینش و نمایش کارت‌های داشبورد:
               </p>
               <button
                 onClick={() => {
@@ -1080,26 +825,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     window.dispatchEvent(new CustomEvent('pathly_open_customization'));
                   }, 50);
                 }}
-                className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer whitespace-nowrap"
+                className="text-[11px] font-medium text-slate-600 dark:text-slate-300 hover:underline flex items-center gap-1 cursor-pointer whitespace-nowrap"
               >
                 <Palette className="w-3.5 h-3.5" />
-                <span>شخصی‌سازی کامل</span>
+                <span>شخصی‌سازی پیشرفته</span>
               </button>
             </div>
 
             {/* Column Selector */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-xs">
-              <span className="font-bold text-slate-700 dark:text-slate-300">چیدمان ستون‌ها:</span>
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs">
+              <span className="font-medium text-slate-700 dark:text-slate-300">چیدمان ستون‌ها:</span>
               <div className="flex items-center gap-1">
-                {(['auto', '1', '2', '3'] as const).map((col) => (
+                {(['auto', '1', '2'] as const).map((col) => (
                   <button
                     key={col}
                     type="button"
                     onClick={() => updateCustomization({ dashboardColumns: col })}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded text-xs font-medium transition-colors cursor-pointer ${
                       (customization.dashboardColumns || 'auto') === col
-                        ? 'bg-cyan-500 text-slate-950 shadow-xs'
-                        : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-[#111827]'
+                        ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold'
+                        : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                   >
                     {col === 'auto' ? 'خودکار' : `${toPersianDigits(col)} ستونه`}
@@ -1109,7 +854,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
 
             {/* Cards List with Up/Down and Eye Toggle */}
-            <div className="space-y-2 max-h-72 overflow-y-auto cyber-scrollbar pr-1">
+            <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
               {customization.dashboardCardsOrder.map((cardId, index) => {
                 const cardDef = DEFAULT_DASHBOARD_CARDS.find((c) => c.id === cardId) || {
                   id: cardId,
@@ -1121,17 +866,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 return (
                   <div
                     key={cardId}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                    className={`flex items-center justify-between p-2.5 rounded-lg border transition-colors ${
                       isHidden
-                        ? 'bg-slate-100/50 dark:bg-[#0B0F19]/50 border-dashed border-slate-300 dark:border-[#1E293B] opacity-60'
-                        : 'bg-slate-50 dark:bg-[#172033]/70 border-slate-200 dark:border-[#263247]'
+                        ? 'bg-slate-50 dark:bg-slate-950/40 border-dashed border-slate-200 dark:border-slate-800 opacity-60'
+                        : 'bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-800'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-5 h-5 rounded-md bg-slate-200 dark:bg-[#0D1220] text-slate-600 dark:text-slate-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                      <span className="w-5 h-5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                         {toPersianDigits(index + 1)}
                       </span>
-                      <span className={`text-xs font-semibold truncate ${isHidden ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                      <span className={`text-xs font-medium truncate ${isHidden ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
                         {cardDef.label}
                       </span>
                     </div>
@@ -1147,7 +892,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                           newOrder[index - 1] = temp;
                           updateCustomization({ dashboardCardsOrder: newOrder });
                         }}
-                        className="p-1 text-slate-400 hover:text-cyan-400 disabled:opacity-20 rounded cursor-pointer"
+                        className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 rounded cursor-pointer"
                         title="بالا"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -1163,7 +908,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                           newOrder[index + 1] = temp;
                           updateCustomization({ dashboardCardsOrder: newOrder });
                         }}
-                        className="p-1 text-slate-400 hover:text-cyan-400 disabled:opacity-20 rounded cursor-pointer"
+                        className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 rounded cursor-pointer"
                         title="پایین"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -1179,7 +924,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                           updateCustomization({ hiddenDashboardCards: nextHidden });
                         }}
                         className={`p-1 rounded cursor-pointer ${
-                          isHidden ? 'text-slate-400 hover:text-emerald-400' : 'text-cyan-500'
+                          isHidden ? 'text-slate-400 hover:text-emerald-500' : 'text-slate-600 dark:text-slate-400'
                         }`}
                         title={isHidden ? 'نمایش مجدد' : 'مخفی کردن'}
                       >
@@ -1191,7 +936,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               })}
             </div>
 
-            <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-[#263247]">
+            <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => updateCustomization({ dashboardCardsOrder: DEFAULT_DASHBOARD_CARDS.map((c) => c.id), hiddenDashboardCards: [] })}
@@ -1203,7 +948,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
               <button
                 onClick={() => setShowConfigModal(false)}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 text-xs font-bold rounded-xl cursor-pointer shadow-sm"
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg cursor-pointer"
               >
                 تأیید و بستن
               </button>
@@ -1214,9 +959,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
       {/* New Habit Modal */}
       {showNewHabitModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#111827] rounded-2xl max-w-sm w-full p-6 border border-slate-200 dark:border-[#263247] shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-[#263247] pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-amber-500" />
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -1242,7 +987,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                   onChange={(e) => setNewHabitTitle(e.target.value)}
                   placeholder="مثال: ۳۰ دقیقه مطالعه تخصصی"
                   required
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#263247] bg-white dark:bg-[#172033] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-slate-400"
                 />
               </div>
 
@@ -1253,7 +998,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 <select
                   value={newHabitCategory}
                   onChange={(e) => setNewHabitCategory(e.target.value as SectionType)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#263247] bg-white dark:bg-[#172033] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-slate-400"
                 >
                   <option value="school">مدرسه و درس‌ها</option>
                   <option value="skill">توسعه مهارت‌ها</option>
@@ -1273,7 +1018,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                   max="7"
                   value={newHabitDays}
                   onChange={(e) => setNewHabitDays(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-[#263247] bg-white dark:bg-[#172033] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-slate-400"
                 />
               </div>
 
@@ -1281,13 +1026,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                 <button
                   type="button"
                   onClick={() => setShowNewHabitModal(false)}
-                  className="px-3 py-2 rounded-xl text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                  className="px-3 py-2 rounded-lg text-xs text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   انصراف
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 text-xs font-bold rounded-xl cursor-pointer shadow-sm"
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg cursor-pointer shadow-xs"
                 >
                   ثبت عادت
                 </button>

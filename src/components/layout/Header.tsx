@@ -127,92 +127,67 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/90 dark:bg-[#080B14]/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 transition-colors relative before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-cyan-500/35 before:to-transparent">
-      <div className="flex items-center justify-between px-4 lg:px-6 h-16 gap-4">
-        {/* Right Zone in RTL: Mobile menu trigger & Breadcrumb / Date */}
+    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+      <div className="flex items-center justify-between px-4 lg:px-6 h-15 gap-4">
+        {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onToggleSidebar}
-            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 lg:hidden rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033]"
+            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 lg:hidden rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="منوی ناوبری"
           >
             <Menu className="w-5 h-5" />
           </button>
 
-          <div className="flex flex-col min-w-0">
+          <div className="flex items-baseline gap-3 min-w-0">
             <h1 className="text-base font-bold text-slate-900 dark:text-white truncate">
               {activeSectionTitle}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-              <span className="truncate">{formatJalaliFull()}</span>
-            </div>
+            <span className="hidden sm:inline text-xs text-slate-400 dark:text-slate-500 truncate font-normal">
+              {formatJalaliFull()}
+            </span>
           </div>
         </div>
 
-        {/* Action buttons, Notifications, Theme, Profile on the left (in RTL) */}
+        {/* Action buttons on the left (in RTL) */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* RPG Level Badge */}
-          {rpg?.enabled && (
-            <div className="hidden sm:block">
-              <RPGBanner compact={true} />
-            </div>
-          )}
-
-          {/* Rescue Mode Trigger */}
-          <button
-            onClick={() => setIsRescueModalOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition-all cursor-pointer active:scale-95"
-            title="حالت نجات روز من (Rescue Mode)"
-          >
-            <LifeBuoy className="w-3.5 h-3.5 animate-pulse text-amber-500" />
-            <span className="hidden md:inline">نجات روز</span>
-          </button>
-
-          {/* AI Assistant Trigger */}
-          <button
-            onClick={() => setIsAIAssistantOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 hover:from-cyan-500/20 hover:to-purple-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 text-xs font-semibold rounded-xl transition-all cursor-pointer active:scale-95 shadow-sm"
-            title="دستیار هوشمند مسیر (AI Life Coach)"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
-            <span className="hidden lg:inline">دستیار هوش مصنوعی</span>
-          </button>
-
-          {/* Unified Single Search Trigger (No duplicate empty bars, No ctrl+k text) */}
+          {/* Search Trigger */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-[#172033] rounded-xl border border-slate-200 dark:border-[#263247] hover:border-cyan-500/50 hover:text-cyan-500 dark:hover:text-cyan-400 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800/60 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 transition-colors cursor-pointer"
             aria-label="جستجو در سامانه"
-            title="جستجو در تمام بخش‌های سامانه"
+            title="جستجو (Ctrl + K)"
           >
-            <Search className="w-4 h-4 text-slate-400 group-hover:text-cyan-400" />
+            <Search className="w-3.5 h-3.5 text-slate-400" />
             <span className="hidden sm:inline">جستجو</span>
           </button>
 
+          {/* Primary Action: Quick Add */}
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-lg shadow-[0_0_12px_rgba(0,245,255,0.3)] transition-all whitespace-nowrap cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer active:scale-98 shadow-xs"
+            title="ثبت سریع وظیفه یا رویداد جدید"
           >
-            <Plus className="w-4 h-4" />
-            <span className="hidden md:inline">ثبت سریع</span>
+            <Plus className="w-3.5 h-3.5" />
+            <span>ثبت سریع</span>
           </button>
 
           {/* Notifications Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-cyan-400 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033] transition-colors cursor-pointer"
+              className="relative p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               aria-label="اعلان‌ها"
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-[#0D1220]" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
               )}
             </button>
 
             {showNotifications && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-96 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263247] p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247]">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-88 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-4 z-50 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-slate-900 dark:text-white">
                       مرکز یادآوری‌ها
@@ -319,7 +294,7 @@ export const Header: React.FC<HeaderProps> = ({
           {!currentUser && (
             <button
               onClick={() => openAuthModal('login')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-cyan-500/15 to-blue-500/15 hover:from-cyan-500/25 hover:to-blue-500/25 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
               title="ورود یا ثبت‌نام حساب چندکاربره"
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -331,37 +306,26 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative" ref={themeMenuRef}>
             <button
               onClick={() => setShowThemeMenu((prev) => !prev)}
-              className="flex items-center gap-1.5 p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-[#172033] border border-transparent hover:border-slate-200 dark:hover:border-[#263247] transition-all cursor-pointer active:scale-95 group"
+              className="flex items-center gap-1.5 p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               aria-label="تغییر حالت تم (روشن / تاریک / سیستم)"
-              title={
-                themeMode === 'system'
-                  ? `تم سیستم (فعال: ${resolvedTheme === 'dark' ? 'تاریک' : 'روشن'})`
-                  : themeMode === 'light'
-                  ? 'تم روشن (Light Mode)'
-                  : 'تم تاریک نئون (Dark Mode)'
-              }
+              title="تغییر حالت تم"
             >
-              <div className="relative flex items-center justify-center">
-                {themeMode === 'system' ? (
-                  <Monitor className="w-4 h-4 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
-                ) : resolvedTheme === 'dark' ? (
-                  <Moon className="w-4 h-4 text-cyan-400 group-hover:-rotate-12 transition-transform" />
-                ) : (
-                  <Sun className="w-4 h-4 text-amber-500 group-hover:rotate-45 transition-transform" />
-                )}
-                {themeMode === 'system' && (
-                  <span className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-white dark:ring-[#080B14]" />
-                )}
-              </div>
+              {themeMode === 'system' ? (
+                <Monitor className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+              ) : resolvedTheme === 'dark' ? (
+                <Moon className="w-4 h-4 text-slate-300" />
+              ) : (
+                <Sun className="w-4 h-4 text-amber-500" />
+              )}
               <ChevronDown className={`hidden sm:block w-3 h-3 text-slate-400 transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Theme Dropdown Popover */}
             {showThemeMenu && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-64 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#0D1222] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263247] p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-right">
-                <div className="px-2.5 py-1.5 text-[11px] font-bold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-[#1F293D] mb-1.5 flex items-center justify-between">
-                  <span>انتخاب پوسته و تم</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-60 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-2 z-50 text-right animate-in fade-in duration-150">
+                <div className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 mb-1 flex items-center justify-between">
+                  <span>انتخاب حالت پوسته</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                     {resolvedTheme === 'dark' ? 'تاریک' : 'روشن'}
                   </span>
                 </div>
@@ -374,22 +338,17 @@ export const Header: React.FC<HeaderProps> = ({
                       setThemeMode('light', true);
                       setShowThemeMenu(false);
                     }}
-                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                       themeMode === 'light'
-                        ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172033] border border-transparent'
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                        <Sun className="w-4 h-4" />
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs font-bold">حالت روشن</div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">سفید و شفاف برای روز</div>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-4 h-4 text-amber-500" />
+                      <span>حالت روشن</span>
                     </div>
-                    {themeMode === 'light' && <Check className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />}
+                    {themeMode === 'light' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
                   </button>
 
                   {/* Dark Mode Button */}
@@ -399,22 +358,17 @@ export const Header: React.FC<HeaderProps> = ({
                       setThemeMode('dark', true);
                       setShowThemeMenu(false);
                     }}
-                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                       themeMode === 'dark'
-                        ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 font-bold'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172033] border border-transparent'
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
-                        <Moon className="w-4 h-4" />
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs font-bold">حالت تاریک نئونی</div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">مشکی سرمه‌ای با درخشش فیروزه‌ای</div>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Moon className="w-4 h-4 text-slate-400" />
+                      <span>حالت تاریک</span>
                     </div>
-                    {themeMode === 'dark' && <Check className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />}
+                    {themeMode === 'dark' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
                   </button>
 
                   {/* System Auto Mode Button */}
@@ -424,77 +378,118 @@ export const Header: React.FC<HeaderProps> = ({
                       setThemeMode('system', true);
                       setShowThemeMenu(false);
                     }}
-                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                       themeMode === 'system'
-                        ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-bold'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#172033] border border-transparent'
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-                        <Monitor className="w-4 h-4" />
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs font-bold">هماهنگ با سیستم</div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">
-                          تنظیم خودکار با سیستم‌عامل ({resolvedTheme === 'dark' ? 'اکنون: تاریک' : 'اکنون: روشن'})
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Monitor className="w-4 h-4 text-slate-400" />
+                      <span>هماهنگ با سیستم</span>
                     </div>
-                    {themeMode === 'system' && <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />}
+                    {themeMode === 'system' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Profile pill button & Dropdown on the left */}
+          {/* Profile button & Dropdown on the left */}
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setShowProfileMenu((prev) => !prev)}
-              className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-[#172033] transition-colors text-right group cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-[#263247]"
-              title="پروفایل و آیکون‌های کاربری"
+              className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-right cursor-pointer"
+              title="پروفایل کاربر"
             >
-              <div className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${currentAvatar.gradient} text-white flex items-center justify-center font-bold text-xs ring-2 ring-white dark:ring-[#263247] ${currentAvatar.glowColor} shrink-0`}>
+              <div className="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center font-semibold text-xs shrink-0">
                 <AvatarIcon className="w-4 h-4" />
               </div>
               <div className="hidden sm:flex flex-col text-right min-w-0">
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors truncate max-w-[110px]">
-                  {currentUser ? currentUser.name : (profile.name || 'کاربر مهمان')}
+                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[110px]">
+                  {currentUser ? currentUser.name : (profile.name || 'کاربر')}
                 </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[110px]">
-                  {currentUser ? `@${currentUser.username}` : (profile.gradeOrField || currentAvatar.label)}
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate max-w-[110px]">
+                  {currentUser ? `@${currentUser.username}` : (profile.gradeOrField || 'دانش‌آموز')}
                 </span>
               </div>
-              <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-transform" />
+              <ChevronDown className="hidden sm:block w-3 h-3 text-slate-400 transition-transform" />
             </button>
 
-            {/* Profile Popover / Avatar Selector */}
+            {/* Profile Popover */}
             {showProfileMenu && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263247] p-4 z-50 text-right animate-in fade-in zoom-in-95 duration-150">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-4 z-50 text-right animate-in fade-in duration-150">
                 {/* User identity summary */}
-                <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-[#263247]">
-                  <div className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${currentAvatar.gradient} text-white flex items-center justify-center shadow-md ${currentAvatar.glowColor} shrink-0`}>
-                    <AvatarIcon className="w-6 h-6" />
+                <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                    <AvatarIcon className="w-5 h-5" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
                       {currentUser ? currentUser.name : (profile.name || 'کاربر مهمان')}
                     </span>
                     <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                      {currentUser ? `${currentUser.email} (${currentUser.role === 'admin' ? 'مدیر سیستم' : 'کاربر'})` : (profile.gradeOrField || 'دانش‌آموز / یادگیرنده')}
+                      {currentUser ? currentUser.email : (profile.gradeOrField || 'حالت محلی')}
                     </span>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className={`w-2 h-2 rounded-full ${currentUser ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                      <span className="text-[10px] text-slate-600 dark:text-slate-400">
-                        {currentUser ? 'متصل به سرور ابری' : 'حالت مهمان (آفلاین)'}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className={`w-1.5 h-1.5 rounded-full ${currentUser ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      <span className="text-[11px] text-slate-500">
+                        {currentUser ? 'متصل به حساب ابری' : 'حافظه محلی (آفلاین)'}
                       </span>
                     </div>
                   </div>
                 </div>
 
+                {/* Quick Assistant & Rescue Actions */}
+                <div className="py-2.5 border-b border-slate-100 dark:border-slate-800 space-y-1.5">
+                  <button
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      setIsAIAssistantOpen(true);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Bot className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                      <span>دستیار هوش مصنوعی</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400 font-normal">گفتگوی هوشمند</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      setIsRescueModalOpen(true);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LifeBuoy className="w-4 h-4 text-amber-500" />
+                      <span>حالت نجات روز</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400 font-normal">جبران عقب‌افتادگی</span>
+                  </button>
+
+                  {currentUser && (
+                    <button
+                      onClick={() => {
+                        syncWithServer();
+                      }}
+                      className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Cloud className={`w-4 h-4 ${syncStatus === 'syncing' ? 'animate-spin text-cyan-500' : 'text-slate-500'}`} />
+                        <span>همگام‌سازی ابری</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">
+                        {syncStatus === 'synced' ? 'به‌روز' : syncStatus === 'syncing' ? 'در حال ارسال' : 'خطا'}
+                      </span>
+                    </button>
+                  )}
+                </div>
+
                 {/* Account Actions Bar */}
-                <div className="py-2.5 border-b border-slate-100 dark:border-[#263247] space-y-1.5">
+                <div className="py-2.5 border-b border-slate-100 dark:border-slate-800">
                   {currentUser ? (
                     <div className="grid grid-cols-2 gap-2">
                       <button
@@ -502,9 +497,9 @@ export const Header: React.FC<HeaderProps> = ({
                           setShowProfileMenu(false);
                           setIsAuthModalOpen(true);
                         }}
-                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-[#172033] dark:hover:bg-[#1f2b45] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg transition-colors cursor-pointer"
                       >
-                        <LogIn className="w-3.5 h-3.5 text-cyan-400" />
+                        <LogIn className="w-3.5 h-3.5" />
                         <span>تغییر حساب</span>
                       </button>
                       <button
@@ -512,7 +507,7 @@ export const Header: React.FC<HeaderProps> = ({
                           setShowProfileMenu(false);
                           logout();
                         }}
-                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 text-xs font-medium rounded-lg transition-colors cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>خروج</span>
@@ -524,20 +519,20 @@ export const Header: React.FC<HeaderProps> = ({
                         setShowProfileMenu(false);
                         openAuthModal('login');
                       }}
-                      className="w-full py-2 px-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer"
+                      className="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
                     >
                       <LogIn className="w-4 h-4" />
-                      <span>ورود / ساخت حساب مستقل</span>
+                      <span>ورود / ساخت حساب ابری</span>
                     </button>
                   )}
                 </div>
 
                 {/* Avatar icons selection */}
-                <div className="py-3 border-b border-slate-100 dark:border-[#263247]">
-                  <span className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2">
-                    انتخاب آیکون پروفایل:
+                <div className="py-2.5 border-b border-slate-100 dark:border-slate-800">
+                  <span className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-2">
+                    آیکون نمایه:
                   </span>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 gap-1.5">
                     {AVATAR_OPTIONS.map((opt) => {
                       const Icon = opt.icon;
                       const isSelected = profile.avatarSeed === opt.id || (!profile.avatarSeed && opt.id === 'cyber-neon');
@@ -548,104 +543,35 @@ export const Header: React.FC<HeaderProps> = ({
                             updateProfile({ avatarSeed: opt.id });
                           }}
                           title={opt.label}
-                          className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all cursor-pointer relative ${
+                          className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-colors cursor-pointer relative ${
                             isSelected
-                              ? 'bg-slate-100 dark:bg-[#172033] ring-2 ring-cyan-400 dark:ring-cyan-400 shadow-sm'
-                              : 'hover:bg-slate-50 dark:hover:bg-[#172033]/60'
+                              ? 'bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-400 dark:ring-slate-600'
+                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
                           }`}
                         >
-                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center ${isSelected ? opt.glowColor : ''}`}>
-                            <Icon className="w-4 h-4" />
+                          <div className="w-7 h-7 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center">
+                            <Icon className="w-3.5 h-3.5" />
                           </div>
-                          <span className={`text-[10px] mt-1 font-medium truncate max-w-full ${isSelected ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-500 dark:text-slate-400'}`}>
+                          <span className="text-[10px] mt-1 text-slate-600 dark:text-slate-400 truncate max-w-full">
                             {opt.label}
                           </span>
-                          {isSelected && (
-                            <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-cyan-500 text-slate-950 rounded-full flex items-center justify-center text-[8px] font-bold">
-                              ✓
-                            </span>
-                          )}
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Quick actions: Theme switch & Settings */}
-                <div className="pt-3 space-y-2">
-                  <div className="text-xs p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-medium text-slate-600 dark:text-slate-400">
-                      <span>پوسته و تم سامانه:</span>
-                      <span className="font-mono text-[10px] text-cyan-600 dark:text-cyan-400">
-                        {themeMode === 'system' ? 'سیستم (خودکار)' : themeMode === 'light' ? 'روشن' : 'تاریک نئون'}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setThemeMode('light', true)}
-                        className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          themeMode === 'light'
-                            ? 'bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-400 shadow-xs'
-                            : 'bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                        }`}
-                        title="حالت روشن"
-                      >
-                        <Sun className="w-3.5 h-3.5 text-amber-500" />
-                        <span>روشن</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setThemeMode('dark', true)}
-                        className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          themeMode === 'dark'
-                            ? 'bg-cyan-500/15 border border-cyan-500/40 text-cyan-700 dark:text-cyan-400 shadow-xs'
-                            : 'bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                        }`}
-                        title="حالت تاریک"
-                      >
-                        <Moon className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>تاریک</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setThemeMode('system', true)}
-                        className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          themeMode === 'system'
-                            ? 'bg-indigo-500/15 border border-indigo-500/40 text-indigo-700 dark:text-indigo-400 shadow-xs'
-                            : 'bg-white dark:bg-[#172033] border border-slate-200 dark:border-[#263247] text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                        }`}
-                        title="هماهنگ با سیستم"
-                      >
-                        <Monitor className="w-3.5 h-3.5 text-indigo-500" />
-                        <span>سیستم</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      if (onSelectTab) onSelectTab('settings');
-                      setTimeout(() => {
-                        window.dispatchEvent(new CustomEvent('pathly_open_customization'));
-                      }, 50);
-                    }}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 rounded-xl transition-all cursor-pointer shadow-xs"
-                  >
-                    <Palette className="w-3.5 h-3.5" />
-                    <span>شخصی‌سازی سایت و ظاهر</span>
-                  </button>
-
+                {/* Settings link */}
+                <div className="pt-2.5">
                   <button
                     onClick={() => {
                       setShowProfileMenu(false);
                       if (onSelectTab) onSelectTab('settings');
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-[#172033] dark:hover:bg-[#1f2b45] rounded-xl transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
                   >
-                    <Settings className="w-3.5 h-3.5 text-slate-400 dark:text-cyan-400" />
-                    <span>تنظیمات پیشرفته و امنیت</span>
+                    <Settings className="w-3.5 h-3.5 text-slate-400" />
+                    <span>تنظیمات و شخصی‌سازی</span>
                   </button>
                 </div>
               </div>

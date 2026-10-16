@@ -105,12 +105,7 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#080B14] text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950 font-sans" dir="rtl">
-      {/* Background Ambient Lighting Orbs & Tech Grid */}
-      <div className="pointer-events-none fixed inset-0 cyber-grid opacity-30 dark:opacity-20 z-0" aria-hidden="true" />
-      <div className="pointer-events-none fixed top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 dark:bg-cyan-500/8 rounded-full blur-[140px] z-0" aria-hidden="true" />
-      <div className="pointer-events-none fixed bottom-0 left-0 w-[600px] h-[600px] bg-purple-500/5 dark:bg-purple-600/7 rounded-full blur-[160px] z-0" aria-hidden="true" />
-      <div className="pointer-events-none fixed top-1/3 left-1/4 w-[400px] h-[400px] bg-blue-500/4 dark:bg-blue-600/5 rounded-full blur-[130px] z-0" aria-hidden="true" />
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-slate-200 dark:selection:bg-slate-800 font-sans" dir="rtl">
 
       {/* Sidebar Navigation */}
       <Sidebar

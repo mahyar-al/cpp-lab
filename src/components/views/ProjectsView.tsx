@@ -151,36 +151,35 @@ export const ProjectsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-blue-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <span className="p-2.5 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <FolderGit2 className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <FolderGit2 className="w-5 h-5" />
             </span>
-            مدیریت پروژه‌های نرم‌افزاری
+            مدیریت پروژه‌ها
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             برد کانبان، پیگیری وظایف، ددلاین‌ها و مستندات فنی
           </p>
         </div>
         <button
           onClick={() => setShowAddProjectModal(true)}
-          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(59,130,246,0.35)] hover:shadow-[0_0_22px_rgba(59,130,246,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
         >
           <Plus className="w-4 h-4" />
-          پروژه جدید
+          <span>پروژه جدید</span>
         </button>
       </div>
 
       {projects.length === 0 ? (
-        <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
           <FolderGit2 className="w-12 h-12 mx-auto text-slate-400 mb-3" />
-          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز پروژه‌ای ثبت نشده است</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-4">اولین پروژه خود را برای سازماندهی وظایف و مراحل کار ایجاد کنید.</p>
+          <h3 className="text-base font-bold text-slate-700 dark:text-slate-200">هنوز پروژه‌ای ثبت نشده است</h3>
+          <p className="text-xs text-slate-500 mt-1 mb-4">اولین پروژه خود را برای سازماندهی وظایف و مراحل کار ایجاد کنید.</p>
           <button
             onClick={() => setShowAddProjectModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl text-sm font-bold cursor-pointer"
+            className="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer"
           >
             افزودن اولین پروژه
           </button>
@@ -189,7 +188,7 @@ export const ProjectsView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Project Sidebar */}
           <div className="lg:col-span-4 space-y-3">
-            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
+            <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
               پروژه‌ها ({toPersianDigits(projects.length)})
             </h2>
             <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto cyber-scrollbar pr-0.5">
@@ -202,10 +201,10 @@ export const ProjectsView: React.FC = () => {
                 <div
                   key={proj.id}
                   onClick={() => setSelectedProjectId(proj.id)}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  className={`p-4 rounded-xl border cursor-pointer transition-colors ${
                     isSelected
-                      ? 'bg-blue-500/10 dark:bg-blue-950/40 border-blue-400 dark:border-blue-500/60 shadow-[0_0_20px_-3px_rgba(59,130,246,0.25)]'
-                      : 'bg-white dark:bg-[#0D1222] border-slate-200 dark:border-slate-800 hover:border-blue-500/30'
+                      ? 'bg-slate-50 dark:bg-slate-800 border-slate-400 dark:border-slate-600'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-start justify-between">

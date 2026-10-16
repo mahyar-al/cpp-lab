@@ -120,36 +120,35 @@ export const CompetitionsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-amber-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <span className="p-2.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-              <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <Trophy className="w-5 h-5" />
             </span>
-            آمادگی برای مسابقات و المپیادها
+            آمادگی مسابقات
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             مدیریت مراحل آزمون، آزمون‌های آزمایشی و ارزیابی آمادگی
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_22px_rgba(245,158,11,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
         >
           <Plus className="w-4 h-4" />
-          ثبت مسابقه جدید
+          <span>مسابقه جدید</span>
         </button>
       </div>
 
       {competitions.length === 0 ? (
-        <div className="bg-white dark:bg-[#0D1222] p-12 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 p-12 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
           <Trophy className="w-12 h-12 mx-auto text-slate-400 mb-3" />
-          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">هنوز مسابقه‌ای ثبت نشده است</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-4">مسابقه علمی، هکاتون یا المپیاد خود را ثبت کنید.</p>
+          <h3 className="text-base font-bold text-slate-700 dark:text-slate-200">هنوز مسابقه‌ای ثبت نشده است</h3>
+          <p className="text-xs text-slate-500 mt-1 mb-4">مسابقه علمی، هکاتون یا المپیاد خود را ثبت کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 rounded-xl text-sm font-bold cursor-pointer"
+            className="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer"
           >
             افزودن اولین مسابقه
           </button>
@@ -158,7 +157,7 @@ export const CompetitionsView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Competitions Sidebar */}
           <div className="lg:col-span-4 space-y-3">
-            <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
+            <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
               مسابقات من ({toPersianDigits(competitions.length)})
             </h2>
             <div className="space-y-3 max-h-72 lg:max-h-none overflow-y-auto cyber-scrollbar pr-0.5">
@@ -170,26 +169,26 @@ export const CompetitionsView: React.FC = () => {
                 <div
                   key={comp.id}
                   onClick={() => setSelectedCompId(comp.id)}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  className={`p-4 rounded-xl border cursor-pointer transition-colors ${
                     isSelected
-                      ? 'bg-amber-500/10 dark:bg-amber-950/40 border-amber-400 dark:border-amber-500/60 shadow-[0_0_20px_-3px_rgba(245,158,11,0.25)]'
-                      : 'bg-white dark:bg-[#0D1222] border-slate-200 dark:border-slate-800 hover:border-amber-500/30'
+                      ? 'bg-slate-50 dark:bg-slate-800 border-slate-400 dark:border-slate-600'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                         {comp.domain}
                       </span>
-                      <h3 className="font-bold text-base text-slate-900 dark:text-white mt-1">
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-white mt-1">
                         {comp.title}
                       </h3>
                       <span className="text-xs text-slate-500 dark:text-slate-400 block">برگزارکننده: {comp.organizer}</span>
                     </div>
 
                     <div className="text-left">
-                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
                         {daysLeft > 0 ? `${toPersianDigits(daysLeft)} روز مانده` : 'منقضی'}
                       </span>
                     </div>
@@ -198,11 +197,11 @@ export const CompetitionsView: React.FC = () => {
                   <div className="mt-3">
                     <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
                       <span>درصد آمادگی</span>
-                      <span className="font-bold text-amber-600 dark:text-amber-400">{toPersianDigits(comp.readinessPercentage)}٪</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">{toPersianDigits(comp.readinessPercentage)}٪</span>
                     </div>
                     <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.4)]"
+                        className="h-full bg-slate-900 dark:bg-slate-300 rounded-full"
                         style={{ width: `${comp.readinessPercentage}%` }}
                       />
                     </div>

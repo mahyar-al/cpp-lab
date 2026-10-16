@@ -262,18 +262,18 @@ export const SettingsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header Card */}
-      <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-cyan-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Top Banner */}
+      <div className="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-              <span className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(0,245,255,0.25)]">
-                <SettingsIcon className="w-6 h-6" />
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+              <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                <SettingsIcon className="w-5 h-5" />
               </span>
               تنظیمات سامانه، حساب و ایمنی اطلاعات
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              مدیریت حساب چندکاربره، ذخیره‌سازی ابری دائمی، سطل بازیافت و نقاط بازگردانی (Snapshots)
+              مدیریت حساب چندکاربره، ذخیره‌سازی ابری، سطل بازیافت و نقاط بازگردانی
             </p>
           </div>
 
@@ -428,14 +428,14 @@ export const SettingsView: React.FC = () => {
                         }}
                         className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all cursor-pointer ${
                           isSelected
-                            ? 'border-cyan-400 bg-cyan-500/10 dark:bg-[#090D18] ring-2 ring-cyan-400 shadow-[0_0_12px_rgba(0,245,255,0.25)]'
-                            : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-[#121829]'
+                            ? 'border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800 shadow-xs'
+                            : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                         }`}
                       >
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center ${isSelected ? opt.glowColor : ''}`}>
+                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${opt.gradient} text-white flex items-center justify-center`}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <span className={`text-[10px] mt-1.5 font-medium ${isSelected ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-400'}`}>
+                        <span className={`text-[10px] mt-1.5 font-medium ${isSelected ? 'text-slate-900 dark:text-white font-bold' : 'text-slate-600 dark:text-slate-400'}`}>
                           {opt.label}
                         </span>
                       </button>
@@ -449,8 +449,8 @@ export const SettingsView: React.FC = () => {
                   <label className="block font-semibold text-slate-700 dark:text-slate-300">
                     پوسته و تم سامانه:
                   </label>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25">
-                    {themeMode === 'system' ? `سیستم (در حال حاضر: ${resolvedTheme === 'dark' ? 'تاریک' : 'روشن'})` : themeMode === 'light' ? 'روشن' : 'تاریک نئون'}
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    {themeMode === 'system' ? `سیستم (در حال حاضر: ${resolvedTheme === 'dark' ? 'تاریک' : 'روشن'})` : themeMode === 'light' ? 'روشن' : 'تاریک'}
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -458,10 +458,10 @@ export const SettingsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setThemeMode('light', true)}
-                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
+                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-colors cursor-pointer ${
                       themeMode === 'light'
-                        ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-2 ring-amber-400/30 shadow-xs font-bold'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
+                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
@@ -469,7 +469,7 @@ export const SettingsView: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-xs font-bold">حالت روشن</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">مناسب محیط‌های پرنور</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سفید و خاکستری ملایم</div>
                     </div>
                   </button>
 
@@ -477,18 +477,18 @@ export const SettingsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setThemeMode('dark', true)}
-                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
+                    className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-colors cursor-pointer ${
                       themeMode === 'dark'
-                        ? 'border-cyan-500 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 ring-2 ring-cyan-400/30 shadow-[0_0_15px_rgba(0,245,255,0.2)] font-bold'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
+                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center">
                       <Moon className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="text-xs font-bold">حالت تاریک</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سرمه‌ای با هایلایت فیروزه‌ای</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سرمه‌ای ملایم و خوانا</div>
                     </div>
                   </button>
 
@@ -498,11 +498,11 @@ export const SettingsView: React.FC = () => {
                     onClick={() => setThemeMode('system', true)}
                     className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
                       themeMode === 'system'
-                        ? 'border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-400/30 shadow-xs font-bold'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#121829]'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
+                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center">
                       <Monitor className="w-5 h-5" />
                     </div>
                     <div>
@@ -515,13 +515,13 @@ export const SettingsView: React.FC = () => {
 
               <div className="flex items-center justify-between pt-2">
                 {saveSuccess && (
-                  <span className="text-emerald-500 flex items-center gap-1 font-bold">
-                    <Check className="w-4 h-4" /> ذخیره شد
+                  <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium text-xs">
+                    <Check className="w-4 h-4" /> تغییرات ذخیره شد
                   </span>
                 )}
                 <button
                   type="submit"
-                  className="mr-auto px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 rounded-xl font-bold shadow-[0_0_12px_rgba(0,245,255,0.25)] transition-all cursor-pointer active:scale-95"
+                  className="mr-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-lg font-semibold text-xs transition-colors cursor-pointer shadow-xs"
                 >
                   ذخیره تغییرات پروفایل
                 </button>
@@ -715,7 +715,7 @@ export const SettingsView: React.FC = () => {
                     <button
                       type="submit"
                       disabled={passLoading}
-                      className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl shadow-[0_0_12px_rgba(0,245,255,0.2)] transition-all cursor-pointer"
+                      className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
                     >
                       {passLoading ? 'در حال ثبت...' : 'ثبت رمز عبور جدید'}
                     </button>
@@ -784,7 +784,7 @@ export const SettingsView: React.FC = () => {
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <button
                   onClick={() => openAuthModal('login')}
-                  className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>ورود به حساب کاربری</span>
@@ -842,7 +842,7 @@ export const SettingsView: React.FC = () => {
                 <button
                   type="submit"
                   disabled={snapshotLoading}
-                  className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl transition-all cursor-pointer whitespace-nowrap shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                  className="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap shadow-xs"
                 >
                   {snapshotLoading ? 'در حال ثبت...' : 'ایجاد نسخه پشتیبان لحظه‌ای'}
                 </button>
@@ -908,7 +908,7 @@ export const SettingsView: React.FC = () => {
                 </p>
                 <button
                   onClick={currentUser ? exportServerBackup : exportBackup}
-                  className="w-full py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all cursor-pointer"
+                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs text-xs"
                 >
                   <Download className="w-4 h-4" />
                   دانلود فایل پشتیبان
@@ -940,7 +940,7 @@ export const SettingsView: React.FC = () => {
                     )}
                     <button
                       type="submit"
-                      className="mr-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl flex items-center gap-1 shadow-[0_0_12px_rgba(0,245,255,0.2)] transition-all cursor-pointer"
+                      className="mr-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
                     >
                       <Upload className="w-4 h-4" />
                       اعمال و بازیابی

@@ -377,35 +377,30 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     <div
       className={`w-full ${
         isModal
-          ? 'max-w-5xl rounded-3xl bg-white/95 dark:bg-[#090D18]/95 border border-slate-200 dark:border-cyan-500/30 shadow-2xl dark:shadow-[0_0_80px_rgba(6,182,212,0.18)] overflow-hidden text-right'
+          ? 'max-w-5xl rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden text-right'
           : 'min-h-[85vh] flex items-center justify-center p-2 sm:p-4 text-right'
       }`}
       dir="rtl"
     >
-      <div className={`w-full ${isModal ? '' : 'max-w-6xl'} grid grid-cols-1 lg:grid-cols-12 rounded-3xl border border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-[#090E1B]/95 backdrop-blur-2xl shadow-xl dark:shadow-[0_10px_50px_rgba(0,0,0,0.6)] overflow-hidden relative`}>
-        
-        {/* Subtle Cyber Neon Ambient Highlights */}
-        <div className="pointer-events-none absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px]" />
-        <div className="pointer-events-none absolute -bottom-40 -left-40 w-96 h-96 bg-purple-600/10 dark:bg-purple-600/15 rounded-full blur-[140px]" />
-        <div className="pointer-events-none absolute top-1/2 left-1/3 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[120px]" />
+      <div className={`w-full ${isModal ? '' : 'max-w-6xl'} grid grid-cols-1 lg:grid-cols-12 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden relative`}>
 
         {/* ----------------- COLUMN 1: FORM SECTION (7 cols on lg) ----------------- */}
-        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative z-10 border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-slate-800/80">
+        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative z-10 border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-slate-800">
           <div>
             {/* Top Bar with Brand and Quick Action */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/70">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25 ring-2 ring-cyan-400/30">
-                  <Sparkles className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 flex items-center justify-center font-bold">
+                  P
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-black text-lg text-slate-900 dark:text-white tracking-wider">PATHLY</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
-                      نسخه ابری هوشمند
+                    <span className="font-bold text-lg text-slate-900 dark:text-white tracking-wider">PATHLY</span>
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      نسخه ابری
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400">سیستم جامع یادگیری، مهارت‌ها و برنامه‌ریزی فردی</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">سامانه برنامه‌ریزی فردی و پیشرفت مسیر</span>
                 </div>
               </div>
 
@@ -413,7 +408,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
                 >
                   <span>پیش‌نمایش مهمان</span>
                   <ChevronLeft className="w-3.5 h-3.5" />
@@ -422,7 +417,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             </div>
 
             {/* Mode Selector Tabs (Login / Register / Forgot Password) */}
-            <div className="grid grid-cols-3 p-1.5 bg-slate-100 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800/90 mb-6 gap-1 text-xs font-bold">
+            <div className="grid grid-cols-3 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 gap-1 text-xs font-medium">
               <button
                 type="button"
                 onClick={() => {
@@ -430,10 +425,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setError(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                   mode === 'login'
-                    ? 'bg-white dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/40 shadow-xs dark:shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-900/60'
+                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
@@ -447,10 +442,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setError(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                   mode === 'register'
-                    ? 'bg-white dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/40 shadow-xs dark:shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-900/60'
+                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
@@ -464,10 +459,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setError(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                   mode === 'forgot_password' || mode === 'recovery_token'
-                    ? 'bg-white dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-500/40 shadow-xs dark:shadow-[0_0_15px_rgba(6,182,212,0.15)] font-black'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-900/60'
+                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 <KeyRound className="w-3.5 h-3.5" />
@@ -636,7 +631,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.45)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {loading ? (
                     <>
@@ -927,7 +922,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 hover:from-emerald-400 hover:via-teal-500 hover:to-cyan-500 text-white font-bold text-sm shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:shadow-[0_0_35px_rgba(16,185,129,0.45)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {loading ? (
                     <>
@@ -1005,7 +1000,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-sm shadow-[0_0_25px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {loading ? (
                     <>
@@ -1213,7 +1208,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {loading ? (
                     <>

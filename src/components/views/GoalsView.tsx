@@ -124,12 +124,11 @@ export const GoalsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-emerald-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <span className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#39FF88] border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
-              <Target className="w-5 h-5 sm:w-6 sm:h-6" />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+            <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <Target className="w-5 h-5" />
             </span>
             هدف‌گذاری و ارزیابی عملکرد هفتگی
           </h1>
@@ -138,12 +137,12 @@ export const GoalsView: React.FC = () => {
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(16,185,129,0.35)] hover:shadow-[0_0_22px_rgba(16,185,129,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
+            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4" />
             تعریف هدف جدید
           </button>
         </div>
@@ -161,15 +160,15 @@ export const GoalsView: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors flex items-center gap-2 cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-white dark:bg-emerald-500/15 text-emerald-700 dark:text-[#39FF88] border border-slate-200 dark:border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121829]'
+                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold border border-slate-200 dark:border-slate-700 shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
             }`}
           >
             {tab.label}
-            <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
-              activeTab === tab.id ? 'bg-emerald-500/20 text-emerald-600 dark:text-[#39FF88]' : 'bg-slate-200 dark:bg-slate-800'
+            <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+              activeTab === tab.id ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-bold' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
             }`}>
               {toPersianDigits(tab.count)}
             </span>
@@ -496,7 +495,7 @@ export const GoalsView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 rounded-xl text-xs font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)] cursor-pointer"
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer shadow-xs"
                 >
                   ذخیره هدف
                 </button>
@@ -586,7 +585,7 @@ export const GoalsView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 rounded-xl font-bold shadow-[0_0_12px_rgba(16,185,129,0.3)] cursor-pointer"
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer shadow-xs"
                 >
                   ثبت ارزیابی هفتگی
                 </button>

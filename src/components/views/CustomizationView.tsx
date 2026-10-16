@@ -440,10 +440,10 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
           <button
             onClick={handleSave}
             disabled={isSaving || !hasChanges}
-            className={`flex items-center gap-2 px-4 py-2 text-xs font-black rounded-xl transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
               hasChanges
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-[0_0_15px_rgba(0,245,255,0.4)] active:scale-95'
-                : 'bg-slate-200 dark:bg-[#172033] text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-70'
+                ? 'bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 shadow-xs'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-70'
             }`}
           >
             {isSaving ? (
@@ -1196,10 +1196,10 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
               <button
                 onClick={handleSave}
                 disabled={isSaving || !hasChanges}
-                className={`w-full py-2.5 px-4 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`w-full py-2.5 px-4 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   hasChanges
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-[0_0_15px_rgba(0,245,255,0.35)]'
-                    : 'bg-slate-200 dark:bg-[#172033] text-slate-400 cursor-not-allowed opacity-70'
+                    ? 'bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-70'
                 }`}
               >
                 {isSaving ? <RotateCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}

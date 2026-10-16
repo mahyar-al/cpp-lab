@@ -108,13 +108,12 @@ export const HabitsView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-white dark:bg-[#0D1222] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-amber-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
-                <Flame className="w-5 h-5 text-amber-400" />
+            <div className="flex items-center gap-2.5 mb-1">
+              <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                <Flame className="w-5 h-5 text-amber-500" />
               </span>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
                 سیستم عادت‌ها و استمرار فردی
@@ -127,9 +126,9 @@ export const HabitsView: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_22px_rgba(245,158,11,0.5)] transition-all cursor-pointer active:scale-95 self-start md:self-auto"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer self-start md:self-auto shadow-xs"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4" />
             <span>تعریف عادت جدید</span>
           </button>
         </div>
@@ -289,13 +288,13 @@ export const HabitsView: React.FC = () => {
                             key={idx}
                             onClick={() => toggleHabitToday(habit.id, dateStr)}
                             title={`${dateStr} ${isDone ? '(انجام شده)' : isRest ? '(استراحت)' : ''}`}
-                            className={`w-4 h-6 rounded-xs transition-all cursor-pointer ${
+                            className={`w-4 h-6 rounded-xs transition-colors cursor-pointer ${
                               isDone
-                                ? 'bg-[#39FF88] shadow-[0_0_8px_rgba(57,255,136,0.4)]'
+                                ? 'bg-slate-800 dark:bg-slate-200'
                                 : isRest
-                                ? 'bg-blue-500/50'
-                                : 'bg-slate-200 dark:bg-[#172033] hover:bg-slate-300 dark:hover:bg-[#263247]'
-                            } ${isTodayDate ? 'ring-1 ring-cyan-400' : ''}`}
+                                ? 'bg-slate-400/50'
+                                : 'bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700'
+                            } ${isTodayDate ? 'ring-1 ring-slate-900 dark:ring-slate-100' : ''}`}
                           />
                         );
                       })}
@@ -430,7 +429,7 @@ export const HabitsView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl text-xs shadow-[0_0_12px_rgba(0,245,255,0.25)] cursor-pointer"
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
                 >
                   ثبت عادت
                 </button>

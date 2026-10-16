@@ -271,28 +271,27 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-cyan-500/25 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-32 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+        <div>
           <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-            <span className="p-2.5 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-              <CalendarDays className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <CalendarDays className="w-5 h-5" />
             </span>
             تقویم و زمان‌بندی رویدادها
           </h1>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            یکپارچه‌سازی تاریخ امتحانات، تکالیف مدرسه، مهلت پروژه‌ها و مسابقات با گاه‌شمار دقیق شمسی
+            یکپارچه‌سازی تاریخ امتحانات، تکالیف مدرسه، مهلت پروژه‌ها و مسابقات با تقویم شمسی
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {/* View mode switcher */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 p-1 rounded-xl text-xs font-medium">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-1 rounded-lg text-xs font-medium">
             <button
               onClick={() => setViewMode('month')}
-              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded transition-colors whitespace-nowrap cursor-pointer ${
                 viewMode === 'month'
-                  ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-[#00F5FF] font-bold shadow-[0_0_10px_rgba(6,182,212,0.25)]'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
@@ -300,9 +299,9 @@ export const CalendarView: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('week')}
-              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded transition-colors whitespace-nowrap cursor-pointer ${
                 viewMode === 'week'
-                  ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-[#00F5FF] font-bold shadow-[0_0_10px_rgba(6,182,212,0.25)]'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
@@ -310,9 +309,9 @@ export const CalendarView: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('day')}
-              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded transition-colors whitespace-nowrap cursor-pointer ${
                 viewMode === 'day'
-                  ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-[#00F5FF] font-bold shadow-[0_0_10px_rgba(6,182,212,0.25)]'
+                  ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
@@ -322,19 +321,19 @@ export const CalendarView: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl shadow-[0_0_16px_rgba(6,182,212,0.35)] hover:shadow-[0_0_22px_rgba(6,182,212,0.5)] transition-all whitespace-nowrap cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer shadow-xs"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4" />
             <span>رویداد جدید</span>
           </button>
         </div>
       </div>
 
       {/* Filter Tabs & Navigation Strip */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-[#0D1222] p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs font-bold text-slate-400 pl-1 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5 text-cyan-400" /> فیلتر ستون‌ها:
+          <span className="text-xs text-slate-400 pl-1 flex items-center gap-1">
+            <Filter className="w-3.5 h-3.5 text-slate-400" /> فیلتر:
           </span>
           {[
             { id: 'all', label: 'همه بخش‌ها' },
@@ -346,10 +345,10 @@ export const CalendarView: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setSectionFilter(item.id as typeof sectionFilter)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
                 sectionFilter === item.id
-                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_12px_rgba(6,182,212,0.35)]'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121829]'
+                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               {item.label}
@@ -422,17 +421,17 @@ export const CalendarView: React.FC = () => {
                     onClick={() => setSelectedDateIso(dayIso)}
                     className={`h-16 sm:h-24 p-1 sm:p-1.5 rounded-xl border flex flex-col justify-between cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-cyan-500 bg-cyan-500/10 dark:bg-cyan-950/30 ring-2 ring-cyan-500/30 shadow-[0_0_15px_-3px_rgba(6,182,212,0.3)]'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800/80 shadow-xs'
                         : isToday
-                        ? 'border-cyan-400/40 dark:border-cyan-500/40 bg-slate-50/80 dark:bg-[#121829]'
-                        : 'border-slate-100 dark:border-slate-800/80 hover:border-cyan-500/40 bg-white dark:bg-[#0D1222]'
+                        ? 'border-slate-400 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50'
+                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span
-                        className={`text-xs font-mono tabular-nums w-5 h-5 flex items-center justify-center rounded-lg ${
+                        className={`text-xs font-mono tabular-nums w-5 h-5 flex items-center justify-center rounded ${
                           isToday
-                            ? 'bg-gradient-to-tr from-cyan-500 to-blue-600 text-slate-950 font-bold shadow-[0_0_8px_rgba(6,182,212,0.4)]'
+                            ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold'
                             : 'text-slate-800 dark:text-slate-200'
                         }`}
                       >
