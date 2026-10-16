@@ -108,7 +108,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     activityLogs,
     customization,
     updateCustomization,
-    setIsAIAssistantOpen,
   } = useApp();
 
   // Local UI State
@@ -576,16 +575,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* AI Assistant Button */}
-          <button
-            onClick={() => setIsAIAssistantOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] bg-white dark:bg-[#0D0D0D] hover:bg-[#F9F8F5] dark:hover:bg-[#151515] border border-[#E7E5DF] dark:border-[#252525] rounded-xl transition-all cursor-pointer shadow-2xs"
-            title="دستیار هوشمند برنامه‌ریزی"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#D6A62E]" />
-            <span className="hidden sm:inline">دستیار</span>
-          </button>
-
           {/* Layout Configuration Button */}
           <button
             onClick={() => setShowConfigModal(true)}

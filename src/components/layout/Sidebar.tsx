@@ -70,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   onToggleCollapse,
 }) => {
-  const { homeworks, skills, goals, habits, reviews, dayData, getSectionTitle, customization, setIsAIAssistantOpen } = useApp();
+  const { homeworks, skills, goals, habits, reviews, dayData, getSectionTitle, customization } = useApp();
 
   const pendingHomeworkCount = homeworks.filter((h) => !h.completed).length;
 
@@ -393,27 +393,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             );
           })}
         </nav>
-
-        {/* AI Assistant Quick Trigger in Sidebar */}
-        <div className="px-2.5 mb-2.5">
-          <button
-            onClick={() => setIsAIAssistantOpen(true)}
-            className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold bg-[#D6A62E]/10 hover:bg-[#D6A62E]/20 text-[#D6A62E] border border-[#D6A62E]/30 transition-all cursor-pointer shadow-2xs ${
-              isCollapsed ? 'justify-center px-0' : 'justify-between'
-            }`}
-            title="دستیار هوشمند Pathly"
-          >
-            <div className="flex items-center gap-2 truncate">
-              <Sparkles className="w-4 h-4 shrink-0 text-[#D6A62E]" />
-              {!isCollapsed && <span className="truncate">دستیار هوشمند Pathly</span>}
-            </div>
-            {!isCollapsed && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#D6A62E]/20 text-[#D6A62E] font-bold">
-                زنده
-              </span>
-            )}
-          </button>
-        </div>
 
         {/* Footer Streak & Progress Widget */}
         {!isCollapsed && (

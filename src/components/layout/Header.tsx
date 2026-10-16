@@ -19,8 +19,6 @@ import {
   ShieldCheck,
   Palette,
   LifeBuoy,
-  Sparkles,
-  Bot,
   Trophy,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -62,7 +60,6 @@ export const Header: React.FC<HeaderProps> = ({
     logout,
     syncWithServer,
     setIsRescueModalOpen,
-    setIsAIAssistantOpen,
     rpg,
   } = useApp();
 
@@ -160,17 +157,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Search className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500" />
             <span className="hidden sm:inline">جستجو</span>
-          </button>
-
-          {/* AI Assistant Quick Trigger */}
-          <button
-            onClick={() => setIsAIAssistantOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-[#D6A62E] bg-[#D6A62E]/10 hover:bg-[#D6A62E]/20 border border-[#D6A62E]/30 rounded-lg transition-all cursor-pointer font-semibold shadow-2xs"
-            aria-label="دستیار هوشمند Pathly"
-            title="گفتگو با دستیار هوشمند Pathly"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">دستیار هوشمند</span>
           </button>
 
           {/* Primary Action: Quick Add with Warm Accent */}
@@ -471,22 +457,8 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                 </div>
 
-                {/* Quick Assistant & Rescue Actions */}
+                {/* Quick Rescue Actions */}
                 <div className="py-2.5 border-b border-slate-100 dark:border-slate-800 space-y-1.5">
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      setIsAIAssistantOpen(true);
-                    }}
-                    className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Bot className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                      <span>دستیار هوش مصنوعی</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400 font-normal">گفتگوی هوشمند</span>
-                  </button>
-
                   <button
                     onClick={() => {
                       setShowProfileMenu(false);

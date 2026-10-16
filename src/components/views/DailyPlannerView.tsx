@@ -22,7 +22,6 @@ import {
   Info,
   Play,
   LifeBuoy,
-  Bot,
   Zap,
   TrendingUp,
   BrainCircuit,
@@ -57,7 +56,6 @@ export const DailyPlannerView: React.FC = () => {
     smartSchedule,
     setIsRescueModalOpen,
     startActiveFocus,
-    setIsAIAssistantOpen,
   } = useApp();
 
   const today = new Date();
@@ -248,7 +246,7 @@ export const DailyPlannerView: React.FC = () => {
             <button
               onClick={() => setIsSmartPlannerModalOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer"
-              title="چینش خودکار فعالیت‌ها با هوش مصنوعی"
+              title="چینش خودکار فعالیت‌ها بر اساس اولویت"
             >
               <Sparkles className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               <span>چینش خودکار</span>
@@ -1118,7 +1116,7 @@ export const DailyPlannerView: React.FC = () => {
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 text-white dark:text-slate-900" />
-                    <span>تولید پیشنهاد زمان‌بندی با هوش مصنوعی</span>
+                    <span>تولید پیشنهاد زمان‌بندی بهینه</span>
                   </>
                 )}
               </button>

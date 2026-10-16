@@ -36,7 +36,6 @@ export const SkillsView: React.FC = () => {
     toggleSkillResource,
     addSkillExercise,
     toggleSkillExercise,
-    breakdownGoalWithAI,
     showToast,
   } = useApp();
 
@@ -54,8 +53,6 @@ export const SkillsView: React.FC = () => {
   const [newTargetDate, setNewTargetDate] = useState('2026-12-30');
   const [newSkillNotes, setNewSkillNotes] = useState('');
   const [newPrerequisites, setNewPrerequisites] = useState<string[]>([]);
-  const [isBreakingDownRoadmap, setIsBreakingDownRoadmap] = useState(false);
-
   // Quick inputs
   const [newStepTitle, setNewStepTitle] = useState('');
   const [practiceMinutes, setPracticeMinutes] = useState(45);
@@ -97,35 +94,6 @@ export const SkillsView: React.FC = () => {
     setNewSkillName('');
     setNewPrerequisites([]);
     setShowAddModal(false);
-  };
-
-  const handleAIBreakdown = async () => {
-    if (!activeSkill) return;
-    setIsBreakingDownRoadmap(true);
-    try {
-      const res = await breakdownGoalWithAI(
-        activeSkill.name,
-        activeSkill.notes,
-        activeSkill.targetLevel,
-        activeSkill.category
-      );
-      if (res && res.steps && res.steps.length > 0) {
-        const newRoadmapSteps = res.steps.map((st: any, idx: number) => ({
-          id: `step-ai-${Date.now()}-${idx}`,
-          title: st.title || st.step || 'گام آموزشی هوشمند',
-          completed: false,
-          order: (activeSkill.roadmap?.length || 0) + idx + 1,
-        }));
-        updateSkill(activeSkill.id, {
-          roadmap: [...(activeSkill.roadmap || []), ...newRoadmapSteps],
-        });
-        showToast('مراحل یادگیری هوشمند با موفقیت به نقشه راه اضافه شدند.');
-      }
-    } catch (e: any) {
-      showToast('خطا در تحلیل نقشه راه با هوش مصنوعی');
-    } finally {
-      setIsBreakingDownRoadmap(false);
-    }
   };
 
   const handleAddRoadmapStep = (e: React.FormEvent) => {
@@ -452,22 +420,6 @@ export const SkillsView: React.FC = () => {
                       </div>
                     )}
 
-                    {/* AI Breakdown Action Bar */}
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-purple-400" />
-                        <span>پیشنهاد گام‌های آموزشی متناسب با سطح هدف شما ({activeSkill.targetLevel})</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleAIBreakdown}
-                        disabled={isBreakingDownRoadmap}
-                        className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold rounded-lg text-xs shadow-sm flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
-                        <span>{isBreakingDownRoadmap ? 'در حال تحلیل...' : 'تولید نقشه راه با هوش مصنوعی'}</span>
-                      </button>
-                    </div>
 
                     <form onSubmit={handleAddRoadmapStep} className="flex gap-2">
                       <input
