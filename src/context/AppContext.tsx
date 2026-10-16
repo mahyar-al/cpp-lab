@@ -3344,12 +3344,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const trimmed = text.trim();
     if (!trimmed || isAILoading || isAIStreaming) return;
 
-    if (!currentUser) {
-      openAuthModal('login');
-      showToast('برای گفتگو با هوش مصنوعی زنده، لطفاً ابتدا وارد حساب کاربری خود شوید.');
-      return;
-    }
-
     setLastUserPrompt(trimmed);
     setAiError(null);
 
@@ -3376,6 +3370,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           conversationId: activeConversationId || undefined,
           model: selectedAIModel,
           tone: selectedAITone,
+          clientContext: {
+            profile: state.profile,
+            dayData: state.dayData,
+            homeworks: state.homeworks,
+            goals: state.goals,
+            habits: state.habits,
+            skills: state.skills,
+            projects: state.projects,
+            exams: state.exams,
+            subjects: state.subjects,
+            notes: state.notes,
+            calendarEvents: state.calendarEvents,
+            studySessions: state.studySessions,
+          },
         },
         {
           signal: controller.signal,

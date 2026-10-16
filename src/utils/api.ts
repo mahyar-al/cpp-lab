@@ -347,7 +347,7 @@ export interface StreamChatCallbacks {
 }
 
 export async function apiStreamAIChat(
-  payload: { message: string; conversationId?: string; model?: string; tone?: string },
+  payload: { message: string; conversationId?: string; model?: string; tone?: string; clientContext?: any },
   callbacks: StreamChatCallbacks
 ): Promise<void> {
   const token = getStoredToken();
@@ -356,6 +356,14 @@ export async function apiStreamAIChat(
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  } else {
+    // Generate or read browser guest session
+    let guestId = localStorage.getItem('pathly_guest_ai_id');
+    if (!guestId) {
+      guestId = `guest_${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem('pathly_guest_ai_id', guestId);
+    }
+    headers['x-guest-id'] = guestId;
   }
 
   const response = await fetch('/api/ai/chat/stream', {

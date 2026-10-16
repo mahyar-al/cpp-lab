@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Clock,
@@ -17,9 +17,8 @@ import {
   Settings,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   X,
-  Layers,
-  Bot,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits } from '../../utils/jalali';
@@ -53,6 +52,7 @@ interface SidebarProps {
 }
 
 interface NavGroup {
+  groupId: string;
   groupTitle: string;
   items: {
     id: NavTab;
@@ -84,9 +84,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const todayTasks = dayData[currentIranianDayIdx]?.postSchoolTasks || [];
   const pendingTasksCount = todayTasks.filter((t) => !t.completed).length;
 
+  // 6 Structured Groups as specified in user brief:
+  // ۱. نمای کلی: داشبورد، برنامه‌ریز روزانه
+  // ۲. برنامه‌ریزی: مدرسه و درس‌ها، تقویم رویدادها، اهداف
+  // ۳. رشد و فعالیت: مهارت‌ها، پروژه‌ها، مسابقات
+  // ۴. تمرکز: عادت‌ها، تایمر تمرکز، مرور فاصله‌دار
+  // ۵. اطلاعات: کتابخانه منابع، یادداشت‌ها، آمار و عملکرد
+  // ۶. حساب: تنظیمات و پروفایل
   const rawNavGroups: NavGroup[] = [
     {
-      groupTitle: 'پیشخوان',
+      groupId: 'overview',
+      groupTitle: 'نمای کلی',
       items: [
         {
           id: 'dashboard',
@@ -102,7 +110,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      groupTitle: 'ستون‌های اصلی',
+      groupId: 'planning',
+      groupTitle: 'برنامه‌ریزی',
       items: [
         {
           id: 'school',
@@ -110,6 +119,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           icon: GraduationCap,
           badge: pendingHomeworkCount > 0 ? pendingHomeworkCount : undefined,
         },
+        {
+          id: 'calendar',
+          label: getSectionTitle('calendar'),
+          icon: CalendarDays,
+        },
+        {
+          id: 'goals',
+          label: getSectionTitle('goals'),
+          icon: Target,
+        },
+      ],
+    },
+    {
+      groupId: 'growth',
+      groupTitle: 'رشد و فعالیت',
+      items: [
         {
           id: 'skills',
           label: getSectionTitle('skills'),
@@ -128,7 +153,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
-      groupTitle: 'تمرکز و استمرار',
+      groupId: 'focus',
+      groupTitle: 'تمرکز',
       items: [
         {
           id: 'habits',
@@ -136,35 +162,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
           icon: Flame,
         },
         {
-          id: 'reviews',
-          label: getSectionTitle('reviews'),
-          icon: RotateCcw,
-          badge: dueReviewsCount > 0 ? dueReviewsCount : undefined,
-        },
-        {
           id: 'focus_timer',
           label: getSectionTitle('focus_timer'),
           icon: Zap,
         },
         {
-          id: 'resources',
-          label: getSectionTitle('resources'),
-          icon: BookOpen,
+          id: 'reviews',
+          label: getSectionTitle('reviews'),
+          icon: RotateCcw,
+          badge: dueReviewsCount > 0 ? dueReviewsCount : undefined,
         },
       ],
     },
     {
-      groupTitle: 'برنامه‌ریزی و ارزیابی',
+      groupId: 'knowledge',
+      groupTitle: 'اطلاعات',
       items: [
         {
-          id: 'calendar',
-          label: getSectionTitle('calendar'),
-          icon: CalendarDays,
-        },
-        {
-          id: 'goals',
-          label: getSectionTitle('goals'),
-          icon: Target,
+          id: 'resources',
+          label: getSectionTitle('resources'),
+          icon: BookOpen,
         },
         {
           id: 'notes',
@@ -176,6 +193,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           label: getSectionTitle('analytics'),
           icon: BarChart3,
         },
+      ],
+    },
+    {
+      groupId: 'account',
+      groupTitle: 'حساب',
+      items: [
         {
           id: 'settings',
           label: getSectionTitle('settings'),
@@ -185,21 +208,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
-  // Filter hidden sections & sort by user custom navOrder (Settings is never hidden)
-  const userNavOrder = customization?.navOrder || [];
-  const getNavOrderIndex = (tab: NavTab) => {
-    const idx = userNavOrder.indexOf(tab);
-    return idx === -1 ? 999 : idx;
+  // Collapsible groups state - default all open
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+
+  // Ensure group containing active tab is always open
+  useEffect(() => {
+    const activeGroup = rawNavGroups.find((g) => g.items.some((it) => it.id === currentTab));
+    if (activeGroup && collapsedGroups[activeGroup.groupId]) {
+      setCollapsedGroups((prev) => ({ ...prev, [activeGroup.groupId]: false }));
+    }
+  }, [currentTab]);
+
+  const toggleGroupCollapse = (groupId: string) => {
+    setCollapsedGroups((prev) => ({
+      ...prev,
+      [groupId]: !prev[groupId],
+    }));
   };
 
+  // Filter hidden sections (Settings is never hidden)
   const navGroups: NavGroup[] = rawNavGroups
     .map((grp) => ({
       ...grp,
-      items: grp.items
-        .filter(
-          (it) => it.id === 'settings' || !(customization?.hiddenSections || []).includes(it.id)
-        )
-        .sort((a, b) => getNavOrderIndex(a.id) - getNavOrderIndex(b.id)),
+      items: grp.items.filter(
+        (it) => it.id === 'settings' || !(customization?.hiddenSections || []).includes(it.id)
+      ),
     }))
     .filter((grp) => grp.items.length > 0);
 
@@ -216,42 +249,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
+      {/* Mobile Backdrop */}
       {isOpenMobile && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden transition-opacity"
         />
       )}
 
+      {/* Main Sidebar Aside */}
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0A0A0A] border-l border-slate-200 dark:border-[#242424] transition-all duration-300 ease-in-out shadow-lg ${
+        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0D0D0D] border-l border-[#E7E5DF] dark:border-[#252525] transition-all duration-300 ease-in-out shadow-lg ${
           isCollapsed ? 'w-20' : 'w-64'
-        } ${
-          isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
-        }`}
+        } ${isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}
+        dir="rtl"
       >
-        {/* Top Header of Sidebar */}
+        {/* Top Header / Branding */}
         <div
-          className={`flex items-center h-15 border-b border-slate-200 dark:border-[#242424] transition-all relative ${
+          className={`flex items-center h-16 border-b border-[#E7E5DF] dark:border-[#252525] transition-all relative ${
             isCollapsed ? 'px-2 justify-center' : 'px-4 justify-between'
           }`}
         >
-          {/* Logo & Brand */}
+          {/* Logo & Brand Name */}
           <div
             onClick={isCollapsed ? onToggleCollapse : undefined}
-            className={`flex items-center ${isCollapsed ? 'justify-center cursor-pointer' : 'gap-2.5'} overflow-hidden`}
-            title={isCollapsed ? 'برای باز کردن منو کلیک کنید' : undefined}
+            className={`flex items-center ${isCollapsed ? 'justify-center cursor-pointer' : 'gap-3'} overflow-hidden`}
+            title={isCollapsed ? 'برای گسترش منو کلیک کنید' : undefined}
           >
-            <div className="w-8 h-8 rounded-lg bg-amber-600 dark:bg-amber-500 text-white dark:text-stone-950 flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-[#D6A62E] text-black font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
               P
             </div>
 
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white truncate">
+                <span className="font-bold text-sm tracking-tight text-[#292A27] dark:text-[#E8E8E8] truncate">
                   Pathly
                 </span>
-                <span className="text-[10px] text-slate-400 truncate">
+                <span className="text-[10px] text-[#74756F] dark:text-[#A0A0A0] truncate">
                   مسیر پیشرفت من
                 </span>
               </div>
@@ -262,7 +296,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={onToggleCollapse}
-              className={`hidden lg:flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer ${
+              className={`hidden lg:flex items-center justify-center p-1.5 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] rounded-lg hover:bg-[#F9F8F5] dark:hover:bg-[#151515] transition-colors cursor-pointer ${
                 isCollapsed ? 'w-8 h-8' : ''
               }`}
               aria-label={isCollapsed ? 'گسترش منو' : 'جمع‌کردن منو'}
@@ -273,7 +307,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             <button
               onClick={onCloseMobile}
-              className="lg:hidden p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              className="lg:hidden p-1.5 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] rounded-lg hover:bg-[#F9F8F5] dark:hover:bg-[#151515] cursor-pointer"
               aria-label="بستن منو"
               title="بستن منو"
             >
@@ -282,82 +316,126 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Navigation Item Groups */}
-        <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-3.5">
-          {navGroups.map((group, groupIdx) => (
-            <div key={groupIdx} className="space-y-0.5">
-              {!isCollapsed && (
-                <div className="px-2.5 pb-1 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                  {group.groupTitle}
-                </div>
-              )}
+        {/* Navigation Groups List */}
+        <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-3 scrollbar-thin">
+          {navGroups.map((group) => {
+            const isGroupCollapsed = collapsedGroups[group.groupId] && !isCollapsed;
 
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = currentTab === item.id;
+            return (
+              <div key={group.groupId} className="space-y-0.5">
+                {/* Group Title Header (Collapsible) */}
+                {!isCollapsed && (
+                  <button
+                    type="button"
+                    onClick={() => toggleGroupCollapse(group.groupId)}
+                    className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-semibold text-[#74756F] dark:text-[#A0A0A0] hover:text-[#292A27] dark:hover:text-[#E8E8E8] transition-colors cursor-pointer group"
+                  >
+                    <span>{group.groupTitle}</span>
+                    <ChevronDown
+                      className={`w-3 h-3 text-[#A0A0A0] transition-transform duration-200 ${
+                        isGroupCollapsed ? '-rotate-90' : 'rotate-0'
+                      }`}
+                    />
+                  </button>
+                )}
 
-                  return (
-                      <button
-                        key={item.id}
-                        onClick={() => handleNavClick(item.id)}
-                        className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors group cursor-pointer relative ${
-                          isActive
-                            ? 'bg-amber-500/10 dark:bg-amber-400/10 text-amber-950 dark:text-amber-200 font-semibold'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-[#151515] hover:text-slate-900 dark:hover:text-slate-200'
-                        } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
-                        title={isCollapsed ? item.label : undefined}
-                      >
-                        {isActive && (
-                          <span className="absolute right-0 inset-y-1 w-1 bg-amber-600 dark:bg-amber-400 rounded-full" />
-                        )}
-                        <div className="flex items-center gap-2.5 truncate">
-                          <Icon
-                            className={`w-4 h-4 shrink-0 transition-colors ${
-                              isActive ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'
-                            }`}
-                          />
-                          {!isCollapsed && <span className="truncate">{item.label}</span>}
-                        </div>
+                {/* Group Items */}
+                {(!isGroupCollapsed || isCollapsed) && (
+                  <div className="space-y-0.5">
+                    {group.items.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = currentTab === item.id;
 
-                        {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
-                          <span className={`px-1.5 py-0.2 text-[10px] rounded font-mono tabular-nums font-medium ${
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => handleNavClick(item.id)}
+                          className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all group cursor-pointer relative ${
                             isActive
-                              ? 'bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200'
-                              : 'text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-[#1A1A1A]'
-                          }`}>
-                            {toPersianDigits(item.badge)}
-                          </span>
-                        )}
-                      </button>
-                  );
-                })}
+                              ? 'bg-[#D6A62E]/15 text-[#D6A62E] font-semibold'
+                              : 'text-[#74756F] dark:text-[#A0A0A0] hover:bg-[#F9F8F5] dark:hover:bg-[#151515] hover:text-[#292A27] dark:hover:text-[#E8E8E8]'
+                          } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
+                          title={isCollapsed ? item.label : undefined}
+                        >
+                          {/* Active Matte Gold Indicator Bar */}
+                          {isActive && (
+                            <span className="absolute right-0 inset-y-1 w-1 bg-[#D6A62E] rounded-full" />
+                          )}
+
+                          <div className="flex items-center gap-2.5 truncate">
+                            <Icon
+                              className={`w-4 h-4 shrink-0 transition-colors ${
+                                isActive
+                                  ? 'text-[#D6A62E]'
+                                  : 'text-[#A0A0A0] group-hover:text-[#292A27] dark:group-hover:text-[#E8E8E8]'
+                              }`}
+                            />
+                            {!isCollapsed && <span className="truncate">{item.label}</span>}
+                          </div>
+
+                          {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                            <span
+                              className={`px-1.5 py-0.2 text-[10px] rounded-md font-mono tabular-nums font-semibold ${
+                                isActive
+                                  ? 'bg-[#D6A62E] text-black'
+                                  : 'text-[#74756F] dark:text-[#A0A0A0] bg-[#E7E5DF] dark:bg-[#252525]'
+                              }`}
+                            >
+                              {toPersianDigits(item.badge)}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
-        {/* Footer Streaks Widget */}
+        {/* AI Assistant Quick Trigger in Sidebar */}
+        <div className="px-2.5 mb-2.5">
+          <button
+            onClick={() => setIsAIAssistantOpen(true)}
+            className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold bg-[#D6A62E]/10 hover:bg-[#D6A62E]/20 text-[#D6A62E] border border-[#D6A62E]/30 transition-all cursor-pointer shadow-2xs ${
+              isCollapsed ? 'justify-center px-0' : 'justify-between'
+            }`}
+            title="دستیار هوشمند Pathly"
+          >
+            <div className="flex items-center gap-2 truncate">
+              <Sparkles className="w-4 h-4 shrink-0 text-[#D6A62E]" />
+              {!isCollapsed && <span className="truncate">دستیار هوشمند Pathly</span>}
+            </div>
+            {!isCollapsed && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#D6A62E]/20 text-[#D6A62E] font-bold">
+                زنده
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Footer Streak & Progress Widget */}
         {!isCollapsed && (
-          <div className="p-3 mx-2.5 mb-3 bg-slate-50 dark:bg-[#0D0D0D] rounded-xl border border-slate-200/90 dark:border-[#242424]">
-            <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 font-medium mb-1.5">
+          <div className="p-3 mx-2.5 mb-3 bg-[#F9F8F5] dark:bg-[#151515] rounded-xl border border-[#E7E5DF] dark:border-[#252525]">
+            <div className="flex items-center justify-between text-xs text-[#292A27] dark:text-[#E8E8E8] font-medium mb-1.5">
               <span className="flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-amber-500" />
+                <Flame className="w-3.5 h-3.5 text-[#D6A62E]" />
                 استمرار روزانه
               </span>
-              <span className="font-mono tabular-nums text-slate-800 dark:text-slate-200 font-semibold">
+              <span className="font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8] font-bold">
                 {toPersianDigits(maxStreak)} روز
               </span>
             </div>
 
             <div className="space-y-1">
-              <div className="flex justify-between text-[11px] text-slate-400">
-                <span>پیشرفت هفتگی</span>
+              <div className="flex justify-between text-[11px] text-[#74756F] dark:text-[#A0A0A0]">
+                <span>پیشرفت هفتگی اهداف</span>
                 <span className="font-mono tabular-nums">{toPersianDigits(weeklyGoalPercent)}٪</span>
               </div>
-              <div className="w-full bg-slate-200 dark:bg-[#1C1C1C] h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-[#E7E5DF] dark:bg-[#252525] h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-amber-600 dark:bg-amber-400 h-full rounded-full transition-all duration-300"
+                  className="bg-[#D6A62E] h-full rounded-full transition-all duration-300"
                   style={{ width: `${weeklyGoalPercent}%` }}
                 />
               </div>

@@ -162,6 +162,17 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">جستجو</span>
           </button>
 
+          {/* AI Assistant Quick Trigger */}
+          <button
+            onClick={() => setIsAIAssistantOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-[#D6A62E] bg-[#D6A62E]/10 hover:bg-[#D6A62E]/20 border border-[#D6A62E]/30 rounded-lg transition-all cursor-pointer font-semibold shadow-2xs"
+            aria-label="دستیار هوشمند Pathly"
+            title="گفتگو با دستیار هوشمند Pathly"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">دستیار هوشمند</span>
+          </button>
+
           {/* Primary Action: Quick Add with Warm Accent */}
           <button
             onClick={onOpenQuickAdd}

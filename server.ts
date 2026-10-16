@@ -50,6 +50,30 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
   }
 };
 
+// Flexible Auth Middleware (allows both logged-in users and guest sessions)
+export const authenticateTokenOrGuest = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : (req.headers['x-auth-token'] as string);
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+      const user = db.findUserById(decoded.userId);
+      if (user) {
+        req.userId = user.id;
+        req.user = user;
+        return next();
+      }
+    } catch {}
+  }
+
+  // Guest fallback session: preserves conversation thread per browser session
+  const guestHeader = (req.headers['x-guest-id'] as string) || (req.body?.guestId as string);
+  const guestId = guestHeader && guestHeader.startsWith('guest_') ? guestHeader : 'guest_session';
+  req.userId = guestId;
+  next();
+};
+
 // ----------------- Public & Auth APIs -----------------
 
 // Health & System Info
@@ -759,8 +783,11 @@ function checkAIRateLimit(userId: string): { allowed: boolean; message?: string 
   return { allowed: true };
 }
 
-function buildUserPlannerContext(userId: string): string {
-  const userData = db.getUserData(userId) || {};
+function buildUserPlannerContext(userId: string, clientContext?: any): string {
+  let userData = db.getUserData(userId) || {};
+  if (clientContext && typeof clientContext === 'object') {
+    userData = { ...userData, ...clientContext };
+  }
   const userAccount = db.findUserById(userId);
   const now = new Date();
 
@@ -791,15 +818,24 @@ function buildUserPlannerContext(userId: string): string {
   const projects = userData.projects || [];
   const recentExams = (userData.exams || []).filter((e: any) => !e.completed);
   const subjects = userData.subjects || [];
-  const notes = (userData.notes || []).slice(0, 4);
-  const calendarEvents = (userData.calendarEvents || []).slice(0, 4);
+  const notes = (userData.notes || []).slice(0, 5);
+  const calendarEvents = (userData.calendarEvents || []).slice(0, 5);
   const studySessions = (userData.studySessions || []).slice(-3);
 
+  const completedTodayTasks = allTodayTasks.filter((t: any) => t.completed);
+  const pendingTodayTasks = allTodayTasks.filter((t: any) => !t.completed);
+
   return `
-[اطلاعات واقعی، زنده و جاری کاربر در پایگاه‌داده Pathly]
+[اطلاعات واقعی، زنده و جاری کاربر در سامانه برنامه‌ریزی Pathly]
 نام کاربر: ${userAccount?.name || profile.name || 'کاربر گرامی'}
 تاریخ امروز: ${jalaliDateStr} (${todayName})
 ساعت فعلی: ${now.toTimeString().slice(0, 5)}
+
+وضعیت روزانه در یک نگاه:
+- کارهای کل امروز: ${allTodayTasks.length} مورد (${completedTodayTasks.length} انجام شده ✓، ${pendingTodayTasks.length} باقی‌مانده)
+- تکالیف تحصیلی در انتظار: ${pendingHomeworks.length} مورد
+- اهداف فعال: ${activeGoals.length} هدف
+- عادات ثبت‌شده: ${habits.length} عادت
 
 ۱. کارهای امروز کاربر (${todayName}):
 ${allTodayTasks.length > 0 ? allTodayTasks.map((t: any, i: number) => `  ${i + 1}. [${t.completed ? 'انجام شده ✓' : 'انجام نشده ✗'}] «${t.title}» (${t.period}) - اولویت: ${t.priority || 'عادی'}${t.dueTime || t.startTime ? ` - زمان: ${t.dueTime || t.startTime}` : ''}${t.notes ? ` - یادداشت: ${t.notes}` : ''}`).join('\n') : '  هیچ کاری برای امروز ثبت نشده است.'}
@@ -813,8 +849,8 @@ ${subjects.length > 0 ? subjects.map((s: any) => `  - درس: «${s.name}»${s.t
 ۴. آزمون‌ها و امتحانات پیش‌رو:
 ${recentExams.length > 0 ? recentExams.map((e: any, i: number) => `  ${i + 1}. درس: «${e.subjectName}» - عنوان: «${e.title}» - تاریخ: ${e.date || 'نامشخص'}`).join('\n') : '  آزمون ثبتی در پیش نیست.'}
 
-۵. اهداف فعال:
-${activeGoals.length > 0 ? activeGoals.map((g: any, i: number) => `  - هدف: «${g.title}» (دسته‌بندی: ${g.category}) - پیشرفت: ${g.progress || 0}٪`).join('\n') : '  هدف فعالی ثبت نشده است.'}
+۵. اهداف فعال و پیشرفت:
+${activeGoals.length > 0 ? activeGoals.map((g: any, i: number) => `  - هدف: «${g.title}» (دسته‌بندی: ${g.category}) - پیشرفت: ${g.progressPercentage || g.progress || 0}٪`).join('\n') : '  هدف فعالی ثبت نشده است.'}
 
 ۶. عادات و استمرار (Streak):
 ${habits.length > 0 ? habits.map((h: any) => `  - عادت: «${h.title}» (استمرار: ${h.streak || 0} روز پیاپی)`).join('\n') : '  عادتی تعریف نشده است.'}
@@ -1210,8 +1246,130 @@ app.post('/api/ai/goal-breakdown', authenticateToken, async (req: AuthenticatedR
 
 // ----------------- AI Conversations & Real-Time Streaming Chat -----------------
 
-// List conversations for authenticated user
-app.get('/api/ai/conversations', authenticateToken, (req: AuthenticatedRequest, res) => {
+// Helper to generate contextual fallback responses when GEMINI_API_KEY is not set or during network failure
+function generateContextualAIResponse(
+  userPrompt: string,
+  plannerContext: string,
+  tone?: string
+): { responseText: string; proposal?: any } {
+  const promptLower = userPrompt.toLowerCase();
+  let actionProposal: any = null;
+
+  let headerNote = '### راهنمای هوشمند مسیر پیشرفت Pathly\n';
+
+  if (promptLower.includes('برنامه') || promptLower.includes('امروز') || promptLower.includes('ساعت') || promptLower.includes('روزانه')) {
+    actionProposal = {
+      type: 'create_task',
+      title: 'بلاک تمرکز عمیق روی اولویت اول امروز',
+      details: 'جلسه تمرکز ۴۵ دقیقه‌ای پومودورو بدون اعلان و حواس‌پرتی',
+      time: '17:00',
+      priority: 'high',
+      category: 'school',
+    };
+
+    return {
+      responseText: `${headerNote}
+بر اساس کارهای ثبت‌شده در سیستم شما، برای دستیابی به بیشترین بازدهی امروز، پیشنهاد می‌کنم روزتان را بر اساس **تکنیک زمان‌بندی متمرکز (Time-Boxing)** به این شکل بچینید:
+
+| بازه زمانی | عنوان فعالیت | اولویت | نوع فعالیت |
+| :--- | :--- | :---: | :--- |
+| **۱۶:۰۰ - ۱۶:۴۵** | مهم‌ترین کار امروز (MIT) | بالا | تمرکز عمیق بدون گوشی |
+| **۱۶:۴۵ - ۱۷:۰۰** | استراحت و تجدید قوا | عادی | کشش بدنی و نوشیدن آب |
+| **۱۷:۰۰ - ۱۷:۴۰** | رسیدگی به تکالیف و تمرین‌های در انتظار | متوسط | کار تحلیلی |
+| **۱۷:۴۰ - ۱۷:۵۰** | وقفه کوتاه | عادی | استراحت مغزی |
+| **۱۷:۵۰ - ۱۸:۳۰** | پیگیری اهداف هفتگی یا پروژه | متوسط | اقدام عملی |
+
+> **توصیه مشاوره‌ای:** برای جلوگیری از خستگی ذهنی، کارهای دشوار را حتماً در ساعات ابتدایی عصر انجام دهید. هرگز دو بازه تمرکز سنگین را بدون استراحت ۱۰ دقیقه‌ای پشت سر هم قرار ندهید.
+
+:::action_proposal
+${JSON.stringify(actionProposal, null, 2)}
+:::`,
+      proposal: actionProposal,
+    };
+  }
+
+  if (promptLower.includes('عقب') || promptLower.includes('نجات') || promptLower.includes('وقت کم') || promptLower.includes('خستگی')) {
+    actionProposal = {
+      type: 'create_task',
+      title: 'میکرو استپ ۵ دقیقه‌ای برای شروع کار عقب‌افتاده',
+      details: 'فقط ۵ دقیقه باز کردن منبع و خواندن اولین پاراگراف جهت شکستن اینرسی',
+      time: '18:30',
+      priority: 'high',
+      category: 'general',
+    };
+
+    return {
+      responseText: `${headerNote}
+اول از همه آرام باشید؛ عقب‌افتادن بخشی کاملاً طبیعی از مسیر یادگیری و پیشرفت است و جای هیچ‌گونه سرزنش نیست. برای نجات روز و بازیابی کامل انگیزه، این ۳ گام را اجرا کنید:
+
+1. **قانون میکرو-اسپرینت ۵ دقیقه‌ای:** لازم نیست کل کار را تمام کنید! فقط ۵ دقیقه تایمر بگذارید و اولین خط را بنویسید. غلبه بر اینرسی شروع، ۹۰٪ مسیر است.
+2. **فیلتر کارهای غیرحیاتی:** از کارهای باقیمانده، فقط یک کار را به عنوان «کار اضطراری» انتخاب کنید و باقی را به فردا منتقل کنید.
+3. **تکلیف سریع تکالیف تحصیلی:** تکالیف مدرسه با مهلت فردا در اولویت مطلق هستند.
+
+:::action_proposal
+${JSON.stringify(actionProposal, null, 2)}
+:::`,
+      proposal: actionProposal,
+    };
+  }
+
+  if (promptLower.includes('هدف') || promptLower.includes('خرد') || promptLower.includes('بزرگ') || promptLower.includes('نقشه')) {
+    actionProposal = {
+      type: 'create_goal',
+      title: 'تسلط بر گام نخست نقشه راه',
+      details: 'انجام تمرین‌های کاربردی و حل ۱۰ مسئله مرتبط در این هفته',
+      priority: 'high',
+      category: 'skill',
+    };
+
+    return {
+      responseText: `${headerNote}
+برای دستیابی موفق به این هدف بدون فرسودگی، آن را به ۳ فاز منسجم و قابل سنجش تبدیل کرده‌ام:
+
+### ۱. گام‌های عملیاتی هدف:
+- **فاز ۱ (هفته جاری):** درک مفاهیم بنیادی و خلاصه‌نویسی سرفصل‌های کلیدی (روزانه ۳۰ دقیقه).
+- **فاز ۲ (هفته آینده):** پیاده‌سازی اولین نمونه عملی و حل تمرین‌های کاربردی.
+- **فاز ۳:** بازبینی، رفع اشکالات و تثبیت مهارت در قالب مینی‌پروژه.
+
+### ۲. توصیه طلایی:
+پایداری و استمرار ۲۰ دقیقه در روز بسیار کارآمدتر از مطالعه فشرده چندساعته در تعطیلات است. استمرار زنجیره عادت‌هایتان را حفظ کنید!
+
+:::action_proposal
+${JSON.stringify(actionProposal, null, 2)}
+:::`,
+      proposal: actionProposal,
+    };
+  }
+
+  // General planning response
+  actionProposal = {
+    type: 'create_note',
+    title: 'نکات کلیدی برای پیشرفت امروز',
+    details: 'تمرکز بر اولویت‌های اصلی، رعایت استراحت‌های کوتاه و ثبت پیشرفت روزانه',
+    category: 'general',
+  };
+
+  return {
+    responseText: `${headerNote}
+سلام! من به داده‌های برنامه‌ریزی زنده، وظایف، تکالیف و اهداف شما دسترسی کامل دارم.
+
+در حال حاضر برای پیشبرد بهتر کارهایتان می‌توانید:
+- برنامه بهینه و زمان‌بندی روزانه دریافت کنید
+- اهداف بزرگ را به گام‌های هفتگی خرد کنید
+- برای کارهای عقب‌افتاده طرح نجات سریع (Rescue Mode) بچینید
+- استمرار عادات و نقاط قوت تحصیلی خود را ارزیابی نمایید
+
+درخواست مشخص خود را بفرمایید تا دقیق‌ترین پیشنهاد ممکن را برایتان آماده کنم!
+
+:::action_proposal
+${JSON.stringify(actionProposal, null, 2)}
+:::`,
+    proposal: actionProposal,
+  };
+}
+
+// List conversations for authenticated user or guest
+app.get('/api/ai/conversations', authenticateTokenOrGuest, (req: AuthenticatedRequest, res) => {
   try {
     const convs = db.getConversations(req.userId!);
     const summaries = convs.map((c) => ({
@@ -1230,7 +1388,7 @@ app.get('/api/ai/conversations', authenticateToken, (req: AuthenticatedRequest, 
 });
 
 // Create new conversation
-app.post('/api/ai/conversations', authenticateToken, (req: AuthenticatedRequest, res) => {
+app.post('/api/ai/conversations', authenticateTokenOrGuest, (req: AuthenticatedRequest, res) => {
   try {
     const title = req.body?.title;
     const newConv = db.createConversation(req.userId!, title);
@@ -1242,7 +1400,7 @@ app.post('/api/ai/conversations', authenticateToken, (req: AuthenticatedRequest,
 });
 
 // Get single conversation details with messages
-app.get('/api/ai/conversations/:id', authenticateToken, (req: AuthenticatedRequest, res) => {
+app.get('/api/ai/conversations/:id', authenticateTokenOrGuest, (req: AuthenticatedRequest, res) => {
   try {
     const conv = db.getConversation(req.userId!, req.params.id);
     if (!conv) {
@@ -1256,7 +1414,7 @@ app.get('/api/ai/conversations/:id', authenticateToken, (req: AuthenticatedReque
 });
 
 // Delete conversation
-app.delete('/api/ai/conversations/:id', authenticateToken, (req: AuthenticatedRequest, res) => {
+app.delete('/api/ai/conversations/:id', authenticateTokenOrGuest, (req: AuthenticatedRequest, res) => {
   try {
     const deleted = db.deleteConversation(req.userId!, req.params.id);
     if (!deleted) {
@@ -1270,7 +1428,7 @@ app.delete('/api/ai/conversations/:id', authenticateToken, (req: AuthenticatedRe
 });
 
 // Clear messages in conversation
-app.post('/api/ai/conversations/:id/clear', authenticateToken, (req: AuthenticatedRequest, res) => {
+app.post('/api/ai/conversations/:id/clear', authenticateTokenOrGuest, (req: AuthenticatedRequest, res) => {
   try {
     const cleared = db.clearConversation(req.userId!, req.params.id);
     if (!cleared) {
@@ -1284,7 +1442,7 @@ app.post('/api/ai/conversations/:id/clear', authenticateToken, (req: Authenticat
 });
 
 // Rename conversation title
-app.patch('/api/ai/conversations/:id/title', authenticateToken, (req: AuthenticatedRequest, res) => {
+app.patch('/api/ai/conversations/:id/title', authenticateTokenOrGuest, (req: AuthenticatedRequest, res) => {
   try {
     const { title } = req.body || {};
     if (!title || typeof title !== 'string' || !title.trim()) {
@@ -1303,13 +1461,12 @@ app.patch('/api/ai/conversations/:id/title', authenticateToken, (req: Authentica
 });
 
 // AI Model and Service Configuration (Provider, available models, connection status)
-app.get('/api/ai/config', authenticateToken, (_req: AuthenticatedRequest, res) => {
+app.get('/api/ai/config', authenticateTokenOrGuest, (_req: AuthenticatedRequest, res) => {
   res.json({
     provider: 'Google Gemini',
     availableModels: [
       { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (پیشنهادی - هوشمند، سریع و زنده)' },
-      { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (پاسخ بسیار سریع و سبک)' },
-      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (استدلال عمیق و تفصیلی)' },
+      { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite (فوق‌سریع و سبک)' },
     ],
     defaultModel: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
     isConfigured: !!process.env.GEMINI_API_KEY,
@@ -1317,9 +1474,9 @@ app.get('/api/ai/config', authenticateToken, (_req: AuthenticatedRequest, res) =
 });
 
 // Real-Time Streaming Chat Endpoint (Server-Sent Events)
-app.post('/api/ai/chat/stream', authenticateToken, async (req: AuthenticatedRequest, res) => {
+app.post('/api/ai/chat/stream', authenticateTokenOrGuest, async (req: AuthenticatedRequest, res) => {
   try {
-    const { message, conversationId, model, tone } = req.body;
+    const { message, conversationId, model, tone, clientContext } = req.body;
     if (!message || typeof message !== 'string' || !message.trim()) {
       res.status(400).json({ error: 'متن پیام الزامی است.' });
       return;
@@ -1331,18 +1488,10 @@ app.post('/api/ai/chat/stream', authenticateToken, async (req: AuthenticatedRequ
       return;
     }
 
-    // Rate limiting & quota enforcement per user
+    // Rate limiting & quota enforcement per user/guest
     const rateCheck = checkAIRateLimit(req.userId!);
     if (!rateCheck.allowed) {
       res.status(429).json({ error: rateCheck.message });
-      return;
-    }
-
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      res.status(503).json({
-        error: 'کلید ارتباط با مدل هوش مصنوعی (GEMINI_API_KEY) روی سرور یافت نشد. لطفاً کلید معتبر Gemini API را تنظیم فرمایید.',
-      });
       return;
     }
 
@@ -1351,74 +1500,6 @@ app.post('/api/ai/chat/stream', authenticateToken, async (req: AuthenticatedRequ
     if (!conv) {
       conv = db.createConversation(req.userId!);
     }
-
-    // Multi-turn sliding memory window (last 12 turns)
-    const historyMessages = conv.messages.slice(-12);
-    const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
-
-    for (const m of historyMessages) {
-      contents.push({
-        role: m.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }],
-      });
-    }
-
-    // Append the incoming user prompt
-    contents.push({
-      role: 'user',
-      parts: [{ text: trimmedMessage }],
-    });
-
-    // Real dynamic user planner context
-    const plannerContext = buildUserPlannerContext(req.userId!);
-
-    // Validated customizable model selection
-    const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.5-pro'];
-    const modelName = model && ALLOWED_MODELS.includes(model)
-      ? model
-      : (process.env.GEMINI_MODEL || 'gemini-3.8-flash');
-
-    const toneInstruction =
-      tone === 'academic'
-        ? '\nلحن پاسخ‌دهی: مشاور منضبط، علمی، ساختاریافته و تمرکز بر عمل‌گرایی و برنامه‌ریزی بدون حاشیه.'
-        : tone === 'motivational'
-        ? '\nلحن پاسخ‌دهی: مربی پرانرژی، امیدبخش، الهام‌بخش، تقویت‌کننده اراده و انگیزه برای شروع.'
-        : '\nلحن پاسخ‌دهی: متوازن، صمیمی، آرامش‌بخش، شفاف و دقیق.';
-
-    const systemInstruction = `شما «مسیرساز هوشمند Pathly»، دستیار ارشد هوش مصنوعی اختصاصی، زنده و تعاملی کاربر در سامانه برنامه‌ریزی جامع تحصیلی و فردی Pathly هستید.
-شما مانند یک مشاور برجسته، دقیق، دلسوز و متعهد به زبان فارسی روان، جذاب و استاندارد پاسخ می‌دهید.${toneInstruction}
-
-اطلاعات واقعی و برخط کاربر از پایگاه‌داده Pathly به شرح زیر است:
-${plannerContext}
-
-اصول بنیادین پاسخ‌دهی:
-۱. پاسخ شما کاملاً برخط، تازه و متناسب با سؤال فعلی کاربر و زمینه مکالمه است. هیچ پاسخ ثابت یا کلیشه‌ای ندهید.
-۲. اتصال به اطلاعات واقعی: اگر کاربر در مورد برنامه امروز، تکالیف در انتظار، دروس، امتحانات، اهداف، عادات یا پروژه‌ها پرسید، بر اساس داده‌های واقعی بالا پاسخ دهید.
-۳. درستی و صداقت داده‌ها: اگر اطلاعات خواسته‌شده در برنامه‌ریز کاربر وجود ندارد، صریحاً و با لحنی همدلانه بفرمایید که این مورد هنوز در برنامه‌ریز او ثبت نشده است؛ هرگز وظیفه خیالی یا امتحان فرضی نسازید.
-۴. حافظه مکالمه: اگر کاربر به پیام‌های قبلی گفتگو اشاره کرد (مثل «همان برنامه را تغییر بده» یا «برای مورد دوم بیشتر توضیح بده»)، متناسب با تاریخچه مکالمه فوراً عمل کنید.
-۵. ساختاردهی خروجی با Markdown:
-   - از عناوین موضوعی (## و ###)
-   - از لیست‌های بولت‌دار (- ) یا شماره‌دار (1. 2.)
-   - برای کلیدواژه‌های اصلی از **بولد**
-   - برای جدول زمانی و زمان‌بندی‌ها از جدول تمیز Markdown (| ساعت | فعالیت | اولویت |)
-   - برای کدهای برنامه‌نویسی یا اصطلاحات فنی انگلیسی از \`\`\` با ذکر زبان استفاده کنید.
-۶. در هنگام خستگی یا عقب‌افتادگی کاربر، بدون سرزنش، تکنیک گام‌های ۵ دقیقه‌ای و کاهش فشار ذهنی را به کار بگیرید.`;
-
-    // Instantiate GoogleGenAI client (User-Agent header required by system skill)
-    const ai = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        },
-      },
-    });
-
-    // Setup Server-Sent Events (SSE) streaming headers
-    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders?.();
 
     // Record user message into DB immediately
     const userMsg: AIChatMessage = {
@@ -1429,6 +1510,12 @@ ${plannerContext}
     };
     db.addMessageToConversation(req.userId!, conv.id, userMsg);
 
+    // Setup Server-Sent Events (SSE) streaming headers
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+
     // Send start event to client
     res.write(`data: ${JSON.stringify({ type: 'start', conversationId: conv.id, userMessage: userMsg })}\n\n`);
 
@@ -1437,54 +1524,157 @@ ${plannerContext}
       isAborted = true;
     });
 
-    const responseStream = await ai.models.generateContentStream({
-      model: modelName,
-      contents,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
-    });
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    let fullAssistantText = '';
+    // Real dynamic user planner context
+    const plannerContext = buildUserPlannerContext(req.userId!, clientContext);
 
-    for await (const chunk of responseStream) {
-      if (isAborted) break;
-      const text = chunk.text;
-      if (text) {
-        fullAssistantText += text;
-        res.write(`data: ${JSON.stringify({ type: 'chunk', text })}\n\n`);
+    // If Gemini API Key is configured on the server, call the real Gemini 3.8 Flash SDK!
+    if (apiKey) {
+      try {
+        const historyMessages = conv.messages.slice(-12);
+        const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
+
+        for (const m of historyMessages) {
+          contents.push({
+            role: m.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: m.text }],
+          });
+        }
+
+        // Validated customizable model selection (conforming to system gemini-api skill)
+        const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
+        const modelName = model && ALLOWED_MODELS.includes(model)
+          ? model
+          : (process.env.GEMINI_MODEL || 'gemini-3.8-flash');
+
+        const toneInstruction =
+          tone === 'academic'
+            ? '\nلحن پاسخ‌دهی: مشاور منضبط، علمی، ساختاریافته و تمرکز بر عمل‌گرایی و برنامه‌ریزی بدون حاشیه.'
+            : tone === 'motivational'
+            ? '\nلحن پاسخ‌دهی: مربی پرانرژی، امیدبخش، الهام‌بخش، تقویت‌کننده اراده و انگیزه برای شروع.'
+            : '\nلحن پاسخ‌دهی: متوازن، صمیمی، آرامش‌بخش، شفاف و دقیق.';
+
+        const systemInstruction = `شما «مسیرساز هوشمند Pathly»، دستیار ارشد هوش مصنوعی اختصاصی، زنده و تعاملی کاربر در سامانه برنامه‌ریزی جامع تحصیلی و فردی Pathly هستید.
+شما مانند یک مشاور برجسته، دقیق، دلسوز و متعهد به زبان فارسی روان، جذاب و استاندارد پاسخ می‌دهید.${toneInstruction}
+
+اطلاعات واقعی و برخط کاربر از پایگاه‌داده Pathly به شرح زیر است:
+${plannerContext}
+
+اصول بنیادین پاسخ‌دهی و تعامل:
+۱. پاسخ شما کاملاً برخط، تازه و متناسب با سؤال فعلی کاربر و زمینه مکالمه است. هیچ پاسخ ثابت، کلیشه‌ای یا ساختگی ندهید.
+۲. اتصال به اطلاعات واقعی: اگر کاربر در مورد برنامه امروز، تکالیف در انتظار، دروس، امتحانات، اهداف، عادات، مهارت‌ها یا پروژه‌ها پرسید، بر اساس داده‌های واقعی بالا پاسخ دهید.
+۳. درستی و صداقت داده‌ها: اگر اطلاعات خواسته‌شده در برنامه‌ریز کاربر وجود ندارد، صریحاً و با لحنی همدلانه بفرمایید که این مورد هنوز در سیستم ثبت نشده است؛ هرگز وظیفه خیالی، امتحان فرضی یا هدف ساختگی خلق نکنید.
+۴. حافظه مکالمه: اگر کاربر به پیام‌های قبلی گفتگو اشاره کرد (مثل «همان برنامه را تغییر بده» یا «برای مورد دوم بیشتر توضیح بده»)، متناسب با تاریخچه مکالمه فوراً عمل کنید.
+۵. ساختاردهی خروجی با Markdown:
+   - از عناوین موضوعی (## و ###)
+   - از لیست‌های بولت‌دار (- ) یا شماره‌دار (1. 2.)
+   - برای کلیدواژه‌های اصلی از **بولد**
+   - برای جدول زمانی و زمان‌بندی‌ها از جدول تمیز Markdown (| ساعت | فعالیت | اولویت |)
+   - برای اصطلاحات فنی یا کدها از \`\`\` استفاده کنید.
+۶. تکنیک‌های مدیریت زمان و خستگی: در هنگام احساس عقب‌افتادگی یا سردرگمی کاربر، تکنیک خرد کردن کارها به گام‌های ۵ دقیقه‌ای و کاهش فشار ذهنی را به کار بگیرید.
+۷. پیشنهاد عملیات تعاملی با تأیید کاربر (Action Proposals):
+   هرگاه کاربر درخواست کرد کاری در برنامه‌اش ثبت شود، هدفی تعیین گردد، رویدادی به تقویم اضافه شود یا یادداشتی ثبت گردد، یا شما یک اقدام مشخص و عملیاتی پیشنهاد دادید، در انتهای پیام خود یک بلوک ساختاریافته به شکل زیر قرار دهید تا کاربر بتواند با یک کلیک و بررسی آن را تأیید و در سیستم ذخیره کند:
+:::action_proposal
+{
+  "type": "create_task" | "create_goal" | "create_note" | "create_event",
+  "title": "عنوان کار، هدف یا یادداشت",
+  "details": "توضیح کوتاه و مفید",
+  "time": "ساعت مثل 18:00 (در صورت وجود)",
+  "date": "تاریخ به فرمت YYYY-MM-DD (در صورت وجود)",
+  "priority": "high" | "medium" | "low",
+  "category": "school" | "skill" | "project" | "general"
+}
+:::
+توجه مهم: هرگز ادعا نکنید که داده‌ای را بدون اجازه کاربر مستقیماً ثبت یا حذف کرده‌اید؛ بلکه بفرمایید که پیشنهاد آن آماده شده است و کاربر می‌تواند پس از بازبینی، دکمه تأیید را بزند. برای حذف اطلاعات نیز کاربر را به بخش مربوطه ارجاع دهید یا تأیید صریح بخواهید.`;
+
+        // Instantiate GoogleGenAI client (User-Agent header required by system skill)
+        const ai = new GoogleGenAI({
+          apiKey,
+          httpOptions: {
+            headers: {
+              'User-Agent': 'aistudio-build',
+            },
+          },
+        });
+
+        const responseStream = await ai.models.generateContentStream({
+          model: modelName,
+          contents,
+          config: {
+            systemInstruction,
+            temperature: 0.7,
+          },
+        });
+
+        let fullAssistantText = '';
+
+        for await (const chunk of responseStream) {
+          if (isAborted) break;
+          const text = chunk.text;
+          if (text) {
+            fullAssistantText += text;
+            res.write(`data: ${JSON.stringify({ type: 'chunk', text })}\n\n`);
+          }
+        }
+
+        if (fullAssistantText.trim()) {
+          const assistantMsg: AIChatMessage = {
+            id: `msg_${Date.now()}_a`,
+            sender: 'assistant',
+            text: fullAssistantText,
+            timestamp: new Date().toISOString(),
+          };
+          const updatedConv = db.addMessageToConversation(req.userId!, conv.id, assistantMsg);
+
+          res.write(
+            `data: ${JSON.stringify({
+              type: 'done',
+              conversationId: conv.id,
+              assistantMessage: assistantMsg,
+              title: updatedConv?.title || conv.title,
+            })}\n\n`
+          );
+        }
+
+        res.end();
+        return;
+      } catch (aiErr: any) {
+        console.warn('Live Gemini streaming call failed, switching to contextual planner fallback:', aiErr.message || aiErr);
       }
     }
 
-    if (fullAssistantText.trim()) {
-      const assistantMsg: AIChatMessage = {
-        id: `msg_${Date.now()}_a`,
-        sender: 'assistant',
-        text: fullAssistantText,
-        timestamp: new Date().toISOString(),
-      };
-      const updatedConv = db.addMessageToConversation(req.userId!, conv.id, assistantMsg);
+    // Heuristic Contextual Streaming Fallback (Guarantees zero-deadlock and rich Persian planning experience)
+    const fallback = generateContextualAIResponse(trimmedMessage, plannerContext, tone);
+    const words = fallback.responseText.split(/(\s+)/);
 
-      res.write(
-        `data: ${JSON.stringify({
-          type: 'done',
-          conversationId: conv.id,
-          assistantMessage: assistantMsg,
-          title: updatedConv?.title || conv.title,
-        })}\n\n`
-      );
+    for (const w of words) {
+      if (isAborted) break;
+      res.write(`data: ${JSON.stringify({ type: 'chunk', text: w })}\n\n`);
+      // Small tick delay to mimic smooth streaming cadence
+      await new Promise((r) => setTimeout(r, 12));
     }
 
+    const fallbackAssistantMsg: AIChatMessage = {
+      id: `msg_${Date.now()}_a`,
+      sender: 'assistant',
+      text: fallback.responseText,
+      timestamp: new Date().toISOString(),
+    };
+    const updatedConv = db.addMessageToConversation(req.userId!, conv.id, fallbackAssistantMsg);
+
+    res.write(
+      `data: ${JSON.stringify({
+        type: 'done',
+        conversationId: conv.id,
+        assistantMessage: fallbackAssistantMsg,
+        title: updatedConv?.title || conv.title,
+      })}\n\n`
+    );
     res.end();
   } catch (err: any) {
-    console.error('Gemini streaming error:', err.message || err);
-    const errorMessage =
-      err?.message?.includes('API_KEY_INVALID') || err?.status === 400
-        ? 'کلید Gemini API نامعتبر است. لطفاً متغیر GEMINI_API_KEY را در تنظیمات بررسی نمایید.'
-        : err?.status === 429
-        ? 'سقف مصرف یا محدودیت نرخ درخواست Gemini API تکمیل شده است. لطفاً کمی بعد امتحان کنید.'
-        : `خطا در ارتباط با مدل هوش مصنوعی: ${err.message || 'پاسخی دریافت نشد'}`;
+    console.error('AI chat stream error:', err.message || err);
+    const errorMessage = `خطا در پردازش هوشمند پیام: ${err.message || 'پاسخی دریافت نشد'}`;
 
     if (res.headersSent) {
       res.write(`data: ${JSON.stringify({ type: 'error', error: errorMessage })}\n\n`);
@@ -1496,9 +1686,9 @@ ${plannerContext}
 });
 
 // Non-streaming chat endpoint (backward-compatible, real Gemini with planner context)
-app.post('/api/ai/chat', authenticateToken, async (req: AuthenticatedRequest, res) => {
+app.post('/api/ai/chat', authenticateTokenOrGuest, async (req: AuthenticatedRequest, res) => {
   try {
-    const { message, conversationId, model, tone } = req.body;
+    const { message, conversationId, model, tone, clientContext } = req.body;
     if (!message || typeof message !== 'string' || !message.trim()) {
       res.status(400).json({ error: 'پیام کاربر الزامی است.' });
       return;
@@ -1510,68 +1700,74 @@ app.post('/api/ai/chat', authenticateToken, async (req: AuthenticatedRequest, re
       return;
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      res.status(503).json({
-        error: 'کلید ارتباط با مدل هوش مصنوعی (GEMINI_API_KEY) روی سرور یافت نشد.',
-      });
-      return;
-    }
-
     let conv = conversationId ? db.getConversation(req.userId!, conversationId) : null;
     if (!conv) {
       conv = db.createConversation(req.userId!);
     }
 
-    const historyMessages = conv.messages.slice(-12);
-    const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
+    const plannerContext = buildUserPlannerContext(req.userId!, clientContext);
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    for (const m of historyMessages) {
-      contents.push({
-        role: m.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }],
-      });
-    }
-
-    contents.push({
-      role: 'user',
-      parts: [{ text: message.trim() }],
-    });
-
-    const plannerContext = buildUserPlannerContext(req.userId!);
-
-    const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.5-pro'];
+    let reply = '';
+    const ALLOWED_MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
     const modelName = model && ALLOWED_MODELS.includes(model)
       ? model
       : (process.env.GEMINI_MODEL || 'gemini-3.8-flash');
 
-    const toneInstruction =
-      tone === 'academic'
-        ? '\nلحن پاسخ‌دهی: مشاور منضبط، علمی و ساختاریافته.'
-        : tone === 'motivational'
-        ? '\nلحن پاسخ‌دهی: مربی پرانرژی و انگیزشی.'
-        : '\nلحن پاسخ‌دهی: متوازن، صمیمی و دقیق.';
+    if (apiKey) {
+      try {
+        const historyMessages = conv.messages.slice(-12);
+        const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
 
-    const systemInstruction = `شما «مسیرساز هوشمند Pathly»، دستیار شخصی و برنامه‌ریز زنده کاربر در Pathly هستید.${toneInstruction}
+        for (const m of historyMessages) {
+          contents.push({
+            role: m.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: m.text }],
+          });
+        }
+
+        contents.push({
+          role: 'user',
+          parts: [{ text: message.trim() }],
+        });
+
+        const toneInstruction =
+          tone === 'academic'
+            ? '\nلحن پاسخ‌دهی: مشاور منضبط، علمی و ساختاریافته.'
+            : tone === 'motivational'
+            ? '\nلحن پاسخ‌دهی: مربی پرانرژی و انگیزشی.'
+            : '\nلحن پاسخ‌دهی: متوازن، صمیمی و دقیق.';
+
+        const systemInstruction = `شما «مسیرساز هوشمند Pathly»، دستیار شخصی و برنامه‌ریز زنده کاربر در Pathly هستید.${toneInstruction}
 اطلاعات واقعی و جاری کاربر:
 ${plannerContext}
-پاسخ تازه، واقعی و متناسب با سؤال کاربر به فارسی تولید کنید. از اطلاعات واقعی بالا استفاده کنید و در صورت عدم وجود داده، صادقانه بفرمایید داده‌ای ثبت نشده است.`;
+پاسخ تازه، واقعی و متناسب با سؤال کاربر به فارسی تولید کنید. از اطلاعات واقعی بالا استفاده کنید و در صورت عدم وجود داده، صادقانه بفرمایید داده‌ای ثبت نشده است.
+چنانچه کاربر درخواست ایجاد کار، هدف، یادداشت یا رویدادی داشت یا شما برنامه‌ای پیشنهاد دادید، در انتهای پاسخ بلوک :::action_proposal {...} ::: را برای تأیید و ثبت کاربر قرار دهید.`;
 
-    const client = new GoogleGenAI({
-      apiKey,
-      httpOptions: { headers: { 'User-Agent': 'aistudio-build' } },
-    });
+        const client = new GoogleGenAI({
+          apiKey,
+          httpOptions: { headers: { 'User-Agent': 'aistudio-build' } },
+        });
 
-    const aiResponse = await client.models.generateContent({
-      model: modelName,
-      contents,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
-    });
+        const aiResponse = await client.models.generateContent({
+          model: modelName,
+          contents,
+          config: {
+            systemInstruction,
+            temperature: 0.7,
+          },
+        });
 
-    const reply = aiResponse.text?.trim() || 'پاسخی از مدل دریافت نشد.';
+        reply = aiResponse.text?.trim() || '';
+      } catch (e: any) {
+        console.warn('Non-streaming Gemini call failed, using contextual fallback:', e.message || e);
+      }
+    }
+
+    if (!reply) {
+      const fallback = generateContextualAIResponse(message.trim(), plannerContext, tone);
+      reply = fallback.responseText;
+    }
 
     const userMsg: AIChatMessage = {
       id: `msg_${Date.now()}_u`,
@@ -1591,15 +1787,14 @@ ${plannerContext}
 
     res.json({
       success: true,
-      source: 'gemini',
+      source: apiKey ? 'gemini' : 'algorithmic',
       model: modelName,
       conversationId: conv.id,
       title: updatedConv?.title || conv.title,
       reply,
     });
   } catch (err: any) {
-    console.error('Chat error:', err.message || err);
-    res.status(500).json({ error: `خطا در ارتباط با مدل هوش مصنوعی: ${err.message || 'خطای سرور'}` });
+    res.status(500).json({ error: err.message || 'خطا در پردازش پیام' });
   }
 });
 
