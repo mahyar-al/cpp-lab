@@ -58,10 +58,26 @@
           }
           document.documentElement.setAttribute('data-theme', mode);
           document.documentElement.setAttribute('data-resolved-theme', isDark ? 'dark' : 'light');
+
+          // Read accent color from localStorage or cached state for instant anti-flash render
+          var accent = localStorage.getItem('pathly_accent_color');
+          if (!accent) {
+            var themeToAccent = {
+              'sunset-gold': 'amber',
+              'cyber-purple': 'violet',
+              'emerald-matrix': 'emerald',
+              'ocean-deep': 'blue',
+              'rose-quartz': 'rose',
+              'cyan-matrix': 'cyan'
+            };
+            accent = themeToAccent[mode] || 'amber';
+          }
+          document.documentElement.setAttribute('data-accent', accent);
         } catch (e) {
           document.documentElement.classList.add('dark');
           document.documentElement.style.backgroundColor = '#000000';
           document.documentElement.style.color = '#ECEAE6';
+          document.documentElement.setAttribute('data-accent', 'amber');
         }
       })();
     </script>

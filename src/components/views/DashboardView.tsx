@@ -542,7 +542,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto" dir="rtl">
+    <div className="space-y-6 w-full min-w-0" dir="rtl">
       {/* =========================================================================
           SECTION 1: سربرگ ساده، شخصی و مدرن
           ========================================================================= */}
@@ -624,7 +624,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           SECTION 2: کارت‌های اصلی (4 Pillars: مدرسه، مهارت‌ها، پروژه‌ها، مسابقات)
           ========================================================================= */}
       {isSectionVisible('quick_pillars') && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
           {/* Pillar 1: School */}
           <div
             onClick={() => onNavigate('school')}
@@ -723,9 +723,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           Right: Today's Tasks & MIT (Centerpiece)
           Left: Upcoming Deadlines + Goals + Notes
           ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* RIGHT COLUMN (7 of 12 cols on desktop): برنامه امروز (Centerpiece) */}
-        <div className="lg:col-span-7 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 xl:gap-7 items-start">
+        {/* RIGHT COLUMN (7 of 12 cols on desktop, 8 on 2xl): برنامه امروز (Centerpiece) */}
+        <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-8 space-y-6 min-w-0">
           {/* SECTION: برنامه امروز */}
           {isSectionVisible('today_tasks') && (
             <section className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 sm:p-6 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">
@@ -1123,8 +1123,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           )}
         </div>
 
-        {/* LEFT COLUMN (5 of 12 cols on desktop): تقویم، اهداف، یادداشت‌ها */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* LEFT COLUMN (5 of 12 cols on desktop, 4 on 2xl): تقویم، اهداف، یادداشت‌ها */}
+        <div className="lg:col-span-5 xl:col-span-5 2xl:col-span-4 space-y-6 min-w-0">
           {/* SECTION 4: تقویم و رویدادهای آینده */}
           {isSectionVisible('upcoming_deadlines') && (
             <section className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">

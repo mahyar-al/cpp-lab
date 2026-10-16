@@ -380,9 +380,9 @@ export const CalendarView: React.FC = () => {
 
       {/* VIEW MODES */}
       {viewMode === 'month' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-          {/* Calendar Matrix (8 cols on desktop) */}
-          <div className="lg:col-span-8 bg-white dark:bg-[#0D1222] p-3 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4 shadow-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start w-full">
+          {/* Calendar Matrix (8 cols on desktop, 9 on 2xl) */}
+          <div className="lg:col-span-8 xl:col-span-8 2xl:col-span-9 bg-white dark:bg-[#0D1222] p-3 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 sm:space-y-4 shadow-xs">
             {/* Weekday headers */}
             <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
               <div><span className="hidden sm:inline">شنبه</span><span className="sm:hidden text-[11px]">ش</span></div>
@@ -398,7 +398,7 @@ export const CalendarView: React.FC = () => {
             <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {/* Empty leading cells */}
               {Array.from({ length: firstDayIranian }).map((_, i) => (
-                <div key={`empty-${i}`} className="h-16 sm:h-24 p-1 rounded-xl bg-slate-50/50 dark:bg-[#090D18]/50 opacity-20" />
+                <div key={`empty-${i}`} className="min-h-[70px] sm:min-h-[95px] lg:min-h-[110px] p-1 rounded-xl bg-slate-50/50 dark:bg-[#090D18]/50 opacity-20" />
               ))}
 
               {/* Days in Month */}
@@ -419,7 +419,7 @@ export const CalendarView: React.FC = () => {
                   <div
                     key={dayNum}
                     onClick={() => setSelectedDateIso(dayIso)}
-                    className={`h-16 sm:h-24 p-1 sm:p-1.5 rounded-xl border flex flex-col justify-between cursor-pointer transition-all ${
+                    className={`min-h-[70px] sm:min-h-[95px] lg:min-h-[110px] p-1.5 sm:p-2 rounded-xl border flex flex-col justify-between cursor-pointer transition-all ${
                       isSelected
                         ? 'border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800/80 shadow-xs'
                         : isToday
@@ -469,8 +469,8 @@ export const CalendarView: React.FC = () => {
             </div>
           </div>
 
-          {/* Day Detail Sidebar (4 cols on desktop) */}
-          <div className="lg:col-span-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+          {/* Day Detail Sidebar (4 cols on desktop, 3 on 2xl) */}
+          <div className="lg:col-span-4 xl:col-span-4 2xl:col-span-3 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
               <span className="text-xs text-slate-400">رویدادهای تاریخ انتخابی:</span>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
@@ -539,7 +539,7 @@ export const CalendarView: React.FC = () => {
       {/* WEEKLY VIEW */}
       {viewMode === 'week' && (
         <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {weekDays.map((col, idx) => {
               const isToday = col.iso === todayIso;
               return (

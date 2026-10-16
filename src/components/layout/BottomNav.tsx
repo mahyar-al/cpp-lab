@@ -102,12 +102,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => onSelectTab(item.id)}
               className={`relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-colors cursor-pointer select-none ${
                 isActive
-                  ? 'text-amber-600 dark:text-amber-400 font-semibold'
+                  ? 'font-semibold'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
+              style={{ color: isActive ? 'var(--accent-primary)' : undefined }}
             >
               {isActive && (
-                <span className="absolute top-0 w-6 h-0.5 rounded-full bg-amber-600 dark:bg-amber-400" />
+                <span
+                  className="absolute top-0 w-6 h-0.5 rounded-full transition-colors"
+                  style={{ backgroundColor: 'var(--accent-primary)' }}
+                />
               )}
 
               <div className="relative mt-0.5">

@@ -104,7 +104,7 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5F4F1] dark:bg-[#000000] text-[#23211E] dark:text-[#ECEAE6] flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-amber-200 dark:selection:bg-amber-950/70 font-sans" dir="rtl">
+    <div className="min-h-[100dvh] w-full bg-[#F5F4F1] dark:bg-[#000000] text-[#23211E] dark:text-[#ECEAE6] flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-amber-200 dark:selection:bg-amber-950/70 font-sans" dir="rtl">
 
       {/* Sidebar Navigation */}
       <Sidebar
@@ -120,7 +120,7 @@ const MainContent: React.FC = () => {
       />
 
       {/* Main App Container */}
-      <div className={`flex-1 flex flex-col min-w-0 min-h-screen transition-all duration-300 ease-in-out relative z-10 ${
+      <div className={`flex-1 flex flex-col min-w-0 min-h-[100dvh] transition-all duration-300 ease-in-out relative z-10 ${
         isCollapsed ? 'lg:mr-20' : 'lg:mr-64'
       }`}>
         <Header
@@ -131,7 +131,7 @@ const MainContent: React.FC = () => {
           onSelectTab={(tab) => setCurrentTab(tab)}
         />
 
-        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto relative z-10 pb-24 lg:pb-8">
+        <main className="flex-1 w-full min-w-0 p-3.5 sm:p-5 md:p-6 lg:p-8 xl:px-10 2xl:px-12 relative z-10 pb-24 lg:pb-10">
           {currentTab === 'dashboard' && (
             <DashboardView
               onNavigate={(tab) => setCurrentTab(tab)}

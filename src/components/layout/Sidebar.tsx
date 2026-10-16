@@ -352,23 +352,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => handleNavClick(item.id)}
                           className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all group cursor-pointer relative ${
                             isActive
-                              ? 'bg-[#D6A62E]/15 text-[#D6A62E] font-semibold'
+                              ? 'font-semibold'
                               : 'text-[#74756F] dark:text-[#A0A0A0] hover:bg-[#F9F8F5] dark:hover:bg-[#151515] hover:text-[#292A27] dark:hover:text-[#E8E8E8]'
                           } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
+                          style={{
+                            color: isActive ? 'var(--accent-primary)' : undefined,
+                            backgroundColor: isActive ? 'var(--accent-primary-subtle)' : undefined,
+                          }}
                           title={isCollapsed ? item.label : undefined}
                         >
-                          {/* Active Matte Gold Indicator Bar */}
+                          {/* Active Theme Accent Indicator Bar */}
                           {isActive && (
-                            <span className="absolute right-0 inset-y-1 w-1 bg-[#D6A62E] rounded-full" />
+                            <span
+                              className="absolute right-0 inset-y-1 w-1 rounded-full transition-colors"
+                              style={{ backgroundColor: 'var(--accent-primary)' }}
+                            />
                           )}
 
                           <div className="flex items-center gap-2.5 truncate">
                             <Icon
-                              className={`w-4 h-4 shrink-0 transition-colors ${
-                                isActive
-                                  ? 'text-[#D6A62E]'
-                                  : 'text-[#A0A0A0] group-hover:text-[#292A27] dark:group-hover:text-[#E8E8E8]'
-                              }`}
+                              className="w-4 h-4 shrink-0 transition-colors"
+                              style={{ color: isActive ? 'var(--accent-primary)' : undefined }}
                             />
                             {!isCollapsed && <span className="truncate">{item.label}</span>}
                           </div>
@@ -377,9 +381,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             <span
                               className={`px-1.5 py-0.2 text-[10px] rounded-md font-mono tabular-nums font-semibold ${
                                 isActive
-                                  ? 'bg-[#D6A62E] text-black'
+                                  ? ''
                                   : 'text-[#74756F] dark:text-[#A0A0A0] bg-[#E7E5DF] dark:bg-[#252525]'
                               }`}
+                              style={{
+                                backgroundColor: isActive ? 'var(--accent-primary)' : undefined,
+                                color: isActive ? 'var(--btn-primary-text)' : undefined,
+                              }}
                             >
                               {toPersianDigits(item.badge)}
                             </span>
@@ -399,7 +407,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="p-3 mx-2.5 mb-3 bg-[#F9F8F5] dark:bg-[#151515] rounded-xl border border-[#E7E5DF] dark:border-[#252525]">
             <div className="flex items-center justify-between text-xs text-[#292A27] dark:text-[#E8E8E8] font-medium mb-1.5">
               <span className="flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-[#D6A62E]" />
+                <Flame className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
                 استمرار روزانه
               </span>
               <span className="font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8] font-bold">
@@ -414,8 +422,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <div className="w-full bg-[#E7E5DF] dark:bg-[#252525] h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-[#D6A62E] h-full rounded-full transition-all duration-300"
-                  style={{ width: `${weeklyGoalPercent}%` }}
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{ width: `${weeklyGoalPercent}%`, backgroundColor: 'var(--accent-primary)' }}
                 />
               </div>
             </div>

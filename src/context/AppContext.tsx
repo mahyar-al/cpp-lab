@@ -640,6 +640,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Save standalone preference immediately for next load / anti-flash
     try {
       localStorage.setItem('pathly_theme_mode', currentThemeMode);
+      localStorage.setItem('pathly_accent_color', customization.accentColor);
     } catch {}
 
     return () => clearTimeout(transitionTimer);
@@ -719,6 +720,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         newTheme = updates.themeMode === 'system' ? 'system' : updates.themeMode === 'light' ? 'light' : 'dark';
         try {
           localStorage.setItem('pathly_theme_mode', updates.themeMode);
+        } catch {}
+
+        const themeToAccent: Record<string, AccentColor> = {
+          'sunset-gold': 'amber',
+          'cyber-purple': 'violet',
+          'emerald-matrix': 'emerald',
+          'ocean-deep': 'blue',
+          'rose-quartz': 'rose',
+          'cyan-matrix': 'cyan',
+        };
+        if (themeToAccent[updates.themeMode]) {
+          updatedCust.accentColor = themeToAccent[updates.themeMode];
+          try {
+            localStorage.setItem('pathly_accent_color', updatedCust.accentColor);
+          } catch {}
+        }
+      }
+
+      if (updates.accentColor) {
+        try {
+          localStorage.setItem('pathly_accent_color', updates.accentColor);
         } catch {}
       }
 

@@ -154,9 +154,9 @@ export const CompetitionsView: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start w-full">
           {/* Competitions Sidebar */}
-          <div className="lg:col-span-4 space-y-3">
+          <div className="lg:col-span-4 xl:col-span-3 2xl:col-span-3 space-y-3">
             <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
               مسابقات من ({toPersianDigits(competitions.length)})
             </h2>
@@ -219,7 +219,7 @@ export const CompetitionsView: React.FC = () => {
 
           {/* Active Competition Detail */}
           {activeComp && (
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 xl:col-span-9 2xl:col-span-9 space-y-6 min-w-0">
               {/* Main Card */}
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">

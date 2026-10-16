@@ -33,8 +33,8 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
         </span>
         <div className="w-14 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
           <div
-            className="h-full bg-amber-600 dark:bg-amber-400 transition-all duration-300"
-            style={{ width: `${progressInLevel}%` }}
+            className="h-full rounded-full transition-all duration-300"
+            style={{ width: `${progressInLevel}%`, backgroundColor: 'var(--accent-primary)' }}
           />
         </div>
         <span className="text-[10px] text-slate-400 font-mono tabular-nums">
@@ -49,8 +49,15 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Level and Title */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-sm">
-            <Trophy className="w-5 h-5 text-amber-500" />
+          <div
+            className="w-10 h-10 rounded-xl border flex items-center justify-center font-bold text-sm transition-colors"
+            style={{
+              backgroundColor: 'var(--accent-primary-subtle)',
+              borderColor: 'var(--accent-primary-border)',
+              color: 'var(--accent-primary)',
+            }}
+          >
+            <Trophy className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           </div>
 
           <div>
@@ -74,8 +81,8 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
             {/* Progress Bar */}
             <div className="w-full sm:w-60 h-1.5 bg-slate-100 dark:bg-[#1C1C1C] rounded-full overflow-hidden mt-2">
               <div
-                className="h-full bg-amber-600 dark:bg-amber-400 transition-all duration-300"
-                style={{ width: `${progressInLevel}%` }}
+                className="h-full rounded-full transition-all duration-300"
+                style={{ width: `${progressInLevel}%`, backgroundColor: 'var(--accent-primary)' }}
               />
             </div>
           </div>

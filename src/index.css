@@ -184,7 +184,7 @@
    Warm, Alive & Minimal Design System (Pure Black Dark & Warm Soft Light)
    ========================================================================== */
 
-/* Theme-Aware Centralized Design Tokens */
+/* Theme-Aware Centralized Design Tokens — Base Surfaces */
 :root {
   /* Warm & Soft Light Mode Palette */
   --bg-page: #F5F4F1;
@@ -196,21 +196,18 @@
   --text-secondary: #636059;
   --text-muted: #87837B;
 
-  /* Primary Warm Accent: Matte Gold Accent */
-  --accent-primary: #D6A62E;
-  --accent-primary-hover: #C4931A;
-  --accent-primary-subtle: #FFFDF0;
-  --accent-primary-border: #F3DC87;
-  --accent-matte-gold: #D6A62E;
+  /* Default Light Mode Accent (Amber / Sunset Gold) */
+  --accent-primary: #D97706;
+  --accent-primary-hover: #B45309;
+  --accent-primary-subtle: #FEF3C7;
+  --accent-primary-border: #FDE68A;
+  --accent-primary-glow: rgba(217, 119, 6, 0.25);
+  --accent-primary-text: #92400E;
+  --accent-matte-gold: #D97706;
 
-  /* Complementary Semantic Accents */
-  --accent-warm-amber: #D6A62E;
-  --accent-olive-green: #15803D;
-  --accent-coral: #BE123C;
-
-  --btn-primary-bg: #D6A62E;
-  --btn-primary-text: #000000;
-  --btn-primary-hover: #C4931A;
+  --btn-primary-bg: #D97706;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #B45309;
 
   --hover-subtle: #EDEBE6;
   --hover-card: #FAF9F6;
@@ -230,19 +227,16 @@
   --text-secondary: #A0A0A0;
   --text-muted: #78746E;
 
-  /* Primary Warm Accent: Matte Gold */
-  --accent-primary: #D6A62E;
-  --accent-primary-hover: #C4931A;
-  --accent-primary-subtle: #261D05;
-  --accent-primary-border: #7A5B0B;
-  --accent-matte-gold: #D6A62E;
+  /* Default Dark Mode Accent (Amber / Sunset Gold) */
+  --accent-primary: #F59E0B;
+  --accent-primary-hover: #D97706;
+  --accent-primary-subtle: rgba(245, 158, 11, 0.14);
+  --accent-primary-border: rgba(245, 158, 11, 0.35);
+  --accent-primary-glow: rgba(245, 158, 11, 0.25);
+  --accent-primary-text: #FDE68A;
+  --accent-matte-gold: #F59E0B;
 
-  /* Complementary Semantic Accents */
-  --accent-warm-amber: #D6A62E;
-  --accent-olive-green: #22C55E;
-  --accent-coral: #FB7185;
-
-  --btn-primary-bg: #D6A62E;
+  --btn-primary-bg: #F59E0B;
   --btn-primary-text: #000000;
   --btn-primary-hover: #E3B748;
 
@@ -250,6 +244,247 @@
   --hover-card: #141414;
   --scrollbar-thumb: #2A2A2A;
   --scrollbar-hover: #3D3D3D;
+}
+
+/* ==========================================================================
+   Six Dynamic Theme Color Palettes (Compatible with Dark & Light Modes)
+   ========================================================================== */
+
+/* 1. کهربایی و طلایی — Amber / Sunset Gold (Light & Dark) */
+:root[data-accent="amber"],
+:root[data-theme="sunset-gold"],
+body[data-accent="amber"] {
+  --accent-primary: #D97706;
+  --accent-primary-hover: #B45309;
+  --accent-primary-subtle: #FEF3C7;
+  --accent-primary-border: #FDE68A;
+  --accent-primary-glow: rgba(217, 119, 6, 0.25);
+  --accent-primary-text: #92400E;
+  --accent-matte-gold: #D97706;
+  --btn-primary-bg: #D97706;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #B45309;
+}
+
+.dark[data-accent="amber"],
+[data-resolved-theme="dark"][data-accent="amber"],
+.dark[data-theme="sunset-gold"],
+[data-resolved-theme="dark"][data-theme="sunset-gold"],
+.dark body[data-accent="amber"] {
+  --accent-primary: #F59E0B;
+  --accent-primary-hover: #D97706;
+  --accent-primary-subtle: rgba(245, 158, 11, 0.14);
+  --accent-primary-border: rgba(245, 158, 11, 0.35);
+  --accent-primary-glow: rgba(245, 158, 11, 0.25);
+  --accent-primary-text: #FDE68A;
+  --accent-matte-gold: #F59E0B;
+  --btn-primary-bg: #F59E0B;
+  --btn-primary-text: #000000;
+  --btn-primary-hover: #E3B748;
+}
+
+/* 2. بنفش سایبری — Cyber Purple / Royal Violet (Light & Dark) */
+:root[data-accent="violet"],
+:root[data-theme="cyber-purple"],
+body[data-accent="violet"] {
+  --accent-primary: #7C3AED;
+  --accent-primary-hover: #6D28D9;
+  --accent-primary-subtle: #EDE9FE;
+  --accent-primary-border: #DDD6FE;
+  --accent-primary-glow: rgba(124, 58, 237, 0.25);
+  --accent-primary-text: #5B21B6;
+  --accent-matte-gold: #7C3AED;
+  --btn-primary-bg: #7C3AED;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #6D28D9;
+}
+
+.dark[data-accent="violet"],
+[data-resolved-theme="dark"][data-accent="violet"],
+.dark[data-theme="cyber-purple"],
+[data-resolved-theme="dark"][data-theme="cyber-purple"],
+.dark body[data-accent="violet"] {
+  --accent-primary: #A78BFA;
+  --accent-primary-hover: #8B5CF6;
+  --accent-primary-subtle: rgba(139, 92, 246, 0.16);
+  --accent-primary-border: rgba(139, 92, 246, 0.40);
+  --accent-primary-glow: rgba(139, 92, 246, 0.25);
+  --accent-primary-text: #DDD6FE;
+  --accent-matte-gold: #A78BFA;
+  --btn-primary-bg: #8B5CF6;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #7C3AED;
+}
+
+/* 3. سبز زمردی — Emerald Matrix / Forest Green (Light & Dark) */
+:root[data-accent="emerald"],
+:root[data-theme="emerald-matrix"],
+body[data-accent="emerald"] {
+  --accent-primary: #059669;
+  --accent-primary-hover: #047857;
+  --accent-primary-subtle: #D1FAE5;
+  --accent-primary-border: #A7F3D0;
+  --accent-primary-glow: rgba(5, 150, 105, 0.25);
+  --accent-primary-text: #065F46;
+  --accent-matte-gold: #059669;
+  --btn-primary-bg: #059669;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #047857;
+}
+
+.dark[data-accent="emerald"],
+[data-resolved-theme="dark"][data-accent="emerald"],
+.dark[data-theme="emerald-matrix"],
+[data-resolved-theme="dark"][data-theme="emerald-matrix"],
+.dark body[data-accent="emerald"] {
+  --accent-primary: #10B981;
+  --accent-primary-hover: #059669;
+  --accent-primary-subtle: rgba(16, 185, 129, 0.16);
+  --accent-primary-border: rgba(16, 185, 129, 0.40);
+  --accent-primary-glow: rgba(16, 185, 129, 0.25);
+  --accent-primary-text: #A7F3D0;
+  --accent-matte-gold: #10B981;
+  --btn-primary-bg: #10B981;
+  --btn-primary-text: #000000;
+  --btn-primary-hover: #34D399;
+}
+
+/* 4. آبی اقیانوسی — Ocean Deep / Sapphire Blue (Light & Dark) */
+:root[data-accent="blue"],
+:root[data-theme="ocean-deep"],
+body[data-accent="blue"] {
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-primary-subtle: #DBEAFE;
+  --accent-primary-border: #BFDBFE;
+  --accent-primary-glow: rgba(37, 99, 235, 0.25);
+  --accent-primary-text: #1E40AF;
+  --accent-matte-gold: #2563EB;
+  --btn-primary-bg: #2563EB;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #1D4ED8;
+}
+
+.dark[data-accent="blue"],
+[data-resolved-theme="dark"][data-accent="blue"],
+.dark[data-theme="ocean-deep"],
+[data-resolved-theme="dark"][data-theme="ocean-deep"],
+.dark body[data-accent="blue"] {
+  --accent-primary: #60A5FA;
+  --accent-primary-hover: #3B82F6;
+  --accent-primary-subtle: rgba(59, 130, 246, 0.16);
+  --accent-primary-border: rgba(59, 130, 246, 0.40);
+  --accent-primary-glow: rgba(59, 130, 246, 0.25);
+  --accent-primary-text: #BFDBFE;
+  --accent-matte-gold: #60A5FA;
+  --btn-primary-bg: #3B82F6;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #60A5FA;
+}
+
+/* 5. سرخ مرجانی — Rose Quartz / Crimson Coral (Light & Dark) */
+:root[data-accent="rose"],
+:root[data-theme="rose-quartz"],
+body[data-accent="rose"] {
+  --accent-primary: #E11D48;
+  --accent-primary-hover: #BE123C;
+  --accent-primary-subtle: #FFE4E6;
+  --accent-primary-border: #FECDD3;
+  --accent-primary-glow: rgba(225, 29, 72, 0.25);
+  --accent-primary-text: #9F1239;
+  --accent-matte-gold: #E11D48;
+  --btn-primary-bg: #E11D48;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #BE123C;
+}
+
+.dark[data-accent="rose"],
+[data-resolved-theme="dark"][data-accent="rose"],
+.dark[data-theme="rose-quartz"],
+[data-resolved-theme="dark"][data-theme="rose-quartz"],
+.dark body[data-accent="rose"] {
+  --accent-primary: #FB7185;
+  --accent-primary-hover: #F43F5E;
+  --accent-primary-subtle: rgba(244, 63, 94, 0.16);
+  --accent-primary-border: rgba(244, 63, 94, 0.40);
+  --accent-primary-glow: rgba(244, 63, 94, 0.25);
+  --accent-primary-text: #FECDD3;
+  --accent-matte-gold: #FB7185;
+  --btn-primary-bg: #F43F5E;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #FB7185;
+}
+
+/* 6. فیروزه‌ای مدرن — Cyan Matrix / Vibrant Teal (Light & Dark) */
+:root[data-accent="cyan"],
+:root[data-theme="cyan-matrix"],
+body[data-accent="cyan"] {
+  --accent-primary: #0891B2;
+  --accent-primary-hover: #0E7490;
+  --accent-primary-subtle: #CFFAFE;
+  --accent-primary-border: #A5F3FC;
+  --accent-primary-glow: rgba(8, 145, 178, 0.25);
+  --accent-primary-text: #155E75;
+  --accent-matte-gold: #0891B2;
+  --btn-primary-bg: #0891B2;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #0E7490;
+}
+
+.dark[data-accent="cyan"],
+[data-resolved-theme="dark"][data-accent="cyan"],
+.dark[data-theme="cyan-matrix"],
+[data-resolved-theme="dark"][data-theme="cyan-matrix"],
+.dark body[data-accent="cyan"] {
+  --accent-primary: #22D3EE;
+  --accent-primary-hover: #06B6D4;
+  --accent-primary-subtle: rgba(6, 182, 212, 0.16);
+  --accent-primary-border: rgba(6, 182, 212, 0.40);
+  --accent-primary-glow: rgba(6, 182, 212, 0.25);
+  --accent-primary-text: #A5F3FC;
+  --accent-matte-gold: #22D3EE;
+  --btn-primary-bg: #06B6D4;
+  --btn-primary-text: #000000;
+  --btn-primary-hover: #22D3EE;
+}
+
+/* Universal Theme Utility Classes */
+.theme-accent-bg {
+  background-color: var(--accent-primary) !important;
+  color: var(--btn-primary-text, #ffffff) !important;
+}
+
+.theme-accent-text {
+  color: var(--accent-primary) !important;
+}
+
+.theme-accent-border {
+  border-color: var(--accent-primary) !important;
+}
+
+.theme-accent-subtle-bg {
+  background-color: var(--accent-primary-subtle) !important;
+  color: var(--accent-primary-text) !important;
+}
+
+.theme-accent-subtle-border {
+  border-color: var(--accent-primary-border) !important;
+}
+
+.theme-accent-badge {
+  background-color: var(--accent-primary-subtle) !important;
+  color: var(--accent-primary-text) !important;
+  border: 1px solid var(--accent-primary-border) !important;
+}
+
+/* Global Selection styling synchronized with active theme */
+::selection {
+  background-color: var(--accent-primary-subtle) !important;
+  color: var(--accent-primary-text) !important;
+}
+::-moz-selection {
+  background-color: var(--accent-primary-subtle) !important;
+  color: var(--accent-primary-text) !important;
 }
 
 /* ==========================================================================
@@ -503,20 +738,20 @@ html:not(.dark) .hover\:border-slate-300:hover {
   text-shadow: none !important;
 }
 
-/* Clean Form Focus Rings with Warm Amber Accent */
+/* Clean Form Focus Rings with Active Theme Color */
 input:focus,
 select:focus,
 textarea:focus {
   outline: none !important;
-  border-color: #C2410C !important;
-  box-shadow: 0 0 0 2px rgba(194, 65, 12, 0.2) !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px var(--accent-primary-glow) !important;
 }
 
 .dark input:focus,
 .dark select:focus,
 .dark textarea:focus {
-  border-color: #F59E0B !important;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px var(--accent-primary-glow) !important;
 }
 
 /* ==========================================================================

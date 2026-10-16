@@ -185,9 +185,9 @@ export const ProjectsView: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start w-full">
           {/* Project Sidebar */}
-          <div className="lg:col-span-4 space-y-3">
+          <div className="lg:col-span-4 xl:col-span-3 2xl:col-span-3 space-y-3">
             <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-1">
               پروژه‌ها ({toPersianDigits(projects.length)})
             </h2>
@@ -266,7 +266,7 @@ export const ProjectsView: React.FC = () => {
 
           {/* Active Project Workspace */}
           {activeProject && (
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 xl:col-span-9 2xl:col-span-9 space-y-6 min-w-0">
               {/* Project Card Info */}
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -457,7 +457,7 @@ export const ProjectsView: React.FC = () => {
                     </form>
 
                     {/* Columns */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto pb-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pb-2 w-full">
                       {STATUS_COLUMNS.map((col) => {
                         const colTasks = activeProject.tasks.filter((t) => t.status === col.id);
 

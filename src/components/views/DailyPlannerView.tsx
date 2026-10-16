@@ -371,9 +371,9 @@ export const DailyPlannerView: React.FC = () => {
       )}
 
       {/* Main Content Split: School Morning Bells + Planned Tasks Timeline */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (Desktop 1 col): School Bells for this day */}
-        <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm h-fit">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start w-full">
+        {/* School Bells for this day */}
+        <div className="lg:col-span-4 xl:col-span-3 2xl:col-span-3 bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm h-fit">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-3">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Clock className="w-4 h-4 text-cyan-400" />
@@ -426,8 +426,8 @@ export const DailyPlannerView: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column (Desktop 2 cols): Post-School Tasks Timeline */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* Post-School Tasks Timeline */}
+        <div className="lg:col-span-8 xl:col-span-9 2xl:col-span-9 space-y-4 min-w-0">
           <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
               <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">

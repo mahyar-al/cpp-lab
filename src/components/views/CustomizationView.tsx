@@ -49,6 +49,7 @@ import {
   initialCustomization,
 } from '../../utils/initialData';
 import { toPersianDigits } from '../../utils/jalali';
+import { SITE_COLOR_THEMES, THEME_BACKGROUND_OPTIONS, SiteColorTheme } from '../../utils/theme';
 
 interface CustomizationViewProps {
   onBack?: () => void;

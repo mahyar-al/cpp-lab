@@ -124,8 +124,8 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#000000]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#242424] transition-colors">
-      <div className="flex items-center justify-between px-4 lg:px-6 h-15 gap-4">
+    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#000000]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#242424] transition-colors w-full">
+      <div className="flex items-center justify-between px-3.5 sm:px-5 md:px-6 lg:px-8 xl:px-10 2xl:px-12 h-15 gap-4 w-full">
         {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
           <button

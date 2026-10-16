@@ -201,9 +201,9 @@ export const SkillsView: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start w-full">
           {/* Skill Selector Sidebar */}
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-4 xl:col-span-3 2xl:col-span-3 space-y-4">
             <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 px-1">
               فهرست مهارت‌ها ({toPersianDigits(skills.length)})
             </h2>
@@ -270,7 +270,7 @@ export const SkillsView: React.FC = () => {
 
           {/* Active Skill Workspace */}
           {activeSkill && (
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 xl:col-span-9 2xl:col-span-9 space-y-6 min-w-0">
               {/* Skill Main Card */}
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
