@@ -608,10 +608,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ? state.profile.customization.navOrder
       : [...initialCustomization.navOrder],
     themeMode: (state.profile?.customization?.themeMode as ThemeMode) || (state.profile?.theme as ThemeMode) || 'dark',
-    accentColor: state.profile?.customization?.accentColor || 'cyan',
-    secondaryAccent: state.profile?.customization?.secondaryAccent || 'violet',
+    accentColor: state.profile?.customization?.accentColor || 'amber',
+    secondaryAccent: state.profile?.customization?.secondaryAccent || 'emerald',
     borderRadius: state.profile?.customization?.borderRadius || 'medium',
-    glowIntensity: state.profile?.customization?.glowIntensity || 'subtle',
+    glowIntensity: state.profile?.customization?.glowIntensity || 'none',
     fontSize: state.profile?.customization?.fontSize || 'normal',
     density: state.profile?.customization?.density || 'comfortable',
     dashboardCardsOrder: state.profile?.customization?.dashboardCardsOrder?.length
@@ -662,8 +662,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (isDark) {
       document.documentElement.classList.add('dark');
+      document.documentElement.style.backgroundColor = '#000000';
+      document.documentElement.style.color = '#ECEAE6';
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.backgroundColor = '#F5F4F1';
+      document.documentElement.style.color = '#23211E';
     }
 
     document.documentElement.setAttribute('data-theme', currentThemeMode);
@@ -720,10 +724,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (notify) {
       const label =
         newMode === 'light'
-          ? 'حالت روشن فعال شد.'
+          ? 'حالت روشن فعال شد (سفید ملایم و کنترل‌شده).'
           : newMode === 'system'
           ? 'حالت هماهنگ با سیستم فعال شد.'
-          : 'حالت تاریک نئونی فعال شد.';
+          : 'حالت مشکی واقعی (Pure Black) فعال شد.';
       showToast(label);
     }
   }, [showToast]);

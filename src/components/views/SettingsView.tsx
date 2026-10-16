@@ -291,7 +291,7 @@ export const SettingsView: React.FC = () => {
             {!currentUser && (
               <button
                 onClick={() => openAuthModal('login')}
-                className="mr-2 px-2.5 py-1 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg text-xs transition-colors cursor-pointer"
+                className="mr-2 px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs transition-colors cursor-pointer"
               >
                 ورود
               </button>
@@ -305,8 +305,8 @@ export const SettingsView: React.FC = () => {
             onClick={() => setActiveTab('profile')}
             className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'profile'
-                ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033]'
+                ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#161616]'
             }`}
           >
             <User className="w-4 h-4" />
@@ -317,11 +317,11 @@ export const SettingsView: React.FC = () => {
             onClick={() => setActiveTab('customization')}
             className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'customization'
-                ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033]'
+                ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#161616]'
             }`}
           >
-            <Palette className="w-4 h-4 text-cyan-400" />
+            <Palette className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>شخصی‌سازی سایت و ظاهر</span>
           </button>
 
@@ -329,8 +329,8 @@ export const SettingsView: React.FC = () => {
             onClick={() => setActiveTab('account')}
             className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'account'
-                ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033]'
+                ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#161616]'
             }`}
           >
             <Lock className="w-4 h-4" />
@@ -341,14 +341,14 @@ export const SettingsView: React.FC = () => {
             onClick={() => setActiveTab('cloud')}
             className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'cloud'
-                ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033]'
+                ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#161616]'
             }`}
           >
             <Cloud className="w-4 h-4" />
             <span>پایگاه داده و پشتیبان‌گیری</span>
             {serverSnapshots.length > 0 && (
-              <span className="px-1.5 py-0.2 bg-cyan-500/20 text-cyan-400 rounded-full text-[10px]">
+              <span className="px-1.5 py-0.2 bg-amber-500/20 text-amber-700 dark:text-amber-400 rounded-full text-[10px]">
                 {toPersianDigits(serverSnapshots.length)}
               </span>
             )}
@@ -358,8 +358,8 @@ export const SettingsView: React.FC = () => {
             onClick={() => setActiveTab('trash')}
             className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'trash'
-                ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#172033]'
+                ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#161616]'
             }`}
           >
             <Trash2 className="w-4 h-4" />
@@ -376,9 +376,9 @@ export const SettingsView: React.FC = () => {
       {/* Tab 1: Profile & Appearance */}
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-5">
+          <div className="bg-white dark:bg-[#0D0D0D] p-6 rounded-2xl border border-slate-200 dark:border-[#242424] shadow-xs space-y-5">
             <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <User className="w-4 h-4 text-cyan-400" />
+              <User className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               اطلاعات نمایه، آواتار و پوسته
             </h2>
 
@@ -392,7 +392,7 @@ export const SettingsView: React.FC = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-sm text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                 />
               </div>
 
@@ -406,7 +406,7 @@ export const SettingsView: React.FC = () => {
                   value={gradeOrField}
                   onChange={(e) => setGradeOrField(e.target.value)}
                   placeholder="مثلاً: پایه یازدهم ریاضی فیزیک"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-sm text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                 />
               </div>
 
@@ -460,16 +460,16 @@ export const SettingsView: React.FC = () => {
                     onClick={() => setThemeMode('light', true)}
                     className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-colors cursor-pointer ${
                       themeMode === 'light'
-                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-[#161616] text-slate-900 dark:text-white shadow-xs font-semibold'
+                        : 'border-slate-200 dark:border-[#242424] text-slate-600 dark:text-[#A0A0A0] hover:bg-slate-50 dark:hover:bg-[#111111]'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                       <Sun className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold">حالت روشن</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سفید و خاکستری ملایم</div>
+                      <div className="text-xs font-bold">حالت روشن ملایم</div>
+                      <div className="text-[10px] text-slate-500 dark:text-[#777777] mt-0.5">پس‌زمینه #F5F4F1 با حس گرم و کارت‌های سفید</div>
                     </div>
                   </button>
 
@@ -479,16 +479,16 @@ export const SettingsView: React.FC = () => {
                     onClick={() => setThemeMode('dark', true)}
                     className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-colors cursor-pointer ${
                       themeMode === 'dark'
-                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-[#161616] text-slate-900 dark:text-white shadow-xs font-semibold'
+                        : 'border-slate-200 dark:border-[#242424] text-slate-600 dark:text-[#A0A0A0] hover:bg-slate-50 dark:hover:bg-[#111111]'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-[#161616] text-slate-700 dark:text-[#E6E6E6] flex items-center justify-center">
                       <Moon className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold">حالت تاریک</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">سرمه‌ای ملایم و خوانا</div>
+                      <div className="text-xs font-bold">مشکی واقعی (Pure Black)</div>
+                      <div className="text-[10px] text-slate-500 dark:text-[#777777] mt-0.5">مشکی خالص (#000000) بدون سرمه‌ای</div>
                     </div>
                   </button>
 
@@ -498,16 +498,16 @@ export const SettingsView: React.FC = () => {
                     onClick={() => setThemeMode('system', true)}
                     className={`p-3.5 rounded-xl border flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer ${
                       themeMode === 'system'
-                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'border-slate-900 dark:border-slate-100 bg-slate-100 dark:bg-[#161616] text-slate-900 dark:text-white shadow-xs font-semibold'
+                        : 'border-slate-200 dark:border-[#242424] text-slate-600 dark:text-[#A0A0A0] hover:bg-slate-50 dark:hover:bg-[#111111]'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-[#161616] text-slate-700 dark:text-[#E6E6E6] flex items-center justify-center">
                       <Monitor className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="text-xs font-bold">هماهنگ با سیستم</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">تطبیق خودکار با سیستم‌عامل</div>
+                      <div className="text-[10px] text-slate-500 dark:text-[#777777] mt-0.5">تطبیق خودکار با سیستم‌عامل</div>
                     </div>
                   </button>
                 </div>
@@ -530,9 +530,9 @@ export const SettingsView: React.FC = () => {
           </div>
 
           {/* Bell Times */}
-          <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#0D0D0D] p-6 rounded-2xl border border-slate-200 dark:border-[#242424] shadow-xs space-y-4">
             <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-cyan-400" />
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               ساعت شروع و پایان زنگ‌های مدرسه
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -543,7 +543,7 @@ export const SettingsView: React.FC = () => {
               {bellTimes.map((bell, idx) => (
                 <div
                   key={bell.period}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 text-xs"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] text-xs"
                 >
                   <span className="font-bold text-slate-800 dark:text-slate-200 w-24">
                     {bell.title}
@@ -554,14 +554,14 @@ export const SettingsView: React.FC = () => {
                       type="time"
                       value={bell.startTime}
                       onChange={(e) => handleBellTimeChange(idx, 'startTime', e.target.value)}
-                      className="px-2 py-1 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-900 dark:text-white"
+                      className="px-2 py-1 bg-white dark:bg-[#0D0D0D] border border-slate-200 dark:border-[#242424] rounded-lg text-xs font-mono text-slate-900 dark:text-white"
                     />
                     <span className="text-slate-400">تا</span>
                     <input
                       type="time"
                       value={bell.endTime}
                       onChange={(e) => handleBellTimeChange(idx, 'endTime', e.target.value)}
-                      className="px-2 py-1 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-mono text-slate-900 dark:text-white"
+                      className="px-2 py-1 bg-white dark:bg-[#0D0D0D] border border-slate-200 dark:border-[#242424] rounded-lg text-xs font-mono text-slate-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -570,7 +570,7 @@ export const SettingsView: React.FC = () => {
 
             <button
               onClick={handleSaveProfile}
-              className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-bold rounded-xl shadow-[0_0_12px_rgba(0,245,255,0.2)] transition-all cursor-pointer"
+              className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
             >
               ذخیره زمان‌بندی زنگ‌ها
             </button>
@@ -587,20 +587,20 @@ export const SettingsView: React.FC = () => {
           {currentUser ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Account Details & Security Question */}
-              <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-5">
+              <div className="bg-white dark:bg-[#0D0D0D] p-6 rounded-2xl border border-slate-200 dark:border-[#242424] shadow-xs space-y-5">
                 <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   مشخصات هویتی و سؤال امنیتی حساب
                 </h2>
 
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 space-y-2.5 text-xs">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] space-y-2.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-slate-500">شناسه کاربر:</span>
                     <span className="font-mono text-slate-700 dark:text-slate-300">{currentUser.id}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">نام کاربری:</span>
-                    <span className="font-bold text-cyan-600 dark:text-cyan-400">@{currentUser.username}</span>
+                    <span className="font-bold text-amber-600 dark:text-amber-400">@{currentUser.username}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">آدرس ایمیل:</span>
@@ -617,7 +617,7 @@ export const SettingsView: React.FC = () => {
                 {/* Security Question Update Form */}
                 <form onSubmit={handleUpdateSecurity} className="space-y-3 text-xs pt-2">
                   <h3 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                    <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
+                    <KeyRound className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                     ویرایش سؤال امنیتی برای بازیابی رمز عبور:
                   </h3>
                   <div>
@@ -626,7 +626,7 @@ export const SettingsView: React.FC = () => {
                       value={secQuestion}
                       onChange={(e) => setSecQuestion(e.target.value)}
                       placeholder="متن سؤال امنیتی"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-xs text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                     />
                   </div>
                   <div>
@@ -635,15 +635,15 @@ export const SettingsView: React.FC = () => {
                       value={secAnswer}
                       onChange={(e) => setSecAnswer(e.target.value)}
                       placeholder="پاسخ محرمانه شما (هش شده ذخیره می‌شود)"
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-xs text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    {secSuccess && <span className="text-emerald-500 font-bold">سوال امنیتی ثبت شد.</span>}
+                    {secSuccess && <span className="text-emerald-600 dark:text-emerald-400 font-bold">سوال امنیتی ثبت شد.</span>}
                     <button
                       type="submit"
                       disabled={secLoading}
-                      className="mr-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-[#172033] dark:hover:bg-[#1f2b45] text-slate-800 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer"
+                      className="mr-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
                     >
                       {secLoading ? 'در حال ثبت...' : 'بروزرسانی سؤال امنیتی'}
                     </button>
@@ -653,7 +653,7 @@ export const SettingsView: React.FC = () => {
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <button
                     onClick={() => setIsAuthModalOpen(true)}
-                    className="px-3.5 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                    className="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
                   >
                     <LogIn className="w-3.5 h-3.5" />
                     <span>ورود به حساب کاربری دیگر</span>
@@ -671,9 +671,9 @@ export const SettingsView: React.FC = () => {
 
               {/* Password Change Form & Danger Zone */}
               <div className="space-y-6">
-                <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4 text-xs">
+                <div className="bg-white dark:bg-[#0D0D0D] p-6 rounded-2xl border border-slate-200 dark:border-[#242424] shadow-xs space-y-4 text-xs">
                   <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-cyan-400" />
+                    <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     تغییر رمز عبور حساب
                   </h2>
 
@@ -685,7 +685,7 @@ export const SettingsView: React.FC = () => {
                         required
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                       />
                     </div>
                     <div>
@@ -695,7 +695,7 @@ export const SettingsView: React.FC = () => {
                         required
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                       />
                     </div>
                     <div>
@@ -705,7 +705,7 @@ export const SettingsView: React.FC = () => {
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                        className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                       />
                     </div>
 
@@ -771,8 +771,8 @@ export const SettingsView: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-[#0D1222] p-8 rounded-2xl border border-slate-200 dark:border-slate-800/80 text-center space-y-4">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+            <div className="bg-white dark:bg-[#0D0D0D] p-8 rounded-2xl border border-slate-200 dark:border-[#242424] text-center space-y-4 shadow-xs">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                 <LogIn className="w-7 h-7" />
               </div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -791,7 +791,7 @@ export const SettingsView: React.FC = () => {
                 </button>
                 <button
                   onClick={() => openAuthModal('register')}
-                  className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>ثبت‌نام حساب مستقل</span>
@@ -806,11 +806,11 @@ export const SettingsView: React.FC = () => {
       {activeTab === 'cloud' && (
         <div className="space-y-6">
           {/* Cloud Sync Status & Manual Checkpoint */}
-          <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#0D0D0D] p-6 rounded-2xl border border-slate-200 dark:border-[#242424] shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Database className="w-4 h-4 text-cyan-400" />
+                  <Database className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   پشتیبان‌گیری ابری و نقاط بازگردانی
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -821,7 +821,7 @@ export const SettingsView: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={syncWithServer}
-                  className="px-4 py-2 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
                   <span>همگام‌سازی فوری با سرور</span>
@@ -837,7 +837,7 @@ export const SettingsView: React.FC = () => {
                   value={snapshotReason}
                   onChange={(e) => setSnapshotReason(e.target.value)}
                   placeholder="عنوان یا دلیل ایجاد نقطه بازگردانی (مثلاً: قبل از شروع امتحانات نهایی)..."
-                  className="flex-1 px-3 py-2 bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs focus:border-cyan-400 focus:outline-hidden"
+                  className="flex-1 px-3 py-2 bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] rounded-xl text-slate-900 dark:text-white text-xs focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                 />
                 <button
                   type="submit"
@@ -856,7 +856,7 @@ export const SettingsView: React.FC = () => {
                   نقاط بازگردانی سرور برای حساب شما ({toPersianDigits(serverSnapshots.length)} نسخه):
                 </h3>
                 {serverSnapshots.length === 0 ? (
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090D18] text-center text-xs text-slate-400">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#151515] text-center text-xs text-slate-400">
                     هنوز نسخه پشتیبان لحظه‌ای ثبت نشده است. می‌توانید با فرم بالا یک نقطه بازگردانی ایجاد کنید.
                   </div>
                 ) : (
@@ -864,7 +864,7 @@ export const SettingsView: React.FC = () => {
                     {serverSnapshots.map((snap) => (
                       <div
                         key={snap.id}
-                        className="p-3 rounded-xl bg-slate-50 dark:bg-[#090D18] border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs"
+                        className="p-3 rounded-xl bg-slate-50 dark:bg-[#151515] border border-slate-200 dark:border-[#242424] flex items-center justify-between text-xs"
                       >
                         <div className="flex flex-col text-right">
                           <span className="font-bold text-slate-800 dark:text-slate-200">{snap.reason}</span>
@@ -878,7 +878,7 @@ export const SettingsView: React.FC = () => {
                               restoreServerSnapshot(snap.id);
                             }
                           }}
-                          className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+                          className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/25 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
                           <span>بازگردانی</span>
@@ -892,14 +892,14 @@ export const SettingsView: React.FC = () => {
           </div>
 
           {/* Standalone JSON Backup & Restore */}
-          <div className="bg-white dark:bg-[#0D1222] p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#0D0D0D] p-6 rounded-2xl border border-slate-200 dark:border-[#242424] shadow-xs space-y-4">
             <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Download className="w-4 h-4 text-emerald-400" />
+              <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               خروجی و ورود فایل پشتیبان JSON
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#090D18] space-y-3 text-xs">
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-[#242424] bg-slate-50/50 dark:bg-[#151515] space-y-3 text-xs">
                 <span className="font-bold text-slate-800 dark:text-slate-200 block">
                   خروجی فایل JSON
                 </span>
@@ -915,7 +915,7 @@ export const SettingsView: React.FC = () => {
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#090D18] space-y-2 text-xs md:col-span-2">
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-[#242424] bg-slate-50/50 dark:bg-[#151515] space-y-2 text-xs md:col-span-2">
                 <span className="font-bold text-slate-800 dark:text-slate-200 block">
                   بازیابی از فایل JSON
                 </span>
@@ -925,7 +925,7 @@ export const SettingsView: React.FC = () => {
                     value={importJson}
                     onChange={(e) => setImportJson(e.target.value)}
                     placeholder="محتوای متنی فایل JSON را اینجا قرار دهید..."
-                    className="w-full p-2.5 bg-white dark:bg-[#0D1222] border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono text-slate-900 dark:text-white focus:border-cyan-400 focus:outline-hidden"
+                    className="w-full p-2.5 bg-white dark:bg-[#0D0D0D] border border-slate-200 dark:border-[#242424] rounded-xl text-xs font-mono text-slate-900 dark:text-white focus:border-amber-500 dark:focus:border-amber-400 focus:outline-hidden"
                   />
                   <div className="flex items-center justify-between">
                     {importSuccess && (

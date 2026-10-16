@@ -105,7 +105,7 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-slate-200 dark:selection:bg-slate-800 font-sans" dir="rtl">
+    <div className="min-h-screen bg-[#F5F4F1] dark:bg-[#000000] text-[#23211E] dark:text-[#ECEAE6] flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-amber-200 dark:selection:bg-amber-950/70 font-sans" dir="rtl">
 
       {/* Sidebar Navigation */}
       <Sidebar

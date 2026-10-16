@@ -224,7 +224,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0B0F1D] border-l border-slate-200 dark:border-slate-800/80 transition-all duration-300 ease-in-out shadow-lg ${
+        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0A0A0A] border-l border-slate-200 dark:border-[#242424] transition-all duration-300 ease-in-out shadow-lg ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${
           isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
@@ -232,7 +232,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {/* Top Header of Sidebar */}
         <div
-          className={`flex items-center h-15 border-b border-slate-200 dark:border-slate-800 transition-all relative ${
+          className={`flex items-center h-15 border-b border-slate-200 dark:border-[#242424] transition-all relative ${
             isCollapsed ? 'px-2 justify-center' : 'px-4 justify-between'
           }`}
         >
@@ -242,7 +242,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className={`flex items-center ${isCollapsed ? 'justify-center cursor-pointer' : 'gap-2.5'} overflow-hidden`}
             title={isCollapsed ? 'برای باز کردن منو کلیک کنید' : undefined}
           >
-            <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-amber-600 dark:bg-amber-500 text-white dark:text-stone-950 flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
               P
             </div>
 
@@ -298,31 +298,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   const isActive = currentTab === item.id;
 
                   return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavClick(item.id)}
-                      className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors group cursor-pointer ${
-                        isActive
-                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
-                      } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
-                      title={isCollapsed ? item.label : undefined}
-                    >
-                      <div className="flex items-center gap-2.5 truncate">
-                        <Icon
-                          className={`w-4 h-4 shrink-0 transition-colors ${
-                            isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'
-                          }`}
-                        />
-                        {!isCollapsed && <span className="truncate">{item.label}</span>}
-                      </div>
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavClick(item.id)}
+                        className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors group cursor-pointer relative ${
+                          isActive
+                            ? 'bg-amber-500/10 dark:bg-amber-400/10 text-amber-950 dark:text-amber-200 font-semibold'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-[#151515] hover:text-slate-900 dark:hover:text-slate-200'
+                        } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
+                        title={isCollapsed ? item.label : undefined}
+                      >
+                        {isActive && (
+                          <span className="absolute right-0 inset-y-1 w-1 bg-amber-600 dark:bg-amber-400 rounded-full" />
+                        )}
+                        <div className="flex items-center gap-2.5 truncate">
+                          <Icon
+                            className={`w-4 h-4 shrink-0 transition-colors ${
+                              isActive ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'
+                            }`}
+                          />
+                          {!isCollapsed && <span className="truncate">{item.label}</span>}
+                        </div>
 
-                      {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
-                        <span className="px-1.5 py-0.2 text-[10px] rounded font-mono tabular-nums text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-800 font-medium">
-                          {toPersianDigits(item.badge)}
-                        </span>
-                      )}
-                    </button>
+                        {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                          <span className={`px-1.5 py-0.2 text-[10px] rounded font-mono tabular-nums font-medium ${
+                            isActive
+                              ? 'bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200'
+                              : 'text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-[#1A1A1A]'
+                          }`}>
+                            {toPersianDigits(item.badge)}
+                          </span>
+                        )}
+                      </button>
                   );
                 })}
               </div>
@@ -332,7 +339,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer Streaks Widget */}
         {!isCollapsed && (
-          <div className="p-3 mx-2.5 mb-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="p-3 mx-2.5 mb-3 bg-slate-50 dark:bg-[#0D0D0D] rounded-xl border border-slate-200/90 dark:border-[#242424]">
             <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 font-medium mb-1.5">
               <span className="flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5 text-amber-500" />
@@ -348,9 +355,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>پیشرفت هفتگی</span>
                 <span className="font-mono tabular-nums">{toPersianDigits(weeklyGoalPercent)}٪</span>
               </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+              <div className="w-full bg-slate-200 dark:bg-[#1C1C1C] h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-slate-700 dark:bg-slate-300 h-full rounded-full transition-all duration-300"
+                  className="bg-amber-600 dark:bg-amber-400 h-full rounded-full transition-all duration-300"
                   style={{ width: `${weeklyGoalPercent}%` }}
                 />
               </div>

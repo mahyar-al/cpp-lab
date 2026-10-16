@@ -108,8 +108,12 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
       const isDark = draft.themeMode === 'system' ? isSystemDark : draft.themeMode !== 'light';
       if (isDark) {
         document.documentElement.classList.add('dark');
+        document.documentElement.style.backgroundColor = '#000000';
+        document.documentElement.style.color = '#ECEAE6';
       } else {
         document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#F5F4F1';
+        document.documentElement.style.color = '#23211E';
       }
       document.documentElement.setAttribute('data-theme', draft.themeMode);
       document.documentElement.setAttribute('data-resolved-theme', isDark ? 'dark' : 'light');
@@ -129,8 +133,12 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
       const isDark = customization.themeMode === 'system' ? isSystemDark : customization.themeMode !== 'light';
       if (isDark) {
         document.documentElement.classList.add('dark');
+        document.documentElement.style.backgroundColor = '#000000';
+        document.documentElement.style.color = '#ECEAE6';
       } else {
         document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#F5F4F1';
+        document.documentElement.style.color = '#23211E';
       }
       document.documentElement.setAttribute('data-theme', customization.themeMode);
       document.documentElement.setAttribute('data-resolved-theme', isDark ? 'dark' : 'light');
@@ -301,71 +309,36 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
   // Available Theme presets
   const THEME_OPTIONS: Array<{ id: ThemeMode; label: string; desc: string; bgClass: string; badgeClass: string }> = [
     {
-      id: 'system',
-      label: 'هماهنگ با سیستم (System Auto)',
-      desc: 'تنظیم هوشمند بر اساس رنگ و تم فعال سیستم‌عامل (ویندوز / مک / اندروید / لینوکس)',
-      bgClass: 'bg-indigo-50/70 dark:bg-[#0D1225] border-indigo-300 dark:border-indigo-500/50 text-indigo-700 dark:text-indigo-400',
-      badgeClass: 'bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-500/30',
-    },
-    {
       id: 'dark',
-      label: 'نئون سایبر (Dark Neon)',
-      desc: 'تم مشکی ژرف با خطوط فیروزه‌ای و پرتوهای الکتریکی نئون (پیش‌فرض)',
-      bgClass: 'bg-[#080B14] border-cyan-500/50 text-cyan-400',
-      badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+      label: 'مشکی واقعی (Pure Black)',
+      desc: 'مشکی خالص (#000000) با کارت‌های (#0A0A0A)، سطوح فرعی (#111111) و خطوط (#242424)؛ بدون سرمه‌ای یا نئون',
+      bgClass: 'bg-[#000000] border-[#242424] text-[#E6E6E6]',
+      badgeClass: 'bg-[#111111] text-[#E6E6E6] border-[#242424]',
     },
     {
       id: 'light',
-      label: 'مدرن و روشن (Light Modern)',
-      desc: 'تم روشن شیشه‌ای با کنتراست بالا و مناسب محیط‌های پرنور روز',
-      bgClass: 'bg-slate-100 border-slate-300 text-slate-800',
-      badgeClass: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+      label: 'سفید و ملایم (Soft White)',
+      desc: 'پس‌زمینه خاکستری ملایم (#F5F4F1) و کارت‌های سفید (#FFFFFF) با حس گرم، آرام و ضد خیرگی چشم',
+      bgClass: 'bg-[#F5F4F1] border-[#E7E5E0] text-[#23211E]',
+      badgeClass: 'bg-[#FFFFFF] text-[#23211E] border-[#E7E5E0]',
     },
     {
-      id: 'cyber-purple',
-      label: 'سحابی بنفش (Cyber Purple)',
-      desc: 'پس‌زمینه بنفش کهکشانی با هاله نئونی ارغوانی و جذاب',
-      bgClass: 'bg-[#0A0614] border-purple-500/50 text-purple-400',
-      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-    },
-    {
-      id: 'emerald-matrix',
-      label: 'ماتریس زمرد (Emerald Matrix)',
-      desc: 'فضای هکری و تک با مشکی خالص و درخشش سبز فسفری زمردی',
-      bgClass: 'bg-[#040F09] border-emerald-500/50 text-emerald-400',
-      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-    },
-    {
-      id: 'ocean-deep',
-      label: 'اقیانوس لاجوردی (Ocean Deep)',
-      desc: 'آبی تیره اقیانوسی با کنتراست ملایم و آرامش‌بخش چشم',
-      bgClass: 'bg-[#050E1B] border-blue-500/50 text-blue-400',
-      badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-    },
-    {
-      id: 'sunset-gold',
-      label: 'غروب کهربایی (Sunset Gold)',
-      desc: 'رنگ‌های گرم شبانه با رگه‌های خورشیدی و طلایی دلنشین',
-      bgClass: 'bg-[#120904] border-amber-500/50 text-amber-400',
-      badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-    },
-    {
-      id: 'rose-quartz',
-      label: 'یاقوت رز (Rose Quartz)',
-      desc: 'پس‌زمینه مخملی تیره با تأکیدهای سرخ و صورتی نئونی چشم‌نواز',
-      bgClass: 'bg-[#14050B] border-rose-500/50 text-rose-400',
-      badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+      id: 'system',
+      label: 'هماهنگ با سیستم (System Auto)',
+      desc: 'تنظیم هوشمند خودکار بر اساس تم فعال سیستم‌عامل (مشکی واقعی یا سفید ملایم)',
+      bgClass: 'bg-slate-100 dark:bg-[#111111] border-slate-300 dark:border-[#242424] text-slate-800 dark:text-[#ECEAE6]',
+      badgeClass: 'bg-slate-200 dark:bg-[#1A1A1A] text-slate-800 dark:text-[#ECEAE6] border-slate-300 dark:border-[#242424]',
     },
   ];
 
   // Accent Colors
   const ACCENT_OPTIONS: Array<{ id: AccentColor; label: string; hex: string; bg: string }> = [
-    { id: 'cyan', label: 'فیروزه‌ای نئون', hex: '#00F5FF', bg: 'bg-[#00F5FF]' },
-    { id: 'emerald', label: 'سبز زمردی', hex: '#10B981', bg: 'bg-[#10B981]' },
-    { id: 'violet', label: 'ارغوانی نئون', hex: '#A855F7', bg: 'bg-[#A855F7]' },
-    { id: 'rose', label: 'سرخ رز', hex: '#F43F5E', bg: 'bg-[#F43F5E]' },
-    { id: 'amber', label: 'طلایی کهربایی', hex: '#F59E0B', bg: 'bg-[#F59E0B]' },
-    { id: 'blue', label: 'آبی آسمانی', hex: '#3B82F6', bg: 'bg-[#3B82F6]' },
+    { id: 'amber', label: 'کهربایی گرم (پیش‌فرض)', hex: '#F59E0B', bg: 'bg-[#F59E0B]' },
+    { id: 'emerald', label: 'سبز زیتونی / زمردی', hex: '#15803D', bg: 'bg-[#15803D]' },
+    { id: 'rose', label: 'مرجانی ملایم', hex: '#BE123C', bg: 'bg-[#BE123C]' },
+    { id: 'blue', label: 'آبی معتدل', hex: '#2563EB', bg: 'bg-[#2563EB]' },
+    { id: 'violet', label: 'ارغوانی آرام', hex: '#7C3AED', bg: 'bg-[#7C3AED]' },
+    { id: 'cyan', label: 'فیروزه‌ای ملایم', hex: '#0D9488', bg: 'bg-[#0D9488]' },
   ];
 
   // All 15 section tabs to customize
@@ -390,9 +363,9 @@ export const CustomizationView: React.FC<CustomizationViewProps> = ({ onBack }) 
   return (
     <div className="space-y-6 pb-20 animate-in fade-in duration-200">
       {/* Top Header & Overview */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/80 dark:bg-[#0D1222]/80 backdrop-blur-xl border border-slate-200 dark:border-[#263247] shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-[#0D0D0D] border border-slate-200/90 dark:border-[#242424] shadow-xs">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 shadow-[0_0_15px_rgba(0,245,255,0.35)] shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-amber-600 dark:bg-amber-500 flex items-center justify-center text-white dark:text-stone-950 shadow-xs shrink-0">
             <Palette className="w-6 h-6" />
           </div>
           <div>

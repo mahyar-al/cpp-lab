@@ -272,7 +272,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-stone-950 text-xs font-bold rounded-lg transition-all cursor-pointer shadow-xs active:scale-98"
           >
             <Plus className="w-4 h-4" />
             <span>ثبت سریع</span>
@@ -303,28 +303,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         {/* Pillar 1: School */}
         <div
           onClick={() => onNavigate('school')}
-          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
+          className="p-4 bg-white dark:bg-[#0D0D0D] rounded-xl border border-slate-200/90 dark:border-[#242424] border-t-2 border-t-amber-600/90 dark:border-t-amber-500/90 hover:border-slate-300 dark:hover:border-[#383838] transition-all cursor-pointer group shadow-xs"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <span>{getSectionTitle('school')}</span>
-            <GraduationCap className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
+            <span className="font-semibold text-slate-700 dark:text-slate-300">{getSectionTitle('school')}</span>
+            <div className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <GraduationCap className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(pendingHomeworks.length)}
             </span>
-            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
+            <span className="text-xs text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center gap-0.5 transition-colors">
               ورود <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-[#1F1F1F] flex items-center justify-between">
             <span>تکالیف در دست انجام</span>
             {overdueHomeworks.length > 0 ? (
               <span className="text-rose-600 dark:text-rose-400 font-medium">
                 {toPersianDigits(overdueHomeworks.length)} عقب‌افتاده
               </span>
             ) : (
-              <span className="text-emerald-600 dark:text-emerald-400">به‌روز</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium">به‌روز</span>
             )}
           </div>
         </div>
@@ -332,23 +334,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         {/* Pillar 2: Skills */}
         <div
           onClick={() => onNavigate('skills')}
-          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
+          className="p-4 bg-white dark:bg-[#0D0D0D] rounded-xl border border-slate-200/90 dark:border-[#242424] border-t-2 border-t-orange-600/90 dark:border-t-orange-500/90 hover:border-slate-300 dark:hover:border-[#383838] transition-all cursor-pointer group shadow-xs"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <span>{getSectionTitle('skills')}</span>
-            <Sparkles className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
+            <span className="font-semibold text-slate-700 dark:text-slate-300">{getSectionTitle('skills')}</span>
+            <div className="w-6 h-6 rounded-md bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(activeSkillsCount)}
             </span>
-            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
+            <span className="text-xs text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 flex items-center gap-0.5 transition-colors">
               نقشه‌راه <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-[#1F1F1F] flex items-center justify-between">
             <span>میانگین پیشرفت</span>
-            <span className="font-mono tabular-nums font-semibold text-slate-700 dark:text-slate-300">
+            <span className="font-mono tabular-nums font-semibold text-slate-800 dark:text-slate-200">
               {toPersianDigits(avgSkillProgress)}٪
             </span>
           </div>
@@ -357,23 +361,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         {/* Pillar 3: Projects */}
         <div
           onClick={() => onNavigate('projects')}
-          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
+          className="p-4 bg-white dark:bg-[#0D0D0D] rounded-xl border border-slate-200/90 dark:border-[#242424] border-t-2 border-t-emerald-700/90 dark:border-t-emerald-500/90 hover:border-slate-300 dark:hover:border-[#383838] transition-all cursor-pointer group shadow-xs"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <span>{getSectionTitle('projects')}</span>
-            <FolderGit2 className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
+            <span className="font-semibold text-slate-700 dark:text-slate-300">{getSectionTitle('projects')}</span>
+            <div className="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
+              <FolderGit2 className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {toPersianDigits(activeProjects.length)}
             </span>
-            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
+            <span className="text-xs text-slate-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 flex items-center gap-0.5 transition-colors">
               کانبان <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-[#1F1F1F] flex items-center justify-between">
             <span>پیشرفت پروژه‌ها</span>
-            <span className="font-mono tabular-nums font-semibold text-slate-700 dark:text-slate-300">
+            <span className="font-mono tabular-nums font-semibold text-slate-800 dark:text-slate-200">
               {toPersianDigits(avgProjectProgress)}٪
             </span>
           </div>
@@ -382,21 +388,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         {/* Pillar 4: Competitions */}
         <div
           onClick={() => onNavigate('competitions')}
-          className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors cursor-pointer group"
+          className="p-4 bg-white dark:bg-[#0D0D0D] rounded-xl border border-slate-200/90 dark:border-[#242424] border-t-2 border-t-rose-600/90 dark:border-t-rose-500/90 hover:border-slate-300 dark:hover:border-[#383838] transition-all cursor-pointer group shadow-xs"
         >
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <span>{getSectionTitle('competitions')}</span>
-            <Trophy className="w-4 h-4 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
+            <span className="font-semibold text-slate-700 dark:text-slate-300">{getSectionTitle('competitions')}</span>
+            <div className="w-6 h-6 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+              <Trophy className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white">
               {daysToNextCompetition !== null ? `${toPersianDigits(daysToNextCompetition)} روز` : '—'}
             </span>
-            <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex items-center gap-0.5">
+            <span className="text-xs text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 flex items-center gap-0.5 transition-colors">
               رویدادها <ChevronLeft className="w-3.5 h-3.5" />
             </span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 truncate">
+          <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-[#1F1F1F] truncate">
             <span className="truncate">{nextCompetition ? nextCompetition.title : 'رویداد پیش‌رو'}</span>
           </div>
         </div>
@@ -668,9 +676,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       <span className="text-[9px] font-mono tabular-nums text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         {toPersianDigits(d.hours)}h
                       </span>
-                      <div className="w-full max-w-[24px] bg-slate-100 dark:bg-slate-800 rounded-t overflow-hidden flex items-end h-16">
+                      <div className="w-full max-w-[24px] bg-slate-100 dark:bg-[#1A1A1A] rounded-t overflow-hidden flex items-end h-16 border-b border-amber-600/30">
                         <div
-                          className="w-full bg-slate-700 dark:bg-slate-300 hover:opacity-80 transition-all rounded-t"
+                          className={`w-full transition-all rounded-t ${
+                            d.hours === maxChartHours && d.hours > 0
+                              ? 'bg-amber-600 dark:bg-amber-400'
+                              : 'bg-amber-600/70 dark:bg-amber-500/65 hover:bg-amber-600 dark:hover:bg-amber-400'
+                          }`}
                           style={{ height: `${Math.max(6, heightPercent)}%` }}
                         />
                       </div>

@@ -127,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#000000]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#242424] transition-colors">
       <div className="flex items-center justify-between px-4 lg:px-6 h-15 gap-4">
         {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
@@ -154,18 +154,18 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Search Trigger */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-800/60 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-stone-600 dark:text-stone-300 bg-stone-100/70 hover:bg-stone-200/80 dark:bg-[#151515] dark:hover:bg-[#1C1C1C] rounded-lg border border-stone-200 dark:border-[#262626] transition-colors cursor-pointer"
             aria-label="جستجو در سامانه"
             title="جستجو (Ctrl + K)"
           >
-            <Search className="w-3.5 h-3.5 text-slate-400" />
+            <Search className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500" />
             <span className="hidden sm:inline">جستجو</span>
           </button>
 
-          {/* Primary Action: Quick Add */}
+          {/* Primary Action: Quick Add with Warm Accent */}
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer active:scale-98 shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-stone-950 text-xs font-bold rounded-lg transition-all whitespace-nowrap cursor-pointer active:scale-98 shadow-xs"
             title="ثبت سریع وظیفه یا رویداد جدید"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -176,12 +176,12 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="relative p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 rounded-lg hover:bg-stone-100/80 dark:hover:bg-[#151515] transition-colors cursor-pointer"
               aria-label="اعلان‌ها"
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 dark:bg-amber-400 rounded-full" />
               )}
             </button>
 
@@ -202,7 +202,7 @@ export const Header: React.FC<HeaderProps> = ({
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllNotificationsAsRead}
-                        className="text-xs text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                        className="text-xs text-amber-600 dark:text-amber-400 hover:underline cursor-pointer font-medium"
                       >
                         خواندن همه
                       </button>
@@ -227,8 +227,8 @@ export const Header: React.FC<HeaderProps> = ({
                         key={item.id}
                         className={`p-2.5 rounded-lg border text-right transition-colors ${
                           item.isRead
-                            ? 'bg-slate-50/60 dark:bg-[#0D1220]/60 border-slate-200/60 dark:border-[#263247] text-slate-600 dark:text-slate-400'
-                            : 'bg-indigo-50/70 dark:bg-[#172033] border-indigo-200 dark:border-cyan-500/30 text-slate-800 dark:text-slate-200'
+                            ? 'bg-slate-50/60 dark:bg-[#111111]/60 border-slate-200/60 dark:border-[#242424] text-slate-600 dark:text-slate-400'
+                            : 'bg-amber-500/10 dark:bg-amber-500/10 border-amber-300/70 dark:border-amber-900/40 text-slate-800 dark:text-slate-200'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
@@ -245,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({
                               <button
                                 onClick={() => markNotificationAsRead(item.id)}
                                 title="علامت به عنوان خوانده‌شده"
-                                className="text-slate-400 hover:text-cyan-400 cursor-pointer"
+                                className="text-slate-400 hover:text-amber-500 cursor-pointer"
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                               </button>
@@ -278,7 +278,7 @@ export const Header: React.FC<HeaderProps> = ({
                 syncStatus === 'synced'
                   ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
                   : syncStatus === 'syncing'
-                  ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-400 animate-pulse'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400 animate-pulse'
                   : 'bg-rose-500/10 border-rose-500/25 text-rose-500 hover:bg-rose-500/20'
               }`}
               title="همگام‌سازی فوری با پایگاه داده سرور"
@@ -302,56 +302,47 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Modern Theme Switcher Control */}
-          <div className="relative" ref={themeMenuRef}>
+          {/* Simple One-Click Theme Switcher with Sun & Moon Icons */}
+          <div className="relative flex items-center rounded-lg border border-slate-200 dark:border-[#242424] bg-white dark:bg-[#0A0A0A] overflow-visible" ref={themeMenuRef}>
             <button
-              onClick={() => setShowThemeMenu((prev) => !prev)}
-              className="flex items-center gap-1.5 p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              aria-label="تغییر حالت تم (روشن / تاریک / سیستم)"
-              title="تغییر حالت تم"
+              type="button"
+              onClick={() => setThemeMode(resolvedTheme === 'dark' ? 'light' : 'dark', true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-700 dark:text-[#E6E6E6] hover:bg-[#EFEFEF] dark:hover:bg-[#161616] transition-colors cursor-pointer select-none"
+              aria-label={resolvedTheme === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت مشکی واقعی'}
+              title={resolvedTheme === 'dark' ? 'تغییر به حالت روشن (سفید ملایم)' : 'تغییر به حالت تاریک (مشکی واقعی)'}
             >
-              {themeMode === 'system' ? (
-                <Monitor className="w-4 h-4 text-slate-600 dark:text-slate-300" />
-              ) : resolvedTheme === 'dark' ? (
-                <Moon className="w-4 h-4 text-slate-300" />
+              {resolvedTheme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400 shrink-0" />
               ) : (
-                <Sun className="w-4 h-4 text-amber-500" />
+                <Moon className="w-4 h-4 text-slate-700 shrink-0" />
               )}
-              <ChevronDown className={`hidden sm:block w-3 h-3 text-slate-400 transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
+              <span className="hidden sm:inline font-medium">
+                {resolvedTheme === 'dark' ? 'روشن' : 'مشکی'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowThemeMenu((prev) => !prev)}
+              className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-[#EFEFEF] dark:hover:bg-[#161616] border-r border-slate-200 dark:border-[#242424] transition-colors cursor-pointer"
+              title="تنظیمات بیشتر پوسته (سیستم / دستی)"
+              aria-label="منوی گزینه‌های پوسته"
+            >
+              <ChevronDown className={`w-3 h-3 transition-transform ${showThemeMenu ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Theme Dropdown Popover */}
             {showThemeMenu && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-60 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-2 z-50 text-right animate-in fade-in duration-150">
-                <div className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 mb-1 flex items-center justify-between">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-64 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#0A0A0A] rounded-xl shadow-xl border border-slate-200 dark:border-[#242424] p-2 z-50 text-right animate-in fade-in duration-150">
+                <div className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 dark:text-[#777777] border-b border-slate-100 dark:border-[#242424] mb-1 flex items-center justify-between">
                   <span>انتخاب حالت پوسته</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                    {resolvedTheme === 'dark' ? 'تاریک' : 'روشن'}
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#111111] text-slate-600 dark:text-[#A0A0A0]">
+                    {resolvedTheme === 'dark' ? 'مشکی خالص' : 'سفید ملایم'}
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  {/* Light Mode Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setThemeMode('light', true);
-                      setShowThemeMenu(false);
-                    }}
-                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                      themeMode === 'light'
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Sun className="w-4 h-4 text-amber-500" />
-                      <span>حالت روشن</span>
-                    </div>
-                    {themeMode === 'light' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
-                  </button>
-
-                  {/* Dark Mode Button */}
+                  {/* Dark Mode Button (Pure Black) */}
                   <button
                     type="button"
                     onClick={() => {
@@ -360,15 +351,41 @@ export const Header: React.FC<HeaderProps> = ({
                     }}
                     className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                       themeMode === 'dark'
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'bg-slate-100 dark:bg-[#161616] text-slate-900 dark:text-[#E6E6E6] font-semibold border border-transparent dark:border-[#242424]'
+                        : 'text-slate-600 dark:text-[#A0A0A0] hover:bg-slate-50 dark:hover:bg-[#111111]'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <Moon className="w-4 h-4 text-slate-400" />
-                      <span>حالت تاریک</span>
+                      <div>
+                        <div>مشکی واقعی (Pure Black)</div>
+                        <div className="text-[10px] text-slate-400 dark:text-[#777777]">پس‌زمینه #000000 بدون سرمه‌ای</div>
+                      </div>
                     </div>
                     {themeMode === 'dark' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
+                  </button>
+
+                  {/* Light Mode Button (Soft Brightness) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setThemeMode('light', true);
+                      setShowThemeMenu(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                      themeMode === 'light'
+                        ? 'bg-slate-100 dark:bg-[#161616] text-slate-900 dark:text-[#E6E6E6] font-semibold border border-transparent dark:border-[#242424]'
+                        : 'text-slate-600 dark:text-[#A0A0A0] hover:bg-slate-50 dark:hover:bg-[#111111]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-4 h-4 text-amber-500" />
+                      <div>
+                        <div>سفید ملایم (Soft White)</div>
+                        <div className="text-[10px] text-slate-400 dark:text-[#777777]">پس‌زمینه #F5F4F1 با حس گرم و تمیز</div>
+                      </div>
+                    </div>
+                    {themeMode === 'light' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
                   </button>
 
                   {/* System Auto Mode Button */}
@@ -380,13 +397,16 @@ export const Header: React.FC<HeaderProps> = ({
                     }}
                     className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                       themeMode === 'system'
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                        ? 'bg-slate-100 dark:bg-[#161616] text-slate-900 dark:text-[#E6E6E6] font-semibold border border-transparent dark:border-[#242424]'
+                        : 'text-slate-600 dark:text-[#A0A0A0] hover:bg-slate-50 dark:hover:bg-[#111111]'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <Monitor className="w-4 h-4 text-slate-400" />
-                      <span>هماهنگ با سیستم</span>
+                      <div>
+                        <div>هماهنگ با سیستم</div>
+                        <div className="text-[10px] text-slate-400 dark:text-[#777777]">تطبیق خودکار با پوسته سیستم‌عامل</div>
+                      </div>
                     </div>
                     {themeMode === 'system' && <Check className="w-3.5 h-3.5 text-slate-900 dark:text-white" />}
                   </button>
@@ -450,7 +470,7 @@ export const Header: React.FC<HeaderProps> = ({
                     className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Bot className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                      <Bot className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                       <span>دستیار هوش مصنوعی</span>
                     </div>
                     <span className="text-[10px] text-slate-400 font-normal">گفتگوی هوشمند</span>
@@ -478,7 +498,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
-                        <Cloud className={`w-4 h-4 ${syncStatus === 'syncing' ? 'animate-spin text-cyan-500' : 'text-slate-500'}`} />
+                        <Cloud className={`w-4 h-4 ${syncStatus === 'syncing' ? 'animate-spin text-amber-500' : 'text-slate-500'}`} />
                         <span>همگام‌سازی ابری</span>
                       </div>
                       <span className="text-[10px] text-slate-400">

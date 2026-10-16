@@ -87,7 +87,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 lg:hidden transition-colors"
+      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#0A0A0A]/95 backdrop-blur-md border-t border-slate-200 dark:border-[#242424] lg:hidden transition-colors"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label="ناوبری سریع موبایل"
     >
@@ -102,12 +102,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => onSelectTab(item.id)}
               className={`relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-colors cursor-pointer select-none ${
                 isActive
-                  ? 'text-slate-900 dark:text-white font-semibold'
+                  ? 'text-amber-600 dark:text-amber-400 font-semibold'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               {isActive && (
-                <span className="absolute top-0 w-6 h-0.5 rounded-full bg-slate-900 dark:bg-slate-100" />
+                <span className="absolute top-0 w-6 h-0.5 rounded-full bg-amber-600 dark:bg-amber-400" />
               )}
 
               <div className="relative mt-0.5">

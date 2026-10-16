@@ -172,7 +172,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       type: 'یادداشت',
       targetTab: 'notes' as NavTab,
       icon: FileText,
-      colorClass: 'text-cyan-400',
+      colorClass: 'text-amber-600 dark:text-amber-400',
       snippet: n.content,
     })),
     ...calendarEvents.map((ev) => ({
@@ -181,7 +181,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       type: 'رویداد تقویم',
       targetTab: 'calendar' as NavTab,
       icon: Calendar,
-      colorClass: 'text-cyan-400',
+      colorClass: 'text-amber-600 dark:text-amber-400',
       snippet: `${ev.date}${ev.startTime ? ` ساعت ${ev.startTime}` : ''}`,
     })),
   ];
@@ -238,7 +238,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
         </div>
 
         {/* Results List */}
-        <div className="flex-1 overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-[#263247]/60 cyber-scrollbar">
+        <div className="flex-1 overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-[#242424]">
           {query.trim() === '' ? (
             <div className="p-8 text-center text-xs text-slate-400 dark:text-slate-500">
               عنوان درس، پروژه، مهارت، مسابقه، عادت، منبع یا یادداشت موردنظر را تایپ کنید.
@@ -254,18 +254,18 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 <div
                   key={item.id}
                   onClick={() => handleSelectResult(item.targetTab)}
-                  className="p-3 flex items-center justify-between rounded-xl hover:bg-slate-50 dark:hover:bg-[#172033] cursor-pointer transition-colors group"
+                  className="p-3 flex items-center justify-between rounded-xl hover:bg-slate-50 dark:hover:bg-[#161616] cursor-pointer transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] flex items-center justify-center shrink-0">
-                      <Icon className={`w-4 h-4 ${item.colorClass || 'text-cyan-500'}`} />
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-[#151515] border border-slate-200 dark:border-[#262626] flex items-center justify-center shrink-0">
+                      <Icon className={`w-4 h-4 ${item.colorClass || 'text-amber-600 dark:text-amber-400'}`} />
                     </div>
                     <div className="truncate">
-                      <div className="text-xs font-semibold text-slate-800 dark:text-[#F1F5F9] truncate group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF]">
+                      <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400">
                         {item.title}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 truncate mt-0.5">
-                        <span className="font-medium text-cyan-600 dark:text-cyan-400">{item.type}</span>
+                        <span className="font-medium text-amber-600 dark:text-amber-400">{item.type}</span>
                         {item.snippet && (
                           <>
                             <span aria-hidden="true">·</span>
@@ -275,7 +275,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                       </div>
                     </div>
                   </div>
-                  <ArrowLeft className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-cyan-500 dark:group-hover:text-[#00F5FF] transition-colors shrink-0" />
+                  <ArrowLeft className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors shrink-0" />
                 </div>
               );
             })

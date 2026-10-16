@@ -181,47 +181,315 @@
 }
 
 /* ==========================================================================
-   Minimal & Sleek Dashboard Design System (Zero Neon, Clean Slate)
+   Warm, Alive & Minimal Design System (Pure Black Dark & Warm Soft Light)
+   ========================================================================== */
+
+/* Theme-Aware Centralized Design Tokens */
+:root {
+  /* Warm & Soft Light Mode Palette */
+  --bg-page: #F5F4F1;
+  --bg-card: #FFFFFF;
+  --bg-subsurface: #FAF9F6;
+  --border-subtle: #E7E5E0;
+  --border-hover: #D8D5CE;
+  --text-main: #23211E;
+  --text-secondary: #636059;
+  --text-muted: #87837B;
+
+  /* Primary Warm Accent: Rich Warm Amber / Terracotta */
+  --accent-primary: #C2410C;
+  --accent-primary-hover: #9A3412;
+  --accent-primary-subtle: #FFF7ED;
+  --accent-primary-border: #FDBA74;
+
+  /* Complementary Semantic Accents */
+  --accent-warm-amber: #D97706;
+  --accent-olive-green: #15803D;
+  --accent-coral: #BE123C;
+
+  --btn-primary-bg: #C2410C;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover: #9A3412;
+
+  --hover-subtle: #EDEBE6;
+  --hover-card: #FAF9F6;
+  --scrollbar-thumb: #D8D5CE;
+  --scrollbar-hover: #ABA79E;
+}
+
+.dark,
+[data-resolved-theme="dark"] {
+  /* Pure Black Dark Mode with Warm Charcoal Cards */
+  --bg-page: #000000;
+  --bg-card: #0D0D0D;
+  --bg-subsurface: #151515;
+  --border-subtle: #262626;
+  --border-hover: #383838;
+  --text-main: #ECEAE6;
+  --text-secondary: #A8A49E;
+  --text-muted: #78746E;
+
+  /* Primary Warm Accent: Warm Honey Amber */
+  --accent-primary: #F59E0B;
+  --accent-primary-hover: #D97706;
+  --accent-primary-subtle: #241A0B;
+  --accent-primary-border: #78350F;
+
+  /* Complementary Semantic Accents */
+  --accent-warm-amber: #F59E0B;
+  --accent-olive-green: #22C55E;
+  --accent-coral: #FB7185;
+
+  --btn-primary-bg: #F59E0B;
+  --btn-primary-text: #000000;
+  --btn-primary-hover: #FBBF24;
+
+  --hover-subtle: #1C1C1C;
+  --hover-card: #141414;
+  --scrollbar-thumb: #2A2A2A;
+  --scrollbar-hover: #3D3D3D;
+}
+
+/* ==========================================================================
+   Root & Body Baseline Constraints
+   ========================================================================== */
+html.dark,
+html.dark body {
+  background-color: #000000 !important;
+  color: #ECEAE6 !important;
+}
+
+html:not(.dark),
+html:not(.dark) body {
+  background-color: #F5F4F1 !important;
+  color: #23211E !important;
+}
+
+/* Prevent accidental horizontal overflow on document root */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   Card Surfaces & Panels with Warmth & Visual Craft
    ========================================================================== */
 
 /* Flat & Subtle Card Surfaces */
 .glass-panel {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E5E0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 0.75rem;
 }
 
 .dark .glass-panel {
-  background-color: #111827;
-  border: 1px solid #1f293d;
-  box-shadow: none;
+  background-color: #0D0D0D !important;
+  border: 1px solid #262626 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
 }
 
 /* Minimal Card with clean hairline border */
 .futuristic-card {
   position: relative;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E5E0 !important;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .futuristic-card:hover {
-  border-color: #cbd5e1;
+  border-color: #D8D5CE !important;
+  background-color: #FAF9F6 !important;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.05) !important;
 }
 
 .dark .futuristic-card {
-  background-color: #111827;
-  border: 1px solid #1f293d;
-  box-shadow: none;
+  background-color: #0D0D0D !important;
+  border: 1px solid #262626 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
 }
 
 .dark .futuristic-card:hover {
-  border-color: #334155;
+  border-color: #383838 !important;
+  background-color: #141414 !important;
 }
 
-/* Deprecated neon classes neutralized to calm minimal styles */
+/* ==========================================================================
+   Universal Pure Black Mode Overrides (Eliminates all Navy, Indigo & Blue Slate)
+   ========================================================================== */
+
+/* Dark Canvas -> Pure #000000 */
+.dark body,
+.dark .dark\:bg-\[\#0B0F19\],
+.dark .dark\:bg-\[\#0B0F1D\],
+.dark .dark\:bg-\[\#0B0F22\],
+.dark .dark\:bg-\[\#090D18\],
+.dark .dark\:bg-\[\#080B14\],
+.dark .dark\:bg-\[\#080B1A\],
+.dark .dark\:bg-\[\#0D1225\],
+.dark .dark\:bg-black,
+.dark .dark\:bg-slate-950 {
+  background-color: #000000 !important;
+}
+
+/* Dark Cards & Main Panels -> Warm #0D0D0D */
+.dark .dark\:bg-slate-900,
+.dark .dark\:bg-slate-900\/95,
+.dark .dark\:bg-slate-900\/90,
+.dark .dark\:bg-slate-900\/80,
+.dark .dark\:bg-slate-900\/60,
+.dark .dark\:bg-\[\#0A0A0A\],
+.dark .dark\:bg-\[\#111827\],
+.dark .dark\:bg-\[\#0D1222\],
+.dark .dark\:bg-\[\#0D1222\]\/80,
+.dark .dark\:bg-\[\#0D1220\],
+.dark .dark\:bg-\[\#0D1220\]\/60 {
+  background-color: #0D0D0D !important;
+}
+
+/* Dark Sub-surfaces & Interior Rows -> Warm #151515 */
+.dark .dark\:bg-slate-800,
+.dark .dark\:bg-slate-800\/80,
+.dark .dark\:bg-slate-800\/60,
+.dark .dark\:bg-slate-800\/50,
+.dark .dark\:bg-slate-800\/40,
+.dark .dark\:bg-\[\#111111\],
+.dark .dark\:bg-\[\#172033\],
+.dark .dark\:bg-\[\#1E293B\],
+.dark .dark\:bg-\[\#1F293D\],
+.dark .dark\:bg-\[\#172033\]\/70,
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background-color: #151515 !important;
+}
+
+/* Dark Hairline Borders -> Warm #262626 */
+.dark .dark\:border-slate-800,
+.dark .dark\:border-slate-800\/80,
+.dark .dark\:border-slate-800\/60,
+.dark .dark\:border-slate-700,
+.dark .dark\:border-slate-700\/60,
+.dark .dark\:border-\[\#242424\],
+.dark .dark\:border-\[\#263247\],
+.dark .dark\:border-\[\#1F293D\],
+.dark .dark\:border-\[\#2F3B52\],
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea,
+.dark hr {
+  border-color: #262626 !important;
+}
+
+/* Dark Typography Contrast Calibration (Warm light grays) */
+.dark .dark\:text-white,
+.dark .dark\:text-slate-100,
+.dark .dark\:text-slate-50 {
+  color: #ECEAE6 !important;
+}
+
+.dark .dark\:text-slate-200,
+.dark .dark\:text-slate-300,
+.dark .dark\:text-slate-400 {
+  color: #A8A49E !important;
+}
+
+.dark .dark\:text-slate-500,
+.dark .dark\:text-slate-600 {
+  color: #78746E !important;
+}
+
+/* Dark Hover States -> Soft Warm Highlight (#1C1C1C) */
+.dark .dark\:hover\:bg-slate-800:hover,
+.dark .dark\:hover\:bg-slate-800\/60:hover,
+.dark .dark\:hover\:bg-slate-800\/50:hover,
+.dark .dark\:hover\:bg-\[\#161616\]:hover,
+.dark .dark\:hover\:bg-\[\#1F2B45\]:hover,
+.dark .dark\:hover\:bg-slate-700:hover {
+  background-color: #1C1C1C !important;
+}
+
+.dark .dark\:hover\:border-slate-700:hover,
+.dark .dark\:hover\:border-slate-600:hover,
+.dark .dark\:hover\:border-\[\#242424\]:hover,
+.dark .dark\:hover\:border-\[\#263247\]:hover {
+  border-color: #383838 !important;
+}
+
+/* ==========================================================================
+   Universal Light Mode Overrides (Warm Soft Canvas, Clean White Cards)
+   ========================================================================== */
+
+/* Light Page Background -> Warm Soft #F5F4F1 */
+html:not(.dark) body,
+html:not(.dark) .bg-slate-50,
+html:not(.dark) .bg-slate-50\/60,
+html:not(.dark) .bg-slate-100\/50 {
+  background-color: #F5F4F1 !important;
+}
+
+/* Light Mode Cards & Structural Panels -> Clean #FFFFFF */
+html:not(.dark) .bg-white,
+html:not(.dark) .bg-white\/95,
+html:not(.dark) .bg-white\/80 {
+  background-color: #FFFFFF !important;
+}
+
+/* Light Mode Sub-surfaces & Interior Blocks -> Gentle Warm #FAF9F6 */
+html:not(.dark) .bg-slate-100,
+html:not(.dark) .bg-slate-50\/80,
+html:not(.dark) input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) select,
+html:not(.dark) textarea {
+  background-color: #FAF9F6 !important;
+}
+
+/* Light Mode Hairline Borders -> Clean Warm #E7E5E0 */
+html:not(.dark) .border-slate-200,
+html:not(.dark) .border-slate-200\/80,
+html:not(.dark) .border-slate-200\/60,
+html:not(.dark) .border-slate-100,
+html:not(.dark) input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) select,
+html:not(.dark) textarea,
+html:not(.dark) hr {
+  border-color: #E7E5E0 !important;
+}
+
+/* Light Typography Balance (Warm deep charcoals) */
+html:not(.dark) .text-slate-900,
+html:not(.dark) .text-slate-800 {
+  color: #23211E !important;
+}
+
+html:not(.dark) .text-slate-700,
+html:not(.dark) .text-slate-600 {
+  color: #636059 !important;
+}
+
+html:not(.dark) .text-slate-500,
+html:not(.dark) .text-slate-400 {
+  color: #87837B !important;
+}
+
+/* Light Mode Hover Highlight -> Very Soft Warm Neutral #EDEBE6 */
+html:not(.dark) .hover\:bg-slate-100:hover,
+html:not(.dark) .hover\:bg-slate-200\/70:hover,
+html:not(.dark) .hover\:bg-slate-50:hover {
+  background-color: #EDEBE6 !important;
+}
+
+html:not(.dark) .hover\:border-slate-300:hover {
+  border-color: #D8D5CE !important;
+}
+
+/* ==========================================================================
+   Neutralized Neon & Warm Accent Disciplines (Zero Slop, Calm Minimal)
+   ========================================================================== */
 .neon-glow-cyan,
 .neon-glow-purple,
 .neon-glow-green,
@@ -230,59 +498,28 @@
 .neon-glow-amber,
 .neon-glow-blue {
   box-shadow: none !important;
+  text-shadow: none !important;
 }
 
-.neon-border-cyan,
-.neon-border-purple,
-.neon-border-green,
-.neon-border-emerald,
-.neon-border-amber,
-.neon-border-blue {
-  border-color: #e2e8f0;
+/* Clean Form Focus Rings with Warm Amber Accent */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: #C2410C !important;
+  box-shadow: 0 0 0 2px rgba(194, 65, 12, 0.2) !important;
 }
 
-.dark .neon-border-cyan,
-.dark .neon-border-purple,
-.dark .neon-border-green,
-.dark .neon-border-emerald,
-.dark .neon-border-amber,
-.dark .neon-border-blue {
-  border-color: #1f293d;
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25) !important;
 }
 
-.neon-text-cyan {
-  color: #0284c7;
-}
-
-.dark .neon-text-cyan {
-  color: #38bdf8;
-}
-
-.neon-text-purple {
-  color: #7c3aed;
-}
-
-.dark .neon-text-purple {
-  color: #c084fc;
-}
-
-.neon-text-emerald {
-  color: #059669;
-}
-
-.dark .neon-text-emerald {
-  color: #34d399;
-}
-
-.neon-text-amber {
-  color: #d97706;
-}
-
-.dark .neon-text-amber {
-  color: #fbbf24;
-}
-
-/* Custom modern scrollbar */
+/* ==========================================================================
+   Clean Custom Scrollbar
+   ========================================================================== */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -293,18 +530,60 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.7);
+  background: var(--scrollbar-hover);
 }
 
-/* Print styling for weekly timetable and day plans */
+/* Momentum scrolling */
+.overflow-x-auto,
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile font-size zoom prevention */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ==========================================================================
+   Smooth Theme Transitions & Accessibility Motion Compliance
+   ========================================================================== */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.2s ease-out, border-color 0.2s ease-out, color 0.15s ease-out !important;
+  transition-delay: 0s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after,
+  * {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Print styling */
 @media print {
   header,
   aside,
+  nav,
   .no-print,
   button,
   .print-hide {
@@ -324,193 +603,8 @@
     padding: 0 !important;
     width: 100% !important;
   }
-
-  .print-only {
-    display: block !important;
-  }
-
-  .print-table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    page-break-inside: avoid;
-    font-family: 'Vazirmatn', sans-serif !important;
-  }
-
-  .print-table th,
-  .print-table td {
-    border: 1px solid #333 !important;
-    padding: 6px !important;
-    color: black !important;
-  }
 }
 
-/* ==========================================================================
-   Responsive & Mobile Ergonomics Optimization
-   ========================================================================== */
-
-/* Prevent accidental horizontal overflow on document root */
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Smooth momentum scrolling for internal horizontal and vertical scroll areas */
-.overflow-x-auto,
-.overflow-y-auto {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Prevent unwanted iOS Safari auto-zoom on form controls */
-@media screen and (max-width: 768px) {
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  input[type="time"],
-  input[type="email"],
-  input[type="password"],
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
-}
-
-/* ==========================================================================
-   User Customization System: Themes, Accent Colors, Font Sizes, and Density
-   ========================================================================== */
-
-/* Font Size Scales */
-html[data-font-size="small"] {
-  font-size: 14.5px;
-}
-html[data-font-size="normal"] {
-  font-size: 16px;
-}
-html[data-font-size="large"] {
-  font-size: 17.5px;
-}
-
-/* Density Settings */
-html[data-density="compact"] {
-  --density-card-p: 0.85rem;
-  --density-gap: 0.75rem;
-}
-html[data-density="comfortable"] {
-  --density-card-p: 1.25rem;
-  --density-gap: 1rem;
-}
-html[data-density="spacious"] {
-  --density-card-p: 1.75rem;
-  --density-gap: 1.5rem;
-}
-
-/* Clean Theme Variants (Subtle, muted canvas - zero neon grids) */
-html[data-theme="cyber-purple"] body {
-  background-color: #0d0b18 !important;
-  color: #f8fafc;
-}
-
-html[data-theme="emerald-matrix"] body {
-  background-color: #0b1411 !important;
-  color: #f8fafc;
-}
-
-html[data-theme="ocean-deep"] body {
-  background-color: #0b121e !important;
-  color: #f8fafc;
-}
-
-html[data-theme="sunset-gold"] body {
-  background-color: #14100c !important;
-  color: #f8fafc;
-}
-
-html[data-theme="rose-quartz"] body {
-  background-color: #140d12 !important;
-  color: #f8fafc;
-}
-
-/* Card Border Radius Scales */
-html[data-border-radius="subtle"] .futuristic-card,
-html[data-border-radius="subtle"] .glass-panel {
-  border-radius: 0.375rem !important;
-}
-html[data-border-radius="medium"] .futuristic-card,
-html[data-border-radius="medium"] .glass-panel {
-  border-radius: 0.75rem !important;
-}
-html[data-border-radius="rounded"] .futuristic-card,
-html[data-border-radius="rounded"] .glass-panel {
-  border-radius: 1rem !important;
-}
-
-/* Glow Intensity Scales (Clean - No neon glow) */
-html[data-glow="none"] .neon-glow-cyan,
-html[data-glow="none"] .neon-glow-purple,
-html[data-glow="none"] .neon-glow-green,
-html[data-glow="none"] .neon-glow-emerald,
-html[data-glow="none"] .neon-glow-pink,
-html[data-glow="none"] .neon-glow-amber,
-html[data-glow="none"] .neon-glow-blue,
-html[data-glow="subtle"] .neon-glow-cyan,
-html[data-glow="subtle"] .neon-glow-purple,
-html[data-glow="subtle"] .neon-glow-green,
-html[data-glow="subtle"] .neon-glow-emerald,
-html[data-glow="subtle"] .neon-glow-pink,
-html[data-glow="subtle"] .neon-glow-amber,
-html[data-glow="subtle"] .neon-glow-blue,
-html[data-glow="high"] .neon-glow-cyan,
-html[data-glow="high"] .neon-glow-purple,
-html[data-glow="high"] .neon-glow-emerald,
-html[data-glow="high"] .neon-glow-green,
-html[data-glow="high"] .neon-glow-amber,
-html[data-glow="high"] .neon-glow-pink,
-html[data-glow="high"] .neon-glow-blue {
-  box-shadow: none !important;
-  text-shadow: none !important;
-}
-
-/* Theme-Aware Centralized Design Tokens */
-:root {
-  --bg-app: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-surface-secondary: #F1F5F9;
-  --border-subtle: #E2E8F0;
-  --text-main: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --accent-cyan: #0284C7;
-  --accent-emerald: #059669;
-  --accent-violet: #7C3AED;
-  --accent-rose: #E11D48;
-  --accent-amber: #D97706;
-  --accent-blue: #2563EB;
-}
-
-.dark {
-  --bg-app: #0B0F19;
-  --bg-surface: #111827;
-  --bg-surface-secondary: #1E293B;
-  --border-subtle: #1F293D;
-  --text-main: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --accent-cyan: #38BDF8;
-  --accent-emerald: #10B981;
-  --accent-violet: #A855F7;
-  --accent-rose: #FB7185;
-  --accent-amber: #F59E0B;
-  --accent-blue: #60A5FA;
-}
-
-/* Global Smooth Theme Transition (Only applied to visual surface properties) */
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition: background-color 0.22s ease-out, border-color 0.22s ease-out, color 0.15s ease-out, fill 0.15s ease-out, stroke 0.15s ease-out !important;
-  transition-delay: 0s !important;
-}
 
 
 

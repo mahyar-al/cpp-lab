@@ -196,7 +196,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       return { score: 2, label: 'متوسط', color: 'bg-amber-500', percent: 50, criteria };
     }
     if (score === 3) {
-      return { score: 3, label: 'خوب', color: 'bg-cyan-500', percent: 75, criteria };
+      return { score: 3, label: 'خوب', color: 'bg-amber-500', percent: 75, criteria };
     }
     return { score: 4, label: 'عالی و قدرتمند', color: 'bg-emerald-400', percent: 100, criteria };
   };
@@ -390,7 +390,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             {/* Top Bar with Brand and Quick Action */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-xl bg-amber-600 dark:bg-amber-500 text-white dark:text-stone-950 flex items-center justify-center font-bold shadow-xs">
                   P
                 </div>
                 <div>
@@ -505,12 +505,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
             {/* Active User Notice (if user is already logged in and views auth) */}
             {currentUser && (
-              <div className="mb-5 p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-between text-xs">
+              <div className="mb-5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2.5">
                   <img
                     src={currentUser.avatarUrl || 'https://api.dicebear.com/7.x/bottts/svg?seed=user'}
                     alt={currentUser.name}
-                    className="w-8 h-8 rounded-full border border-cyan-500/40"
+                    className="w-8 h-8 rounded-full border border-amber-500/40"
                   />
                   <div>
                     <span className="text-slate-900 dark:text-white font-bold block">{currentUser.name}</span>
@@ -553,7 +553,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 {/* Username / Email Field */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                    نام کاربری یا ایمیل <span className="text-cyan-600 dark:text-cyan-400">*</span>
+                    نام کاربری یا ایمیل <span className="text-amber-600 dark:text-amber-400">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -562,7 +562,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="مثال: ali_developer یا user@domain.com"
-                      className="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
+                      className="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-amber-500 dark:focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
                       dir="ltr"
                       autoFocus
                     />
@@ -574,7 +574,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                      رمز عبور <span className="text-cyan-600 dark:text-cyan-400">*</span>
+                      رمز عبور <span className="text-amber-600 dark:text-amber-400">*</span>
                     </label>
                     <button
                       type="button"
@@ -582,7 +582,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         setRecoveryIdentifier(identifier);
                         setMode('forgot_password');
                       }}
-                      className="text-[11px] text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors cursor-pointer font-medium"
+                      className="text-[11px] text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors cursor-pointer font-medium"
                     >
                       رمز عبور را فراموش کرده‌اید؟
                     </button>
@@ -594,14 +594,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
+                      className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-amber-500 dark:focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
                       dir="ltr"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      className="absolute left-3 top-3.5 text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer"
+                      className="absolute left-3 top-3.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer"
                       title={showPassword ? 'مخفی‌سازی رمز' : 'نمایش رمز'}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -618,7 +618,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-4 h-4 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 peer-checked:bg-cyan-500 peer-checked:border-cyan-400 flex items-center justify-center transition-all">
+                    <div className="w-4 h-4 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 peer-checked:bg-amber-500 peer-checked:border-amber-400 flex items-center justify-center transition-all">
                       {rememberMe && <Check className="w-3 h-3 text-slate-950 stroke-[3]" />}
                     </div>
                     <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">مرا به خاطر بسپار</span>
@@ -655,7 +655,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       setMode('register');
                       setError(null);
                     }}
-                    className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
+                    className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
                   >
                     همین حالا ثبت‌نام کنید
                   </button>
@@ -676,7 +676,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div>
                   <h3 className="text-xl font-black text-white flex items-center gap-2">
                     <span>ایجاد حساب کاربری</span>
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    <Sparkles className="w-4 h-4 text-amber-400" />
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
                     ثبت‌نام برای ذخیره دائمی و همگام‌سازی اطلاعات
@@ -686,7 +686,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 {/* Display Name */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    نام و نام خانوادگی <span className="text-cyan-400">*</span>
+                    نام و نام خانوادگی <span className="text-amber-400">*</span>
                   </label>
                   <input
                     type="text"
@@ -694,7 +694,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="مثال: پارسا صادقی"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 text-sm text-white outline-none transition-all placeholder:text-slate-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-white outline-none transition-all placeholder:text-slate-500"
                     autoFocus
                   />
                 </div>
@@ -705,10 +705,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-semibold text-slate-300">
-                        نام کاربری انگلیسی <span className="text-cyan-400">*</span>
+                        نام کاربری انگلیسی <span className="text-amber-400">*</span>
                       </label>
                       {usernameStatus === 'checking' && (
-                        <span className="text-[10px] text-cyan-400 flex items-center gap-1">
+                        <span className="text-[10px] text-amber-400 flex items-center gap-1">
                           <RefreshCw className="w-2.5 h-2.5 animate-spin" /> در حال بررسی
                         </span>
                       )}
@@ -735,7 +735,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                             ? 'border-emerald-500/70 focus:border-emerald-400'
                             : usernameStatus === 'taken'
                             ? 'border-rose-500/70 focus:border-rose-400'
-                            : 'border-slate-700/80 focus:border-cyan-400'
+                            : 'border-slate-700/80 focus:border-amber-400'
                         }`}
                         dir="ltr"
                       />
@@ -746,10 +746,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-semibold text-slate-300">
-                        آدرس ایمیل <span className="text-cyan-400">*</span>
+                        آدرس ایمیل <span className="text-amber-400">*</span>
                       </label>
                       {emailStatus === 'checking' && (
-                        <span className="text-[10px] text-cyan-400 flex items-center gap-1">
+                        <span className="text-[10px] text-amber-400 flex items-center gap-1">
                           <RefreshCw className="w-2.5 h-2.5 animate-spin" /> در حال بررسی
                         </span>
                       )}
@@ -776,7 +776,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                             ? 'border-emerald-500/70 focus:border-emerald-400'
                             : emailStatus === 'taken'
                             ? 'border-rose-500/70 focus:border-rose-400'
-                            : 'border-slate-700/80 focus:border-cyan-400'
+                            : 'border-slate-700/80 focus:border-amber-400'
                         }`}
                         dir="ltr"
                       />
@@ -788,7 +788,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      رمز عبور <span className="text-cyan-400">*</span>
+                      رمز عبور <span className="text-amber-400">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -797,13 +797,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left"
+                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left"
                         dir="ltr"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword((p) => !p)}
-                        className="absolute left-2.5 top-3 text-slate-400 hover:text-cyan-400 cursor-pointer"
+                        className="absolute left-2.5 top-3 text-slate-400 hover:text-amber-400 cursor-pointer"
                       >
                         {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -813,7 +813,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-semibold text-slate-300">
-                        تکرار رمز عبور <span className="text-cyan-400">*</span>
+                        تکرار رمز عبور <span className="text-amber-400">*</span>
                       </label>
                       {confirmPassword && (
                         <span className={`text-[10px] font-bold ${password === confirmPassword ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -833,14 +833,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                             ? 'border-emerald-500/70 focus:border-emerald-400'
                             : confirmPassword
                             ? 'border-rose-500/70 focus:border-rose-400'
-                            : 'border-slate-700/80 focus:border-cyan-400'
+                            : 'border-slate-700/80 focus:border-amber-400'
                         }`}
                         dir="ltr"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword((p) => !p)}
-                        className="absolute left-2.5 top-3 text-slate-400 hover:text-cyan-400 cursor-pointer"
+                        className="absolute left-2.5 top-3 text-slate-400 hover:text-amber-400 cursor-pointer"
                       >
                         {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -855,7 +855,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       <span className="text-slate-400 text-[11px]">قدرت رمز عبور:</span>
                       <span className={`font-bold text-[11px] ${
                         registerStrength.score === 4 ? 'text-emerald-400' :
-                        registerStrength.score === 3 ? 'text-cyan-400' :
+                        registerStrength.score === 3 ? 'text-amber-400' :
                         registerStrength.score === 2 ? 'text-amber-400' : 'text-rose-400'
                       }`}>
                         {registerStrength.label}
@@ -892,16 +892,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
+                      <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
                       سؤال امنیتی جهت بازیابی رمز عبور
                     </span>
-                    <span className="text-[10px] text-cyan-400 font-medium">پشتیبان امن</span>
+                    <span className="text-[10px] text-amber-400 font-medium">پشتیبان امن</span>
                   </div>
 
                   <select
                     value={securityQuestion}
                     onChange={(e) => setSecurityQuestion(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none focus:border-cyan-400"
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none focus:border-amber-400"
                   >
                     <option value="نام اولین مدرسه یا معلم دوران کودکی شما چیست؟">نام اولین مدرسه یا معلم دوران کودکی شما چیست؟</option>
                     <option value="نام شهر محل تولد شما یا والدین شما چیست؟">نام شهر محل تولد شما یا والدین شما چیست؟</option>
@@ -914,7 +914,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     value={securityAnswer}
                     onChange={(e) => setSecurityAnswer(e.target.value)}
                     placeholder="پاسخ کوتاه شما به سؤال امنیتی (اختیاری اما توصیه می‌شود)..."
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none focus:border-cyan-400 placeholder:text-slate-500"
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none focus:border-amber-400 placeholder:text-slate-500"
                   />
                 </div>
 
@@ -946,7 +946,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       setMode('login');
                       setError(null);
                     }}
-                    className="text-cyan-400 hover:text-cyan-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
+                    className="text-amber-400 hover:text-amber-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
                   >
                     وارد شوید
                   </button>
@@ -1031,7 +1031,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       setMode('recovery_token');
                       setRecoveryMethod('security_question');
                     }}
-                    className="text-cyan-400 hover:text-cyan-300 hover:underline cursor-pointer"
+                    className="text-amber-400 hover:text-amber-300 hover:underline cursor-pointer"
                   >
                     بازیابی مستقیم با سؤال امنیتی
                   </button>
@@ -1052,7 +1052,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div>
                   <h3 className="text-xl font-black text-white flex items-center gap-2">
                     <span>تأیید هویت و ثبت رمز جدید</span>
-                    <ShieldCheck className="w-5 h-5 text-cyan-400" />
+                    <ShieldCheck className="w-5 h-5 text-amber-400" />
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
                     کد تأیید یا پاسخ سؤال امنیتی را وارد نموده و رمز عبور جدید تعیین فرمایید.
@@ -1066,7 +1066,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     onClick={() => setRecoveryMethod('token')}
                     className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                       recoveryMethod === 'token'
-                        ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -1078,7 +1078,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     onClick={() => setRecoveryMethod('security_question')}
                     className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                       recoveryMethod === 'security_question'
-                        ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -1091,7 +1091,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <label className="font-semibold text-slate-300">
-                        کد تأیید ۶ رقمی بازیابی <span className="text-cyan-400">*</span>
+                        کد تأیید ۶ رقمی بازیابی <span className="text-amber-400">*</span>
                       </label>
                       {countdown > 0 ? (
                         <span className="text-[11px] text-amber-400 flex items-center gap-1 font-mono">
@@ -1108,22 +1108,22 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={recoveryCode}
                       onChange={(e) => setRecoveryCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
                       placeholder="مثال: 582914"
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 text-center font-mono text-lg tracking-[0.3em] text-cyan-400 outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-center font-mono text-lg tracking-[0.3em] text-amber-400 outline-none"
                       maxLength={6}
                       autoFocus
                     />
 
                     {/* Temporary Token Display */}
                     {recoverySimulatedToken && (
-                      <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between text-xs">
+                      <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           <span className="text-slate-300">کد بازیابی:</span>
-                          <span className="font-mono font-bold text-cyan-300 text-sm tracking-widest">{recoverySimulatedToken}</span>
+                          <span className="font-mono font-bold text-amber-300 text-sm tracking-widest">{recoverySimulatedToken}</span>
                         </div>
                         <button
                           type="button"
                           onClick={() => setRecoveryCode(recoverySimulatedToken)}
-                          className="px-2.5 py-1 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 text-xs font-bold cursor-pointer"
+                          className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold cursor-pointer"
                         >
                           درج کد
                         </button>
@@ -1136,7 +1136,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <label className="block text-xs font-semibold text-slate-300">
                       پاسخ سؤال امنیتی شما:
                     </label>
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-cyan-400 font-medium">
+                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-amber-400 font-medium">
                       {retrievedQuestion || securityQuestion}
                     </div>
                     <input
@@ -1145,7 +1145,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={securityAnswer}
                       onChange={(e) => setSecurityAnswer(e.target.value)}
                       placeholder="پاسخ کوتاه ثبت‌شده..."
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 text-sm text-white outline-none"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none"
                       autoFocus
                     />
                   </div>
@@ -1155,7 +1155,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div>
                     <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      رمز عبور جدید <span className="text-cyan-400">*</span>
+                      رمز عبور جدید <span className="text-amber-400">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -1164,13 +1164,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 text-sm text-white outline-none text-left"
+                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none text-left"
                         dir="ltr"
                       />
                       <button
                         type="button"
                         onClick={() => setShowNewPassword((p) => !p)}
-                        className="absolute left-2.5 top-3 text-slate-400 hover:text-cyan-400 cursor-pointer"
+                        className="absolute left-2.5 top-3 text-slate-400 hover:text-amber-400 cursor-pointer"
                       >
                         {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -1179,7 +1179,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      تکرار رمز عبور جدید <span className="text-cyan-400">*</span>
+                      تکرار رمز عبور جدید <span className="text-amber-400">*</span>
                     </label>
                     <input
                       type="password"
@@ -1187,7 +1187,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 text-sm text-white outline-none text-left"
+                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none text-left"
                       dir="ltr"
                     />
                   </div>
@@ -1247,71 +1247,64 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </div>
 
         {/* ----------------- COLUMN 2: HERO SHOWCASE (5 cols on lg) ----------------- */}
-        <div className="hidden lg:flex lg:col-span-5 p-8 flex-col justify-between bg-gradient-to-br from-[#0c1427] via-[#090e1d] to-[#070b16] relative overflow-hidden">
-          {/* Futuristic Cyber Circuit Grid Overlay */}
-          <div className="pointer-events-none absolute inset-0 cyber-grid opacity-35" />
-
-          {/* Ambient Glowing Blobs */}
-          <div className="pointer-events-none absolute top-10 left-10 w-48 h-48 bg-cyan-500/20 rounded-full blur-[90px]" />
-          <div className="pointer-events-none absolute bottom-10 right-10 w-48 h-48 bg-indigo-500/20 rounded-full blur-[90px]" />
-
+        <div className="hidden lg:flex lg:col-span-5 p-8 flex-col justify-between bg-stone-50 dark:bg-[#121212] border-t lg:border-t-0 lg:border-r border-slate-200 dark:border-[#242424] relative overflow-hidden">
           {/* Top Showcase Content */}
           <div className="relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
-              <Zap className="w-3.5 h-3.5 text-cyan-400" />
-              <span>پایگاه داده چندکاربره مستقل</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-700 dark:text-amber-400 text-xs font-semibold">
+              <Zap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>فضای کاری آرام و متمرکز</span>
             </div>
 
             <div>
-              <h2 className="text-2xl font-black text-white leading-snug tracking-tight">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white leading-snug tracking-tight">
                 مسیر یکپارچه رشد،
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">
+                <span className="text-amber-600 dark:text-amber-400">
                   یادگیری و مهارت‌های آینده
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                برنامه‌ریزی درسی، پروژه‌ها، چالش‌های مسابقات و مرور فاصله‌دار در یک محیط یکپارچه
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                برنامه‌ریزی درسی، پروژه‌ها، چالش‌های مسابقات و مرور فاصله‌دار در یک محیط آرام و منسجم
               </p>
             </div>
 
             {/* Feature Showcase Cards */}
             <div className="space-y-2.5">
-              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+              <div className="p-3.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-slate-200 dark:border-[#2A2A2A] shadow-xs flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
                   <GraduationCap className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-white">مدرسه و نمرات تحلیلی</div>
-                  <span className="text-[10px] text-slate-400">کارنامه، برنامه هفتگی و پیگیری تکالیف</span>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">مدرسه و نمرات تحلیلی</div>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">کارنامه، برنامه هفتگی و پیگیری تکالیف</span>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
+              <div className="p-3.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-slate-200 dark:border-[#2A2A2A] shadow-xs flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0">
                   <FolderGit2 className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-white">پروژه‌ها و مهارت‌ها</div>
-                  <span className="text-[10px] text-slate-400">برد کانبان و نقشه‌راه گام‌به‌گام یادگیری</span>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">پروژه‌ها و مهارت‌ها</div>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">برد کانبان و نقشه‌راه گام‌به‌گام یادگیری</span>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/60 backdrop-blur-md shadow-lg shadow-black/20 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+              <div className="p-3.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-slate-200 dark:border-[#2A2A2A] shadow-xs flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/25 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
                   <Trophy className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-xs font-bold text-white">مسابقات و آزمون‌ها</div>
-                  <span className="text-[10px] text-slate-400">زمان‌بندی مراحل و ارزیابی آمادگی</span>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">مسابقات و آزمون‌ها</div>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">زمان‌بندی مراحل و ارزیابی آمادگی</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom Trust Note */}
-          <div className="relative z-10 pt-4 mt-4 border-t border-slate-800/80">
-            <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+          <div className="relative z-10 pt-4 mt-4 border-t border-slate-200 dark:border-[#242424]">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed">
               ذخیره‌سازی امن و دسترسی پیوسته به اطلاعات در تمام دستگاه‌ها
             </p>
           </div>

@@ -27,7 +27,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
         {/* Close Button at top-left/right */}
         <button
           onClick={onClose}
-          className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 z-50 p-2 text-slate-400 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-full shadow-2xl transition-all cursor-pointer ring-2 ring-cyan-500/20"
+          className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 z-50 p-2 text-slate-400 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-full shadow-2xl transition-all cursor-pointer ring-1 ring-slate-700/80 hover:ring-amber-500/40"
           title="بستن و ادامه به عنوان مهمان"
         >
           <X className="w-5 h-5" />

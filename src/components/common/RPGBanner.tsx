@@ -33,7 +33,7 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
         </span>
         <div className="w-14 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
           <div
-            className="h-full bg-slate-700 dark:bg-slate-300 transition-all duration-300"
+            className="h-full bg-amber-600 dark:bg-amber-400 transition-all duration-300"
             style={{ width: `${progressInLevel}%` }}
           />
         </div>
@@ -45,11 +45,11 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
   }
 
   return (
-    <div className="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+    <div className="rounded-xl bg-white dark:bg-[#0D0D0D] border border-slate-200/90 dark:border-[#242424] p-4 transition-colors">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Level and Title */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-center font-bold text-sm">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-sm">
             <Trophy className="w-5 h-5 text-amber-500" />
           </div>
 
@@ -72,9 +72,9 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full sm:w-60 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-2">
+            <div className="w-full sm:w-60 h-1.5 bg-slate-100 dark:bg-[#1C1C1C] rounded-full overflow-hidden mt-2">
               <div
-                className="h-full bg-slate-700 dark:bg-slate-300 transition-all duration-300"
+                className="h-full bg-amber-600 dark:bg-amber-400 transition-all duration-300"
                 style={{ width: `${progressInLevel}%` }}
               />
             </div>
