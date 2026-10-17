@@ -117,9 +117,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/45 dark:bg-black/80 backdrop-blur-xl animate-in fade-in duration-200" dir="rtl">
-      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col glass-modal rounded-3xl shadow-2xl overflow-hidden text-right relative">
+      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col glass-strong rounded-[24px] shadow-2xl overflow-hidden text-right relative">
         {/* Ambient subtle glow inside modal */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--accent-primary)] opacity-10 dark:opacity-[0.06] rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-48 h-48 bg-fg opacity-10 dark:opacity-[0.06] rounded-full blur-2xl pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-stone-200/60 dark:border-white/10 shrink-0 bg-stone-500/[0.04] dark:bg-white/[0.03] relative z-10">

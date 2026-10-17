@@ -259,7 +259,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar Aside */}
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-surface/90 backdrop-blur-2xl border-l border-line transition-all duration-300 ease-in-out shadow-lg ${
+        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col glass-strong glass-liquid-refract border-l border-line/60 transition-all duration-300 ease-in-out shadow-2xl ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}
         dir="rtl"
@@ -394,7 +394,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer Streak & Progress Widget */}
         {!isCollapsed && (
-          <div className="p-3.5 mx-2.5 mb-3 bg-surface rounded-2xl border border-line shadow-xs">
+          <div className="p-3.5 mx-2.5 mb-3 glass-subtle rounded-[20px] shadow-xs">
             <div className="flex items-center justify-between text-xs text-fg font-medium mb-1.5">
               <span className="flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5 text-fg" />

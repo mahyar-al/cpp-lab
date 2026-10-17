@@ -87,7 +87,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 bg-surface/90 backdrop-blur-2xl border-t border-line lg:hidden transition-colors shadow-lg"
+      className="fixed bottom-0 inset-x-0 z-40 glass-strong border-t border-line/60 lg:hidden transition-colors shadow-2xl"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label="ناوبری سریع موبایل"
     >

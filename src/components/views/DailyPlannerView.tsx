@@ -217,18 +217,18 @@ export const DailyPlannerView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner & Date Selector */}
-      <div className="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+      <div className="glass p-5 sm:p-6 rounded-[24px] shadow-xs relative">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              <span className="p-2 rounded-xl bg-chip text-fg">
                 <ListTodo className="w-5 h-5" />
               </span>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-xl font-bold text-fg">
                 برنامه‌ریز هوشمند روزانه
               </h1>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-muted">
               مدیریت زمان، اولویت‌ها و فعالیت‌های روزانه
             </p>
           </div>
@@ -236,25 +236,25 @@ export const DailyPlannerView: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setIsRescueModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 rounded-lg text-xs font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle hover:bg-chip text-fg rounded-[14px] text-xs font-medium transition-colors cursor-pointer shadow-xs active:scale-98"
               title="کاهش استرس و بازسازی کارهای امروز"
             >
-              <LifeBuoy className="w-3.5 h-3.5 text-amber-500" />
+              <LifeBuoy className="w-3.5 h-3.5" />
               <span>نجات روز</span>
             </button>
 
             <button
               onClick={() => setIsSmartPlannerModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle hover:bg-chip text-fg rounded-[14px] text-xs font-medium transition-colors cursor-pointer shadow-xs active:scale-98"
               title="چینش خودکار فعالیت‌ها بر اساس اولویت"
             >
-              <Sparkles className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+              <Sparkles className="w-3.5 h-3.5" />
               <span>چینش خودکار</span>
             </button>
 
             <button
               onClick={() => rolloverOverdueTasks()}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
+              className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle hover:bg-chip text-fg rounded-[14px] text-xs font-medium transition-colors cursor-pointer shadow-xs active:scale-98"
               title="انتقال کارهای عقب‌افتاده"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -263,7 +263,7 @@ export const DailyPlannerView: React.FC = () => {
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-fg text-bg hover:opacity-90 font-semibold rounded-[14px] text-xs transition-colors cursor-pointer shadow-xs btn-primary-glass active:scale-98"
             >
               <Plus className="w-4 h-4" />
               <span>افزودن فعالیت</span>
@@ -306,41 +306,41 @@ export const DailyPlannerView: React.FC = () => {
 
       {/* Analytical Metrics Bar for the day */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
-          <span className="text-xs text-slate-400 block mb-1">زمان برنامه‌ریزی‌شده:</span>
+        <div className="glass p-4 rounded-[20px] shadow-xs">
+          <span className="text-xs text-muted block mb-1">زمان برنامه‌ریزی‌شده:</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400">
+            <span className="text-xl font-bold font-mono text-fg">
               {toPersianDigits(Math.floor(totalPlannedMinutes / 60))} ساعت و {toPersianDigits(totalPlannedMinutes % 60)} دقیقه
             </span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
-          <span className="text-xs text-slate-400 block mb-1">زمان ثبت‌شده واقعی:</span>
+        <div className="glass p-4 rounded-[20px] shadow-xs">
+          <span className="text-xs text-muted block mb-1">زمان ثبت‌شده واقعی:</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-xl font-bold font-mono text-emerald-600 dark:text-[#39FF88]">
+            <span className="text-xl font-bold font-mono text-fg">
               {toPersianDigits(Math.floor(totalActualMinutes / 60))} ساعت و {toPersianDigits(totalActualMinutes % 60)} دقیقه
             </span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
-          <span className="text-xs text-slate-400 block mb-1">فرصت آزاد تخمینی:</span>
+        <div className="glass p-4 rounded-[20px] shadow-xs">
+          <span className="text-xs text-muted block mb-1">فرصت آزاد تخمینی:</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-xl font-bold font-mono text-indigo-600 dark:text-[#C084FC]">
+            <span className="text-xl font-bold font-mono text-fg">
               {toPersianDigits(Math.floor(estimatedFreeMinutes / 60))} ساعت
             </span>
-            <span className="text-[10px] text-slate-400">و {toPersianDigits(estimatedFreeMinutes % 60)} دقیقه</span>
+            <span className="text-[10px] text-muted">و {toPersianDigits(estimatedFreeMinutes % 60)} دقیقه</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#111827] p-4 rounded-xl border border-slate-200 dark:border-[#263247]">
-          <span className="text-xs text-slate-400 block mb-1">میزان پیشرفت روز:</span>
+        <div className="glass p-4 rounded-[20px] shadow-xs">
+          <span className="text-xs text-muted block mb-1">میزان پیشرفت روز:</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-xl font-bold font-mono text-amber-500">
+            <span className="text-xl font-bold font-mono text-fg">
               {toPersianDigits(tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0)}٪
             </span>
-            <span className="text-[10px] text-slate-400">({toPersianDigits(completedCount)} از {toPersianDigits(tasks.length)})</span>
+            <span className="text-[10px] text-muted">({toPersianDigits(completedCount)} از {toPersianDigits(tasks.length)})</span>
           </div>
         </div>
       </div>
@@ -373,10 +373,10 @@ export const DailyPlannerView: React.FC = () => {
       {/* Main Content Split: School Morning Bells + Planned Tasks Timeline */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start w-full">
         {/* School Bells for this day */}
-        <div className="lg:col-span-4 xl:col-span-3 2xl:col-span-3 bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm h-fit">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-3">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-cyan-400" />
+        <div className="lg:col-span-4 xl:col-span-3 2xl:col-span-3 glass p-5 rounded-[24px] shadow-sm h-fit">
+          <div className="flex items-center justify-between pb-3 border-b border-line/60 mb-3">
+            <h2 className="text-sm font-bold text-fg flex items-center gap-2">
+              <Clock className="w-4 h-4 text-muted" />
               زنگ‌های مدرسه ({getIranianDayName(selectedDayIdx)})
             </h2>
           </div>
@@ -428,10 +428,10 @@ export const DailyPlannerView: React.FC = () => {
 
         {/* Post-School Tasks Timeline */}
         <div className="lg:col-span-8 xl:col-span-9 2xl:col-span-9 space-y-4 min-w-0">
-          <div className="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200 dark:border-[#263247] shadow-sm">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <ListTodo className="w-4 h-4 text-cyan-400" />
+          <div className="glass p-5 rounded-[24px] shadow-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-line/60 mb-4">
+              <h2 className="text-sm font-bold text-fg flex items-center gap-2">
+                <ListTodo className="w-4 h-4 text-muted" />
                 وظایف و فعالیت‌های زمان‌بندی‌شده
               </h2>
               <span className="text-xs font-mono text-slate-400">
@@ -723,8 +723,8 @@ export const DailyPlannerView: React.FC = () => {
 
       {/* Add Task Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#111827] w-full max-w-md rounded-2xl border border-slate-200 dark:border-[#263247] p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/80 backdrop-blur-xl">
+          <div className="glass-strong w-full max-w-md rounded-[24px] p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Plus className="w-4 h-4 text-cyan-400" />

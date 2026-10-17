@@ -361,44 +361,75 @@ export const FloatingBackground: React.FC = () => {
 
   const isStatic = shouldReduceMotion || !isVisible;
 
-  // Measure initial screen positions of all particles and icons without layout thrashing
+  // Measure initial and current on-screen positions of all particles and icons
   const measurePositions = useCallback(() => {
     particleBases.current = particleWrappersRef.current.map((el) => {
       if (!el) return { x: -9999, y: -9999 };
       const rect = el.getBoundingClientRect();
-      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const shiftX = Number(el.dataset.shiftX || 0);
+      const shiftY = Number(el.dataset.shiftY || 0);
+      return {
+        x: rect.left + rect.width / 2 - shiftX,
+        y: rect.top + rect.height / 2 - shiftY,
+      };
     });
 
     iconBases.current = iconWrappersRef.current.map((el) => {
       if (!el) return { x: -9999, y: -9999 };
       const rect = el.getBoundingClientRect();
-      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const shiftX = Number(el.dataset.shiftX || 0);
+      const shiftY = Number(el.dataset.shiftY || 0);
+      return {
+        x: rect.left + rect.width / 2 - shiftX,
+        y: rect.top + rect.height / 2 - shiftY,
+      };
     });
   }, []);
 
   useEffect(() => {
+    // Measure on mount
     const id = requestAnimationFrame(() => {
       measurePositions();
     });
 
+    // Recompute on resize (debounced)
+    let resizeTimer: any = null;
     const handleResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        measurePositions();
+      }, 100);
+    };
+
+    // Recompute on scroll
+    const handleScroll = () => {
       measurePositions();
     };
 
+    // Periodic recomputation every ~500ms since inner animation drifts
+    const intervalId = setInterval(() => {
+      measurePositions();
+    }, 500);
+
     window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       cancelAnimationFrame(id);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      clearInterval(intervalId);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [measurePositions]);
 
-  // Mouse interactivity: repulsion, lighting up, and cursor constellation lines
+  // Mouse interactivity: repulsion, lighting up, scaling, and cursor constellation lines
   useEffect(() => {
     if (isStatic) return;
 
-    // Detect touch-only / coarse pointer devices to avoid mobile touch overhead
-    const isCoarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    if (isCoarse) return;
+    // Strict pointer: fine check to ensure only mouse/trackpad pointer interaction
+    const hasFinePointer = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+    if (!hasFinePointer) return;
 
     const tick = () => {
       if (mouseState.current.framesRemaining <= 0) {
@@ -426,6 +457,8 @@ export const FloatingBackground: React.FC = () => {
             wrap.style.filter = '';
             if (inner) inner.style.opacity = '';
             delete wrap.dataset.active;
+            delete wrap.dataset.shiftX;
+            delete wrap.dataset.shiftY;
           }
           continue;
         }
@@ -442,6 +475,9 @@ export const FloatingBackground: React.FC = () => {
           const shiftX = Math.cos(angle) * repulse;
           const shiftY = Math.sin(angle) * repulse;
           const scale = 1 + factor * 0.6; // scale up to ~1.6
+
+          wrap.dataset.shiftX = shiftX.toFixed(2);
+          wrap.dataset.shiftY = shiftY.toFixed(2);
 
           wrap.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0) scale(${scale.toFixed(2)})`;
           wrap.style.color = 'var(--text)';
@@ -461,6 +497,8 @@ export const FloatingBackground: React.FC = () => {
           wrap.style.filter = '';
           if (inner) inner.style.opacity = '';
           delete wrap.dataset.active;
+          delete wrap.dataset.shiftX;
+          delete wrap.dataset.shiftY;
         }
       }
 
@@ -481,7 +519,7 @@ export const FloatingBackground: React.FC = () => {
         }
       }
 
-      // 3. Process Floating Icons (~180px radius)
+      // 3. Process Floating Icons (~200px radius)
       for (let i = 0; i < FLOATING_ICONS.length; i++) {
         const wrap = iconWrappersRef.current[i];
         const base = iconBases.current[i];
@@ -489,10 +527,13 @@ export const FloatingBackground: React.FC = () => {
 
         if (!active) {
           if (wrap.dataset.active === 'true') {
-            wrap.style.transform = 'translate3d(0, 0, 0)';
-            wrap.style.color = '';
-            wrap.style.opacity = '';
+            wrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
+            wrap.style.color = 'var(--text-muted)';
+            wrap.style.opacity = '0.2';
+            wrap.style.filter = 'none';
             delete wrap.dataset.active;
+            delete wrap.dataset.shiftX;
+            delete wrap.dataset.shiftY;
           }
           continue;
         }
@@ -501,22 +542,41 @@ export const FloatingBackground: React.FC = () => {
         const dy = base.y - cy;
         const dist = Math.hypot(dx, dy);
 
-        if (dist < 180) {
+        if (dist < 200) {
           wrap.dataset.active = 'true';
-          const factor = Math.pow(1 - dist / 180, 1.5);
+
+          // Smooth falloff: the closer the cursor, the stronger the effect (intensity = 1 - distance/200, eased)
+          const linear = 1 - dist / 200;
+          // Smoothstep easing: linear^2 * (3 - 2 * linear)
+          const intensity = linear * linear * (3 - 2 * linear);
+
+          // Gently repel up to ~16px away from cursor
           const angle = Math.atan2(dy, dx);
-          const repulse = factor * 18; // max ~18px displacement
+          const repulse = intensity * 16;
           const shiftX = Math.cos(angle) * repulse;
           const shiftY = Math.sin(angle) * repulse;
 
-          wrap.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0)`;
+          // Scale up to ~1.25
+          const scale = 1 + intensity * 0.25;
+
+          // Opacity goes from base (~0.2) up to ~0.9
+          const opacity = 0.2 + intensity * 0.7;
+
+          wrap.dataset.shiftX = shiftX.toFixed(2);
+          wrap.dataset.shiftY = shiftY.toFixed(2);
+
+          wrap.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
           wrap.style.color = 'var(--text)';
-          wrap.style.opacity = `${(0.35 + factor * 0.25).toFixed(2)}`; // brighten up to ~0.6
+          wrap.style.opacity = opacity.toFixed(2);
+          wrap.style.filter = 'drop-shadow(0 0 8px currentColor)';
         } else if (wrap.dataset.active === 'true') {
-          wrap.style.transform = 'translate3d(0, 0, 0)';
-          wrap.style.color = '';
-          wrap.style.opacity = '';
+          wrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
+          wrap.style.color = 'var(--text-muted)';
+          wrap.style.opacity = '0.2';
+          wrap.style.filter = 'none';
           delete wrap.dataset.active;
+          delete wrap.dataset.shiftX;
+          delete wrap.dataset.shiftY;
         }
       }
 
@@ -527,8 +587,8 @@ export const FloatingBackground: React.FC = () => {
       }
     };
 
-    const triggerUpdate = (frames = 3) => {
-      mouseState.current.framesRemaining = frames;
+    const triggerUpdate = (frames = 5) => {
+      mouseState.current.framesRemaining = Math.max(mouseState.current.framesRemaining, frames);
       if (rafId.current === null) {
         rafId.current = requestAnimationFrame(tick);
       }
@@ -538,14 +598,14 @@ export const FloatingBackground: React.FC = () => {
       mouseState.current.x = e.clientX;
       mouseState.current.y = e.clientY;
       mouseState.current.active = true;
-      triggerUpdate(3);
+      triggerUpdate(5);
     };
 
     const handlePointerLeave = () => {
       mouseState.current.x = -9999;
       mouseState.current.y = -9999;
       mouseState.current.active = false;
-      triggerUpdate(3);
+      triggerUpdate(5);
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
@@ -758,16 +818,17 @@ export const FloatingBackground: React.FC = () => {
         const wrapperStyle: React.CSSProperties = {
           top: `${item.top}%`,
           insetInlineStart: `${item.start}%`,
-          willChange: 'transform',
-          transition: 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, color 0.2s ease',
+          willChange: 'transform, opacity, filter',
+          transition: 'transform 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 400ms ease, color 400ms ease, filter 400ms ease',
           color: 'var(--text-muted)',
+          opacity: 0.2,
         };
 
         if (isStatic) {
           return (
             <div
               key={item.id}
-              className={`absolute opacity-20 dark:opacity-35 text-[var(--text-muted)] ${
+              className={`absolute opacity-20 select-none text-[var(--text-muted)] ${
                 !item.isMobile ? 'hidden sm:block' : ''
               }`}
               style={{
@@ -775,7 +836,7 @@ export const FloatingBackground: React.FC = () => {
                 insetInlineStart: `${item.start}%`,
               }}
             >
-              <Icon size={item.size} strokeWidth={1.25} />
+              <Icon size={item.size} strokeWidth={1.25} stroke="currentColor" />
             </div>
           );
         }
@@ -786,7 +847,7 @@ export const FloatingBackground: React.FC = () => {
             ref={(el) => {
               iconWrappersRef.current[idx] = el;
             }}
-            className={`absolute pointer-events-none opacity-20 dark:opacity-35 ${
+            className={`absolute pointer-events-none select-none ${
               !item.isMobile ? 'hidden sm:block' : ''
             }`}
             style={wrapperStyle}
@@ -794,6 +855,9 @@ export const FloatingBackground: React.FC = () => {
             <motion.div
               style={{
                 willChange: 'transform',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
               animate={{
                 y: [0, item.yOffset, 0],
@@ -807,7 +871,7 @@ export const FloatingBackground: React.FC = () => {
                 delay: item.delay,
               }}
             >
-              <Icon size={item.size} strokeWidth={1.25} />
+              <Icon size={item.size} strokeWidth={1.25} stroke="currentColor" />
             </motion.div>
           </div>
         );

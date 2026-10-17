@@ -207,7 +207,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/45 dark:bg-black/80 backdrop-blur-xl animate-in fade-in duration-150" dir="rtl">
       <div
-        className="w-full max-w-xl rounded-3xl glass-modal shadow-2xl overflow-hidden flex flex-col max-h-[80vh] text-right"
+        className="w-full max-w-xl rounded-[24px] glass-strong shadow-2xl overflow-hidden flex flex-col max-h-[80vh] text-right"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}

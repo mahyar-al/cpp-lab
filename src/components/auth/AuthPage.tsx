@@ -369,19 +369,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     <div
       className={`w-full ${
         isModal
-          ? 'max-w-4xl rounded-3xl bg-white/80 dark:bg-[#0E0E12]/80 backdrop-blur-2xl border border-stone-200/80 dark:border-white/15 shadow-2xl overflow-hidden text-right'
+          ? 'max-w-4xl rounded-[24px] glass-strong shadow-2xl overflow-hidden text-right'
           : 'min-h-[85vh] flex items-center justify-center p-3 sm:p-6 text-right'
       }`}
       dir="rtl"
     >
       <div
         className={`w-full ${
-          isModal ? '' : 'max-w-4xl rounded-3xl border border-stone-200/80 dark:border-white/15 bg-white/80 dark:bg-[#0E0E12]/80 backdrop-blur-2xl shadow-2xl'
+          isModal ? '' : 'max-w-4xl rounded-[24px] glass-strong shadow-2xl'
         } grid grid-cols-1 lg:grid-cols-12 overflow-hidden relative`}
       >
         {/* Ambient Glass Reflections */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--accent-primary)] opacity-10 dark:opacity-[0.06] rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-violet-500 opacity-10 dark:opacity-[0.05] rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-fg opacity-10 dark:opacity-[0.06] rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-fg opacity-5 dark:opacity-[0.04] rounded-full blur-3xl pointer-events-none" />
 
         {/* ===================== SIDE 1: FORM SECTION (7 cols) ===================== */}
         <div className="lg:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between relative z-10">

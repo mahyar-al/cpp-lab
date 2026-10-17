@@ -569,7 +569,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           <button
             type="button"
             onClick={() => setShowConfigModal(true)}
-            className="p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 bg-white dark:bg-[#121316] hover:bg-stone-50 dark:hover:bg-stone-800/80 border border-stone-200/80 dark:border-stone-800 rounded-xl transition-all cursor-pointer shadow-2xs"
+            className="p-2 text-muted hover:text-fg glass-subtle hover:bg-chip rounded-[14px] transition-all cursor-pointer shadow-xs active:scale-98"
             title="شخصی‌سازی چیدمان داشبورد"
             aria-label="تنظیمات چیدمان"
           >
@@ -583,10 +583,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               setShowQuickNoteForm((prev) => !prev);
               setShowInlineTaskInput(false);
             }}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-stone-700 dark:text-stone-300 bg-white dark:bg-[#121316] hover:bg-stone-50 dark:hover:bg-stone-800/80 border border-stone-200/80 dark:border-stone-800 rounded-xl text-xs font-medium transition-all cursor-pointer shadow-2xs"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-fg glass-subtle hover:bg-chip rounded-[14px] text-xs font-medium transition-all cursor-pointer shadow-xs active:scale-98"
             title="ثبت سریع یادداشت"
           >
-            <FileText className="w-3.5 h-3.5 text-stone-400" />
+            <FileText className="w-3.5 h-3.5 text-muted" />
             <span>یادداشت سریع</span>
           </button>
 
@@ -597,7 +597,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               setShowInlineTaskInput((prev) => !prev);
               setShowQuickNoteForm(false);
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-xs active:scale-[0.99]"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-fg hover:opacity-90 text-bg text-xs font-semibold rounded-[14px] transition-all cursor-pointer shadow-xs active:scale-[0.98] btn-primary-glass"
           >
             <Plus className="w-4 h-4" />
             <span>ثبت کار امروز</span>
@@ -640,26 +640,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             {/* Pillar 1: School */}
             <div
               onClick={() => onNavigate('school')}
-              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+              className="group p-4 glass glass-interactive rounded-[22px] transition-all cursor-pointer shadow-xs"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">مدرسه و درس‌ها</span>
-                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                <span className="text-xs font-semibold text-fg">مدرسه و درس‌ها</span>
+                <div className="w-7 h-7 rounded-lg bg-chip text-fg flex items-center justify-center">
                   <GraduationCap className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100">
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-fg">
                 {toPersianDigits(pendingHomeworks.length)}
-                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">تکلیف در انتظار</span>
+                <span className="text-xs font-normal text-muted mr-1.5">تکلیف در انتظار</span>
               </div>
               {overdueHomeworks.length > 0 ? (
-                <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1">
+                <p className="text-[11px] text-muted font-medium mt-1">
                   {toPersianDigits(overdueHomeworks.length)} تکلیف عقب‌افتاده
                 </p>
               ) : (
-                <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 flex items-center justify-between">
+                <p className="text-[11px] text-muted mt-1 flex items-center justify-between">
                   <span>تکالیف به‌روز</span>
-                  <ChevronLeft className="w-3 h-3 text-stone-400 group-hover:-translate-x-0.5 transition-transform" />
+                  <ChevronLeft className="w-3 h-3 text-muted group-hover:-translate-x-0.5 transition-transform" />
                 </p>
               )}
             </div>
@@ -667,63 +667,63 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             {/* Pillar 2: Skills */}
             <div
               onClick={() => onNavigate('skills')}
-              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+              className="group p-4 glass glass-interactive rounded-[22px] transition-all cursor-pointer shadow-xs"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">توسعه مهارت‌ها</span>
-                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                <span className="text-xs font-semibold text-fg">توسعه مهارت‌ها</span>
+                <div className="w-7 h-7 rounded-lg bg-chip text-fg flex items-center justify-center">
                   <Sparkles className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100">
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-fg">
                 {toPersianDigits(skills.length)}
-                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">مهارت فعال</span>
+                <span className="text-xs font-normal text-muted mr-1.5">مهارت فعال</span>
               </div>
-              <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 flex items-center justify-between">
+              <p className="text-[11px] text-muted mt-1 flex items-center justify-between">
                 <span>نقشه‌راه و تمرین‌ها</span>
-                <ChevronLeft className="w-3 h-3 text-stone-400 group-hover:-translate-x-0.5 transition-transform" />
+                <ChevronLeft className="w-3 h-3 text-muted group-hover:-translate-x-0.5 transition-transform" />
               </p>
             </div>
 
             {/* Pillar 3: Projects */}
             <div
               onClick={() => onNavigate('projects')}
-              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+              className="group p-4 glass glass-interactive rounded-[22px] transition-all cursor-pointer shadow-xs"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">مدیریت پروژه‌ها</span>
-                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                <span className="text-xs font-semibold text-fg">مدیریت پروژه‌ها</span>
+                <div className="w-7 h-7 rounded-lg bg-chip text-fg flex items-center justify-center">
                   <FolderGit2 className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100">
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-fg">
                 {toPersianDigits(activeProjects.length)}
-                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">پروژه در جریان</span>
+                <span className="text-xs font-normal text-muted mr-1.5">پروژه در جریان</span>
               </div>
-              <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 flex items-center justify-between">
+              <p className="text-[11px] text-muted mt-1 flex items-center justify-between">
                 <span>تخته وظایف کانبان</span>
-                <ChevronLeft className="w-3 h-3 text-stone-400 group-hover:-translate-x-0.5 transition-transform" />
+                <ChevronLeft className="w-3 h-3 text-muted group-hover:-translate-x-0.5 transition-transform" />
               </p>
             </div>
 
             {/* Pillar 4: Competitions */}
             <div
               onClick={() => onNavigate('competitions')}
-              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+              className="group p-4 glass glass-interactive rounded-[22px] transition-all cursor-pointer shadow-xs"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">مسابقات و المپیاد</span>
-                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                <span className="text-xs font-semibold text-fg">مسابقات و المپیاد</span>
+                <div className="w-7 h-7 rounded-lg bg-chip text-fg flex items-center justify-center">
                   <Trophy className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100 truncate">
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-fg truncate">
                 {daysToNextComp !== null ? `${toPersianDigits(daysToNextComp)} روز` : toPersianDigits(competitions.length)}
-                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">
+                <span className="text-xs font-normal text-muted mr-1.5">
                   {daysToNextComp !== null ? 'تا موعد بعدی' : 'رویداد ثبت‌شده'}
                 </span>
               </div>
-              <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 truncate">
+              <p className="text-[11px] text-muted mt-1 truncate">
                 {nextCompetition ? nextCompetition.title : 'آماده‌سازی آزمون'}
               </p>
             </div>
@@ -741,7 +741,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-8 space-y-6 min-w-0">
           {/* Section: Today's Tasks */}
           {isSectionVisible('today_tasks') && (
-            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 sm:p-6 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+            <section className="glass rounded-[24px] p-5 sm:p-6 shadow-xs">
               {/* Header with Title and Filter Tabs */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-stone-100 dark:border-stone-800/80 gap-2.5">
                 <div className="flex items-center gap-2">
@@ -1079,7 +1079,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
           {/* Section: Today's Habits (if habits exist) */}
           {isSectionVisible('today_habits') && habits.length > 0 && (
-            <div className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+            <div className="glass rounded-[24px] p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
                   <Flame className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -1145,7 +1145,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         <div className="lg:col-span-5 xl:col-span-5 2xl:col-span-4 space-y-6 min-w-0">
           {/* Section: Upcoming Deadlines */}
           {isSectionVisible('upcoming_deadlines') && (
-            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+            <section className="glass rounded-[24px] p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -1254,7 +1254,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
           {/* Section: Active Goals */}
           {isSectionVisible('active_goals') && (
-            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+            <section className="glass rounded-[24px] p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
                   <Target className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -1358,7 +1358,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
           {/* Section: Quick Notes */}
           {isSectionVisible('quick_notes') && (
-            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+            <section className="glass rounded-[24px] p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -1482,7 +1482,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         {showSecondaryDetails && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4 animate-in fade-in duration-150">
             {/* School Bells */}
-            <div className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800">
+            <div className="glass rounded-[24px] p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
                   <GraduationCap className="w-4 h-4 text-stone-400" />
@@ -1528,7 +1528,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </div>
 
             {/* Recent Activity Log */}
-            <div className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800">
+            <div className="glass rounded-[24px] p-5 shadow-xs">
               <div className="flex items-center gap-2 pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <Activity className="w-4 h-4 text-stone-400" />
                 <span className="text-xs font-bold text-stone-800 dark:text-stone-200">
@@ -1570,9 +1570,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           role="dialog"
           aria-modal="true"
           aria-label="شخصی‌سازی چیدمان داشبورد"
-          className="fixed inset-0 z-50 bg-stone-900/40 dark:bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150"
+          className="fixed inset-0 z-50 bg-black/45 dark:bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-150"
         >
-          <div className="bg-white dark:bg-[#121316] rounded-2xl max-w-md w-full p-5 sm:p-6 border border-stone-200 dark:border-stone-800 shadow-xl space-y-4">
+          <div className="glass-strong rounded-[24px] max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800/80 pb-3">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-[var(--accent-primary)]" />

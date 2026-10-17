@@ -105,6 +105,63 @@ const MainContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Delegated Liquid Glass specular highlight tracking
+  useEffect(() => {
+    const isCoarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isCoarse || prefersReducedMotion) return;
+
+    let rafId: number | null = null;
+    let lastTarget: HTMLElement | null = null;
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const target = (e.target as HTMLElement | null)?.closest?.(
+          '.glass, .glass-strong, .glass-subtle, .glass-card, .glass-panel, .glass-modal, .glass-dropdown'
+        ) as HTMLElement | null;
+
+        if (lastTarget && lastTarget !== target) {
+          lastTarget.style.removeProperty('--gx');
+          lastTarget.style.removeProperty('--gy');
+        }
+
+        if (target) {
+          const rect = target.getBoundingClientRect();
+          const gx = `${(e.clientX - rect.left).toFixed(1)}px`;
+          const gy = `${(e.clientY - rect.top).toFixed(1)}px`;
+          target.style.setProperty('--gx', gx);
+          target.style.setProperty('--gy', gy);
+          lastTarget = target;
+        } else {
+          lastTarget = null;
+        }
+      });
+    };
+
+    const handlePointerLeave = () => {
+      if (lastTarget) {
+        lastTarget.style.removeProperty('--gx');
+        lastTarget.style.removeProperty('--gy');
+        lastTarget = null;
+      }
+    };
+
+    document.addEventListener('pointermove', handlePointerMove, { passive: true });
+    document.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerleave', handlePointerLeave);
+      if (lastTarget) {
+        lastTarget.style.removeProperty('--gx');
+        lastTarget.style.removeProperty('--gy');
+      }
+    };
+  }, []);
+
   return (
     <div data-app-canvas="true" className="min-h-[100dvh] w-full bg-transparent text-fg flex flex-col md:flex-row transition-colors duration-200 relative isolate overflow-x-hidden selection:bg-fg selection:text-bg font-sans" dir="rtl">
 
@@ -195,8 +252,8 @@ const MainContent: React.FC = () => {
 
       {/* Global Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 start-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-fg text-bg text-xs font-semibold rounded-xl shadow-lg border border-line backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <span className="w-2 h-2 rounded-full bg-bg shrink-0" />
+        <div className="fixed bottom-6 start-6 z-50 flex items-center gap-2.5 px-4.5 py-3 glass-strong text-fg text-xs font-semibold rounded-[14px] shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <span className="w-2 h-2 rounded-full bg-fg shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}

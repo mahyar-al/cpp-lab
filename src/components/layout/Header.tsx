@@ -125,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-2xl border-b border-line transition-colors w-full shadow-xs">
+    <header className="sticky top-0 z-30 glass-strong glass-liquid-refract border-b border-line/60 transition-colors w-full shadow-xs">
       <div className="flex items-center justify-between px-3.5 sm:px-5 md:px-6 lg:px-8 xl:px-10 2xl:px-12 h-15 gap-4 w-full">
         {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
@@ -152,7 +152,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Search Trigger */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-fg bg-surface hover:bg-chip rounded-xl border border-line backdrop-blur-md transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-fg glass-subtle hover:bg-chip rounded-[14px] border border-line/60 backdrop-blur-md transition-all cursor-pointer shadow-xs active:scale-[0.98]"
             aria-label="جستجو در سامانه"
             title="جستجو (Ctrl + K)"
           >
@@ -163,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Primary Action: Quick Add */}
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-fg text-bg hover:opacity-90 text-xs font-bold rounded-xl transition-all whitespace-nowrap cursor-pointer active:scale-98 shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-fg text-bg hover:opacity-90 text-xs font-bold rounded-[14px] transition-all whitespace-nowrap cursor-pointer active:scale-98 shadow-xs btn-primary-glass"
             title="ثبت سریع وظیفه یا رویداد جدید"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -184,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {showNotifications && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-88 max-w-[calc(100vw-1.5rem)] bg-surface border border-line rounded-2xl p-4 z-50 animate-in fade-in duration-150 shadow-lg">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-88 max-w-[calc(100vw-1.5rem)] glass-strong rounded-[20px] p-4 z-50 animate-in fade-in duration-150 shadow-2xl">
                 <div className="flex items-center justify-between pb-3 border-b border-line">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-fg">
@@ -326,17 +326,17 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Profile Popover */}
             {showProfileMenu && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] glass-dropdown rounded-2xl p-4 z-50 text-right animate-in fade-in duration-150">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] glass-strong rounded-[20px] p-4 z-50 text-right animate-in fade-in duration-150 shadow-2xl">
                 {/* User identity summary */}
-                <div className="flex items-center gap-3 pb-3 border-b border-stone-200/60 dark:border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3 pb-3 border-b border-line/60">
+                  <div className="w-10 h-10 rounded-xl bg-chip text-fg flex items-center justify-center shrink-0">
                     <AvatarIcon className="w-5 h-5" />
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
-                    <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                    <span className="text-sm font-bold text-fg truncate">
                       {currentUser ? currentUser.name : (profile.name || 'کاربر مهمان')}
                     </span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    <span className="text-xs text-muted truncate">
                       {currentUser ? currentUser.email : (profile.gradeOrField || 'حالت محلی')}
                     </span>
                     <div className="flex items-center gap-1.5 mt-1">

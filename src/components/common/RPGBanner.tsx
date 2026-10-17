@@ -27,17 +27,17 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs border border-slate-200 dark:border-slate-700">
-        <span className="font-semibold text-slate-800 dark:text-slate-200">
+      <div className="flex items-center gap-2 px-3 py-1 rounded-full glass-subtle text-xs">
+        <span className="font-semibold text-fg">
           سطح {toPersianDigits(level)}
         </span>
-        <div className="w-14 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div className="w-14 h-1.5 bg-chip rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-300"
-            style={{ width: `${progressInLevel}%`, backgroundColor: 'var(--accent-primary)' }}
+            className="h-full rounded-full transition-all duration-300 bg-fg"
+            style={{ width: `${progressInLevel}%` }}
           />
         </div>
-        <span className="text-[10px] text-slate-400 font-mono tabular-nums">
+        <span className="text-[10px] text-muted font-mono tabular-nums">
           {toPersianDigits(progressInLevel)}٪
         </span>
       </div>
@@ -45,7 +45,7 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
   }
 
   return (
-    <div className="rounded-xl bg-white dark:bg-[#0D0D0D] border border-slate-200/90 dark:border-[#242424] p-4 transition-colors">
+    <div className="rounded-[20px] glass p-4 transition-colors shadow-xs">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Level and Title */}
         <div className="flex items-center gap-3">
