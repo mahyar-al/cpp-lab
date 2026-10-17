@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Sparkles,
   Lock,
   Mail,
   User,
@@ -18,15 +17,12 @@ import {
   Clock,
   Send,
   HelpCircle,
-  GraduationCap,
-  FolderGit2,
-  Trophy,
-  CalendarDays,
-  Target,
-  Zap,
   ChevronLeft,
-  Server,
-  Terminal,
+  ChevronDown,
+  Sparkles,
+  Compass,
+  Leaf,
+  LogOut,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -62,12 +58,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Password visibility states
+  // Password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
-  // Form states
+  // Remember me & credentials
   const [rememberMe, setRememberMe] = useState(() => {
     return localStorage.getItem('pathly_remember_me') === 'true';
   });
@@ -76,15 +72,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   });
   const [password, setPassword] = useState('');
 
-  // Register form fields
+  // Register fields
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showSecurityFields, setShowSecurityFields] = useState(false);
   const [securityQuestion, setSecurityQuestion] = useState('نام اولین مدرسه یا معلم دوران کودکی شما چیست؟');
   const [securityAnswer, setSecurityAnswer] = useState('');
 
-  // Recovery form fields
+  // Recovery fields
   const [recoveryIdentifier, setRecoveryIdentifier] = useState('');
   const [recoveryCode, setRecoveryCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -92,14 +89,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [retrievedQuestion, setRetrievedQuestion] = useState<string | null>(null);
   const [recoveryMethod, setRecoveryMethod] = useState<'token' | 'security_question'>('token');
   const [recoverySimulatedToken, setRecoverySimulatedToken] = useState<string | null>(null);
-  const [infraStatus, setInfraStatus] = useState<any | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
 
-  // Live availability states for register
+  // Field validation status
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
 
-  // Check username availability with debounce
+  // Debounced username availability check
   useEffect(() => {
     if (mode !== 'register') return;
     const cleanUser = username.trim().toLowerCase();
@@ -126,12 +122,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       } catch {
         setUsernameStatus('idle');
       }
-    }, 450);
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [username, mode]);
+  }, [username, mode, checkAvailability]);
 
-  // Check email availability with debounce
+  // Debounced email availability check
   useEffect(() => {
     if (mode !== 'register') return;
     const cleanEmail = email.trim().toLowerCase();
@@ -158,12 +154,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       } catch {
         setEmailStatus('idle');
       }
-    }, 450);
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [email, mode]);
+  }, [email, mode, checkAvailability]);
 
-  // Countdown timer for reset token
+  // Recovery countdown timer
   useEffect(() => {
     if (countdown <= 0) return;
     const interval = setInterval(() => {
@@ -172,46 +168,36 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     return () => clearInterval(interval);
   }, [countdown]);
 
-  // Calculate password strength
+  // Calming, friendly password strength assessment
   const calculateStrength = (pwd: string) => {
-    if (!pwd) return { score: 0, label: 'خیلی ضعیف', color: 'bg-slate-600', percent: 0, criteria: { length: false, upperLower: false, number: false, special: false } };
+    if (!pwd) return { score: 0, label: 'خالی', barWidth: '0%', color: 'bg-stone-300 dark:bg-stone-700', textClass: 'text-stone-400' };
     
-    const criteria = {
-      length: pwd.length >= 8,
-      upperLower: /[a-z]/.test(pwd) && /[A-Z]/.test(pwd),
-      number: /[0-9]/.test(pwd),
-      special: /[^A-Za-z0-9]/.test(pwd),
-    };
-
     let score = 0;
-    if (criteria.length) score += 1;
-    if (criteria.upperLower) score += 1;
-    if (criteria.number) score += 1;
-    if (criteria.special) score += 1;
+    if (pwd.length >= 6) score += 1;
+    if (pwd.length >= 8) score += 1;
+    if (/[0-9]/.test(pwd) && /[a-zA-Z]/.test(pwd)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
 
     if (score <= 1) {
-      return { score: 1, label: 'ضعیف', color: 'bg-rose-500', percent: 25, criteria };
+      return { score: 1, label: 'ساده', barWidth: '33%', color: 'bg-amber-400/80 dark:bg-amber-500/80', textClass: 'text-amber-600 dark:text-amber-400' };
     }
-    if (score === 2) {
-      return { score: 2, label: 'متوسط', color: 'bg-amber-500', percent: 50, criteria };
+    if (score <= 2) {
+      return { score: 2, label: 'مناسب', barWidth: '66%', color: 'bg-emerald-500/80 dark:bg-emerald-400/80', textClass: 'text-emerald-600 dark:text-emerald-400' };
     }
-    if (score === 3) {
-      return { score: 3, label: 'خوب', color: 'bg-amber-500', percent: 75, criteria };
-    }
-    return { score: 4, label: 'عالی و قدرتمند', color: 'bg-emerald-400', percent: 100, criteria };
+    return { score: 3, label: 'بسیار امن و قدرتمند', barWidth: '100%', color: 'bg-emerald-600 dark:bg-emerald-400', textClass: 'text-emerald-600 dark:text-emerald-300' };
   };
 
   const registerStrength = useMemo(() => calculateStrength(password), [password]);
   const newPasswordStrength = useMemo(() => calculateStrength(newPassword), [newPassword]);
 
-  // Handle Login
+  // Handle Login Submit
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
 
     if (!identifier.trim() || !password) {
-      setError('لطفاً نام کاربری/ایمیل و رمز عبور را وارد فرمایید.');
+      setError('لطفاً نام کاربری یا ایمیل و رمز عبور خود را وارد کنید.');
       return;
     }
 
@@ -237,19 +223,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
   };
 
-  // Handle Register
+  // Handle Register Submit
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
 
     if (!name.trim() || !username.trim() || !email.trim() || !password) {
-      setError('لطفاً همه فیلدهای ستاره‌دار را تکمیل کنید.');
+      setError('لطفاً همه موارد ستاره‌دار را تکمیل کنید.');
       return;
     }
 
     if (usernameStatus === 'taken') {
-      setError('این نام کاربری قبلاً توسط شخص دیگری ثبت شده است.');
+      setError('این نام کاربری قبلاً توسط کاربر دیگری ثبت شده است.');
       return;
     }
 
@@ -259,35 +245,42 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
 
     if (password.length < 6) {
-      setError('رمز عبور باید حداقل ۶ کاراکتر باشد.');
+      setError('رمز عبور باید حداقل ۶ نویسه داشته باشد.');
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('تکرار رمز عبور با رمز اصلی مطابقت ندارد.');
+    if (confirmPassword && password !== confirmPassword) {
+      setError('تکرار رمز عبور با رمز وارد شده مطابقت ندارد.');
       return;
     }
 
     try {
       setLoading(true);
-      await register(email.trim(), username.trim(), name.trim(), password, securityQuestion, securityAnswer);
+      await register(
+        email.trim(),
+        username.trim(),
+        name.trim(),
+        password,
+        securityQuestion,
+        securityAnswer.trim() || undefined
+      );
 
       if (rememberMe) {
         localStorage.setItem('pathly_remember_me', 'true');
         localStorage.setItem('pathly_remember_id', username.trim());
       }
 
-      showToast('حساب کاربری ابری شما با موفقیت ایجاد گردید.');
+      showToast('حساب اختصاصی شما ساخته شد. به مسیر آرام پیشرفت خوش آمدید.');
       if (onSuccess) onSuccess();
       if (onCancel) onCancel();
     } catch (err: any) {
-      setError(err.message || 'خطا در ساخت حساب کاربری.');
+      setError(err.message || 'خطا در ثبت‌نام. لطفاً دوباره تلاش فرمایید.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Forgot Password Request (Step 1)
+  // Handle Forgot Password Request
   const handleForgotRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -302,12 +295,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     try {
       setLoading(true);
       const res = await requestPasswordResetToken(targetId);
-      setRetrievedQuestion(res.securityQuestion || 'نام اولین مدرسه شما چیست؟');
+      setRetrievedQuestion(res.securityQuestion || 'نام اولین مدرسه یا معلم دوران کودکی شما چیست؟');
       setRecoverySimulatedToken(res.mockVerificationToken || null);
-      setInfraStatus(res.infrastructureStatus || null);
       setCountdown(res.expiresInMinutes ? res.expiresInMinutes * 60 : 15 * 60);
 
-      setSuccessMsg(`درخواست بازیابی ثبت شد. کد تأیید امن برای حساب ${res.maskedEmail || targetId} ایجاد گردید.`);
+      setSuccessMsg(`درخواست بازیابی ثبت شد. کد تأیید برای حساب ${res.maskedEmail || targetId} ایجاد گردید.`);
       setMode('recovery_token');
     } catch (err: any) {
       setError(err.message || 'کاربری با این مشخصات یافت نشد.');
@@ -316,7 +308,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
   };
 
-  // Handle Password Reset Execution (Step 2)
+  // Handle Reset Submit
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -324,17 +316,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
     const targetId = (recoveryIdentifier || identifier).trim();
     if (!targetId) {
-      setError('لطفاً نام کاربری یا ایمیل را مشخص نمایید.');
+      setError('لطفاً نام کاربری یا ایمیل را مشخص کنید.');
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('رمز عبور جدید باید حداقل ۶ کاراکتر باشد.');
+      setError('رمز عبور جدید باید حداقل ۶ نویسه باشد.');
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      setError('تکرار رمز عبور جدید با رمز اصلی مطابقت ندارد.');
+      setError('تکرار رمز عبور جدید مطابقت ندارد.');
       return;
     }
 
@@ -342,26 +334,26 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       setLoading(true);
       if (recoveryMethod === 'token') {
         if (!recoveryCode.trim()) {
-          setError('لطفاً کد تأیید ۶ رقمی را وارد کنید.');
+          setError('لطفاً کد ۶ رقمی را وارد کنید.');
           return;
         }
         await resetPasswordWithToken(targetId, recoveryCode.trim(), newPassword);
       } else {
         if (!securityAnswer.trim()) {
-          setError('لطفاً پاسخ سؤال امنیتی را وارد فرمایید.');
+          setError('لطفاً پاسخ سؤال امنیتی را وارد کنید.');
           return;
         }
         await resetPassword(targetId, securityAnswer.trim(), newPassword);
       }
 
-      setSuccessMsg('رمز عبور شما با موفقیت بازنشانی شد! اکنون می‌توانید با رمز جدید وارد شوید.');
+      setSuccessMsg('رمز عبور شما با موفقیت تغییر کرد. در حال انتقال به صفحه ورود...');
       setPassword(newPassword);
       setIdentifier(targetId);
       setTimeout(() => {
         setMode('login');
-      }, 1400);
+      }, 1200);
     } catch (err: any) {
-      setError(err.message || 'خطا در اعتبارسنجی و تغییر رمز عبور.');
+      setError(err.message || 'خطا در بازنشانی رمز عبور.');
     } finally {
       setLoading(false);
     }
@@ -377,30 +369,38 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     <div
       className={`w-full ${
         isModal
-          ? 'max-w-5xl rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden text-right'
-          : 'min-h-[85vh] flex items-center justify-center p-2 sm:p-4 text-right'
+          ? 'max-w-4xl rounded-3xl bg-white/80 dark:bg-[#0E0E12]/80 backdrop-blur-2xl border border-stone-200/80 dark:border-white/15 shadow-2xl overflow-hidden text-right'
+          : 'min-h-[85vh] flex items-center justify-center p-3 sm:p-6 text-right'
       }`}
       dir="rtl"
     >
-      <div className={`w-full ${isModal ? '' : 'max-w-6xl'} grid grid-cols-1 lg:grid-cols-12 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden relative`}>
+      <div
+        className={`w-full ${
+          isModal ? '' : 'max-w-4xl rounded-3xl border border-stone-200/80 dark:border-white/15 bg-white/80 dark:bg-[#0E0E12]/80 backdrop-blur-2xl shadow-2xl'
+        } grid grid-cols-1 lg:grid-cols-12 overflow-hidden relative`}
+      >
+        {/* Ambient Glass Reflections */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--accent-primary)] opacity-10 dark:opacity-[0.06] rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-violet-500 opacity-10 dark:opacity-[0.05] rounded-full blur-3xl pointer-events-none" />
 
-        {/* ----------------- COLUMN 1: FORM SECTION (7 cols on lg) ----------------- */}
-        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between relative z-10 border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-slate-800">
+        {/* ===================== SIDE 1: FORM SECTION (7 cols) ===================== */}
+        <div className="lg:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between relative z-10">
           <div>
-            {/* Top Bar with Brand and Quick Action */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+            {/* Header row: Brand & Guest link */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-200/60 dark:border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-600 dark:bg-amber-500 text-white dark:text-stone-950 flex items-center justify-center font-bold shadow-xs">
+                <div className="w-9 h-9 rounded-xl bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 flex items-center justify-center font-bold text-sm tracking-wider shadow-xs">
                   P
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg text-slate-900 dark:text-white tracking-wider">PATHLY</span>
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                      نسخه ابری
+                    <span className="font-bold text-base text-stone-900 dark:text-stone-100 tracking-wide font-sans">
+                      Pathly
+                    </span>
+                    <span className="text-[11px] font-medium text-stone-500 dark:text-stone-400">
+                      مسیر پیشرفت من
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400">سامانه برنامه‌ریزی فردی و پیشرفت مسیر</span>
                 </div>
               </div>
 
@@ -408,16 +408,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 px-3 py-1.5 rounded-xl bg-stone-500/[0.05] hover:bg-stone-500/[0.1] dark:bg-white/[0.05] dark:hover:bg-white/[0.1] backdrop-blur-sm transition-colors cursor-pointer"
                 >
-                  <span>پیش‌نمایش مهمان</span>
+                  <span>ادامه به عنوان مهمان</span>
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
 
-            {/* Mode Selector Tabs (Login / Register / Forgot Password) */}
-            <div className="grid grid-cols-3 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 gap-1 text-xs font-medium">
+            {/* Subtle Mode Switcher (Login / Sign Up / Forgot Password) */}
+            <div className="flex items-center p-1 bg-stone-500/[0.05] dark:bg-white/[0.05] backdrop-blur-md rounded-xl border border-stone-200/70 dark:border-white/10 mb-6 gap-1 text-xs">
               <button
                 type="button"
                 onClick={() => {
@@ -425,14 +425,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setError(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-2 px-3 rounded-lg transition-all text-center font-medium cursor-pointer ${
                   mode === 'login'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                    ? 'bg-white dark:bg-white/15 text-stone-900 dark:text-stone-100 shadow-xs font-semibold'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                 }`}
               >
-                <User className="w-3.5 h-3.5" />
-                <span>ورود به حساب</span>
+                ورود به حساب
               </button>
 
               <button
@@ -442,46 +441,41 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setError(null);
                   setSuccessMsg(null);
                 }}
-                className={`py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-2 px-3 rounded-lg transition-all text-center font-medium cursor-pointer ${
                   mode === 'register'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                    ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs font-semibold'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>ثبت‌نام جدید</span>
+                ثبت‌نام جدید
               </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setMode('forgot_password');
-                  setError(null);
-                  setSuccessMsg(null);
-                }}
-                className={`py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-                  mode === 'forgot_password' || mode === 'recovery_token'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <KeyRound className="w-3.5 h-3.5" />
-                <span>بازیابی رمز</span>
-              </button>
+              {(mode === 'forgot_password' || mode === 'recovery_token') && (
+                <button
+                  type="button"
+                  className="flex-1 py-2 px-3 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs font-semibold text-center"
+                >
+                  بازیابی رمز
+                </button>
+              )}
             </div>
 
-            {/* Error & Success Banners */}
+            {/* Calm Error & Success Banners */}
             <AnimatePresence mode="wait">
               {error && (
                 <motion.div
-                  initial={{ opacity: 0, y: -8 }}
+                  initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="p-3.5 mb-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 font-medium shadow-md shadow-rose-950/20"
+                  exit={{ opacity: 0, y: -6 }}
+                  className="p-3.5 mb-5 rounded-xl bg-rose-50/90 dark:bg-rose-950/25 border border-rose-200/80 dark:border-rose-900/40 text-rose-800 dark:text-rose-200 text-xs flex items-center gap-2.5 font-medium leading-relaxed"
                 >
-                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                   <span className="flex-1">{error}</span>
-                  <button onClick={() => setError(null)} className="text-rose-400 hover:text-white cursor-pointer">
+                  <button
+                    onClick={() => setError(null)}
+                    className="text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 p-0.5 rounded cursor-pointer"
+                    aria-label="بستن پیام خطا"
+                  >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </motion.div>
@@ -489,32 +483,40 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
               {successMsg && (
                 <motion.div
-                  initial={{ opacity: 0, y: -8 }}
+                  initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="p-3.5 mb-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2.5 font-medium shadow-md shadow-emerald-950/20"
+                  exit={{ opacity: 0, y: -6 }}
+                  className="p-3.5 mb-5 rounded-xl bg-emerald-50/90 dark:bg-emerald-950/25 border border-emerald-200/80 dark:border-emerald-900/40 text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-2.5 font-medium leading-relaxed"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="flex-1">{successMsg}</span>
-                  <button onClick={() => setSuccessMsg(null)} className="text-emerald-400 hover:text-white cursor-pointer">
+                  <button
+                    onClick={() => setSuccessMsg(null)}
+                    className="text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-300 p-0.5 rounded cursor-pointer"
+                    aria-label="بستن پیام موفقیت"
+                  >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Active User Notice (if user is already logged in and views auth) */}
+            {/* Currently Logged In Account Notice */}
             {currentUser && (
-              <div className="mb-5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2.5">
+              <div className="mb-5 p-3.5 rounded-xl bg-stone-100/70 dark:bg-stone-850/60 border border-stone-200/80 dark:border-stone-800 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-3">
                   <img
                     src={currentUser.avatarUrl || 'https://api.dicebear.com/7.x/bottts/svg?seed=user'}
                     alt={currentUser.name}
-                    className="w-8 h-8 rounded-full border border-amber-500/40"
+                    className="w-9 h-9 rounded-full border border-stone-300 dark:border-stone-700 object-cover"
                   />
                   <div>
-                    <span className="text-slate-900 dark:text-white font-bold block">{currentUser.name}</span>
-                    <span className="text-slate-500 dark:text-slate-400 text-[11px]">حساب فعال: @{currentUser.username}</span>
+                    <span className="text-stone-900 dark:text-stone-100 font-semibold block">
+                      {currentUser.name}
+                    </span>
+                    <span className="text-stone-500 dark:text-stone-400 text-[11px]">
+                      حساب فعال: @{currentUser.username}
+                    </span>
                   </div>
                 </div>
                 <button
@@ -523,94 +525,105 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     logout();
                     showToast('با موفقیت از حساب خارج شدید.');
                   }}
-                  className="px-3 py-1 text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-500/10 rounded-lg border border-rose-500/30 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-stone-600 dark:text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-stone-200/50 dark:hover:bg-stone-800 rounded-lg transition-colors cursor-pointer text-xs"
                 >
-                  خروج از حساب
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>خروج</span>
                 </button>
               </div>
             )}
 
-            {/* -------------------- VIEW 1: LOGIN -------------------- */}
+            {/* -------------------- 1. LOGIN VIEW -------------------- */}
             {mode === 'login' && (
               <motion.form
                 key="login-form"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
                 onSubmit={handleLoginSubmit}
                 className="space-y-4"
               >
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                    <span>خوش برگشتی!</span>
-                    <span className="inline-block animate-wave">👋</span>
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    برای دسترسی به داشبورد و برنامه‌ها وارد حساب خود شوید.
+                  <h1 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 tracking-tight">
+                    خوش برگشتی
+                  </h1>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
+                    برای دسترسی به برنامه‌ها، پیگیری اهداف و ثبت گام‌های روزانه وارد شوید.
                   </p>
                 </div>
 
-                {/* Username / Email Field */}
+                {/* Email or Username */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                    نام کاربری یا ایمیل <span className="text-amber-600 dark:text-amber-400">*</span>
+                  <label
+                    htmlFor="login-identifier"
+                    className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5"
+                  >
+                    نام کاربری یا ایمیل <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <input
+                      id="login-identifier"
                       type="text"
                       required
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
-                      placeholder="مثال: ali_developer یا user@domain.com"
-                      className="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-amber-500 dark:focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
+                      placeholder="ali_dev یا user@example.com"
+                      className="w-full pl-3 pr-10 py-2.5 sm:py-3 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:bg-white dark:focus:bg-stone-900 focus:border-[var(--accent-primary)] focus:ring-2 focus:ring-[var(--accent-primary)]/15 text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left"
                       dir="ltr"
                       autoFocus
                     />
-                    <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                    <User className="w-4 h-4 text-stone-400 absolute right-3.5 top-3 sm:top-3.5" />
                   </div>
                 </div>
 
-                {/* Password Field */}
+                {/* Password */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                      رمز عبور <span className="text-amber-600 dark:text-amber-400">*</span>
+                    <label
+                      htmlFor="login-password"
+                      className="block text-xs font-medium text-stone-700 dark:text-stone-300"
+                    >
+                      رمز عبور <span className="text-rose-500">*</span>
                     </label>
                     <button
                       type="button"
                       onClick={() => {
                         setRecoveryIdentifier(identifier);
                         setMode('forgot_password');
+                        setError(null);
+                        setSuccessMsg(null);
                       }}
-                      className="text-[11px] text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors cursor-pointer font-medium"
+                      className="text-[11px] text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200 transition-colors cursor-pointer"
                     >
                       رمز عبور را فراموش کرده‌اید؟
                     </button>
                   </div>
                   <div className="relative">
                     <input
+                      id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 focus:border-amber-500 dark:focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-slate-900 dark:text-white outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 text-left"
+                      className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:bg-white dark:focus:bg-stone-900 focus:border-[var(--accent-primary)] focus:ring-2 focus:ring-[var(--accent-primary)]/15 text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left"
                       dir="ltr"
                     />
-                    <Lock className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                    <Lock className="w-4 h-4 text-stone-400 absolute right-3.5 top-3 sm:top-3.5" />
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      className="absolute left-3 top-3.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer"
-                      title={showPassword ? 'مخفی‌سازی رمز' : 'نمایش رمز'}
+                      className="absolute left-3 top-3 sm:top-3.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 transition-colors cursor-pointer p-0.5"
+                      aria-label={showPassword ? 'پنهان‌سازی رمز عبور' : 'نمایش رمز عبور'}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
 
-                {/* Remember Me Checkbox */}
-                <div className="flex items-center justify-between pt-1">
+                {/* Remember Me */}
+                <div className="flex items-center justify-between pt-0.5">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
@@ -618,83 +631,88 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-4 h-4 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 peer-checked:bg-amber-500 peer-checked:border-amber-400 flex items-center justify-center transition-all">
-                      {rememberMe && <Check className="w-3 h-3 text-slate-950 stroke-[3]" />}
+                    <div className="w-4 h-4 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 peer-checked:bg-[var(--accent-primary)] peer-checked:border-[var(--accent-primary)] flex items-center justify-center transition-all">
+                      {rememberMe && <Check className="w-3 h-3 text-white dark:text-stone-950 stroke-[3]" />}
                     </div>
-                    <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">مرا به خاطر بسپار</span>
+                    <span className="text-xs text-stone-600 dark:text-stone-400">
+                      مرا در این دستگاه به خاطر بسپار
+                    </span>
                   </label>
-
-                  <span className="text-[11px] text-slate-400 dark:text-slate-500">احراز هویت امن</span>
                 </div>
 
                 {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="w-full py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs active:scale-[0.99] mt-2"
                 >
                   {loading ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                      <span>در حال اعتبارسنجی و ورود...</span>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>در حال ورود...</span>
                     </>
                   ) : (
                     <>
-                      <span>ورود به حساب کاربری</span>
+                      <span>ورود به فضای شخصی</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
 
-                {/* Switch to Register Link */}
-                <div className="text-center pt-3 text-xs text-slate-500 dark:text-slate-400">
+                {/* Switch to Register */}
+                <div className="text-center pt-2 text-xs text-stone-500 dark:text-stone-400">
                   <span>حساب کاربری ندارید؟ </span>
                   <button
                     type="button"
                     onClick={() => {
                       setMode('register');
                       setError(null);
+                      setSuccessMsg(null);
                     }}
-                    className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
+                    className="text-stone-900 dark:text-stone-100 font-bold hover:underline transition-colors mr-1 cursor-pointer"
                   >
-                    همین حالا ثبت‌نام کنید
+                    فضای خودت را بساز
                   </button>
                 </div>
               </motion.form>
             )}
 
-            {/* -------------------- VIEW 2: REGISTER -------------------- */}
+            {/* -------------------- 2. REGISTER VIEW -------------------- */}
             {mode === 'register' && (
               <motion.form
                 key="register-form"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
                 onSubmit={handleRegisterSubmit}
                 className="space-y-3.5"
               >
                 <div>
-                  <h3 className="text-xl font-black text-white flex items-center gap-2">
-                    <span>ایجاد حساب کاربری</span>
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    ثبت‌نام برای ذخیره دائمی و همگام‌سازی اطلاعات
+                  <h1 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 tracking-tight">
+                    فضای خودت را بساز
+                  </h1>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
+                    با ساخت حساب مستقل، برنامه‌ها و یادداشت‌های شما همیشه ایمن و همگام خواهند بود.
                   </p>
                 </div>
 
                 {/* Display Name */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    نام و نام خانوادگی <span className="text-amber-400">*</span>
+                  <label
+                    htmlFor="reg-name"
+                    className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1"
+                  >
+                    نام و نام خانوادگی <span className="text-rose-500">*</span>
                   </label>
                   <input
+                    id="reg-name"
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="مثال: پارسا صادقی"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-white outline-none transition-all placeholder:text-slate-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:bg-white dark:focus:bg-stone-900 focus:border-[var(--accent-primary)] focus:ring-2 focus:ring-[var(--accent-primary)]/15 text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500"
                     autoFocus
                   />
                 </div>
@@ -704,106 +722,115 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   {/* Username with Live Check */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-semibold text-slate-300">
-                        نام کاربری انگلیسی <span className="text-amber-400">*</span>
+                      <label
+                        htmlFor="reg-username"
+                        className="block text-xs font-medium text-stone-700 dark:text-stone-300"
+                      >
+                        نام کاربری انگلیسی <span className="text-rose-500">*</span>
                       </label>
                       {usernameStatus === 'checking' && (
-                        <span className="text-[10px] text-amber-400 flex items-center gap-1">
-                          <RefreshCw className="w-2.5 h-2.5 animate-spin" /> در حال بررسی
+                        <span className="text-[10px] text-stone-400 flex items-center gap-1">
+                          <RefreshCw className="w-2.5 h-2.5 animate-spin" /> بررسی...
                         </span>
                       )}
                       {usernameStatus === 'available' && (
-                        <span className="text-[10px] text-emerald-400 flex items-center gap-0.5">
-                          <Check className="w-3 h-3" /> آزاد است
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                          ✓ آزاد است
                         </span>
                       )}
                       {usernameStatus === 'taken' && (
-                        <span className="text-[10px] text-rose-400 flex items-center gap-0.5">
-                          <X className="w-3 h-3" /> رزرو شده
+                        <span className="text-[10px] text-rose-500 font-medium">
+                          ✕ ثبت شده
                         </span>
                       )}
                     </div>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="parsa_dev"
-                        className={`w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left ${
-                          usernameStatus === 'available'
-                            ? 'border-emerald-500/70 focus:border-emerald-400'
-                            : usernameStatus === 'taken'
-                            ? 'border-rose-500/70 focus:border-rose-400'
-                            : 'border-slate-700/80 focus:border-amber-400'
-                        }`}
-                        dir="ltr"
-                      />
-                    </div>
+                    <input
+                      id="reg-username"
+                      type="text"
+                      required
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="parsa_dev"
+                      className={`w-full px-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left ${
+                        usernameStatus === 'available'
+                          ? 'border-emerald-500/60 focus:border-emerald-500'
+                          : usernameStatus === 'taken'
+                          ? 'border-rose-400/80 focus:border-rose-500'
+                          : 'border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)]'
+                      }`}
+                      dir="ltr"
+                    />
                   </div>
 
                   {/* Email with Live Check */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-semibold text-slate-300">
-                        آدرس ایمیل <span className="text-amber-400">*</span>
+                      <label
+                        htmlFor="reg-email"
+                        className="block text-xs font-medium text-stone-700 dark:text-stone-300"
+                      >
+                        آدرس ایمیل <span className="text-rose-500">*</span>
                       </label>
                       {emailStatus === 'checking' && (
-                        <span className="text-[10px] text-amber-400 flex items-center gap-1">
-                          <RefreshCw className="w-2.5 h-2.5 animate-spin" /> در حال بررسی
+                        <span className="text-[10px] text-stone-400 flex items-center gap-1">
+                          <RefreshCw className="w-2.5 h-2.5 animate-spin" /> بررسی...
                         </span>
                       )}
                       {emailStatus === 'available' && (
-                        <span className="text-[10px] text-emerald-400 flex items-center gap-0.5">
-                          <Check className="w-3 h-3" /> معتبر
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                          ✓ معتبر
                         </span>
                       )}
                       {emailStatus === 'taken' && (
-                        <span className="text-[10px] text-rose-400 flex items-center gap-0.5">
-                          <X className="w-3 h-3" /> ثبت شده
+                        <span className="text-[10px] text-rose-500 font-medium">
+                          ✕ قبلاً ثبت شده
                         </span>
                       )}
                     </div>
-                    <div className="relative">
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="parsa@gmail.com"
-                        className={`w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left ${
-                          emailStatus === 'available'
-                            ? 'border-emerald-500/70 focus:border-emerald-400'
-                            : emailStatus === 'taken'
-                            ? 'border-rose-500/70 focus:border-rose-400'
-                            : 'border-slate-700/80 focus:border-amber-400'
-                        }`}
-                        dir="ltr"
-                      />
-                    </div>
+                    <input
+                      id="reg-email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="parsa@example.com"
+                      className={`w-full px-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left ${
+                        emailStatus === 'available'
+                          ? 'border-emerald-500/60 focus:border-emerald-500'
+                          : emailStatus === 'taken'
+                          ? 'border-rose-400/80 focus:border-rose-500'
+                          : 'border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)]'
+                      }`}
+                      dir="ltr"
+                    />
                   </div>
                 </div>
 
                 {/* Password & Confirm Password Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      رمز عبور <span className="text-amber-400">*</span>
+                    <label
+                      htmlFor="reg-password"
+                      className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1"
+                    >
+                      رمز عبور <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
                       <input
+                        id="reg-password"
                         type={showPassword ? 'text' : 'password'}
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left"
+                        placeholder="حداقل ۶ نویسه"
+                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)] text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left"
                         dir="ltr"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword((p) => !p)}
-                        className="absolute left-2.5 top-3 text-slate-400 hover:text-amber-400 cursor-pointer"
+                        className="absolute left-2.5 top-3 text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 cursor-pointer p-0.5"
+                        aria-label={showPassword ? 'پنهان‌سازی رمز' : 'نمایش رمز'}
                       >
                         {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -812,35 +839,44 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-semibold text-slate-300">
-                        تکرار رمز عبور <span className="text-amber-400">*</span>
+                      <label
+                        htmlFor="reg-confirm-password"
+                        className="block text-xs font-medium text-stone-700 dark:text-stone-300"
+                      >
+                        تکرار رمز عبور <span className="text-rose-500">*</span>
                       </label>
                       {confirmPassword && (
-                        <span className={`text-[10px] font-bold ${password === confirmPassword ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {password === confirmPassword ? '✓ مطابقت دارد' : '✕ عدم مطابقت'}
+                        <span
+                          className={`text-[10px] font-medium ${
+                            password === confirmPassword ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'
+                          }`}
+                        >
+                          {password === confirmPassword ? '✓ یکسان است' : '✕ همخوانی ندارد'}
                         </span>
                       )}
                     </div>
                     <div className="relative">
                       <input
+                        id="reg-confirm-password"
                         type={showConfirmPassword ? 'text' : 'password'}
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className={`w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left ${
+                        placeholder="تکرار همان رمز"
+                        className={`w-full pl-9 pr-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left ${
                           confirmPassword && password === confirmPassword
-                            ? 'border-emerald-500/70 focus:border-emerald-400'
+                            ? 'border-emerald-500/60 focus:border-emerald-500'
                             : confirmPassword
-                            ? 'border-rose-500/70 focus:border-rose-400'
-                            : 'border-slate-700/80 focus:border-amber-400'
+                            ? 'border-rose-400/80 focus:border-rose-500'
+                            : 'border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)]'
                         }`}
                         dir="ltr"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword((p) => !p)}
-                        className="absolute left-2.5 top-3 text-slate-400 hover:text-amber-400 cursor-pointer"
+                        className="absolute left-2.5 top-3 text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 cursor-pointer p-0.5"
+                        aria-label={showConfirmPassword ? 'پنهان‌سازی تکرار رمز' : 'نمایش تکرار رمز'}
                       >
                         {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -848,105 +884,99 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
                 </div>
 
-                {/* Password Strength Indicator */}
+                {/* Gentle Password Strength Indicator */}
                 {password && (
-                  <div className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1.5 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">قدرت رمز عبور:</span>
-                      <span className={`font-bold text-[11px] ${
-                        registerStrength.score === 4 ? 'text-emerald-400' :
-                        registerStrength.score === 3 ? 'text-amber-400' :
-                        registerStrength.score === 2 ? 'text-amber-400' : 'text-rose-400'
-                      }`}>
+                  <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-900/40 border border-stone-200/60 dark:border-stone-800/60 space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-stone-500 dark:text-stone-400">سطح امنیت رمز:</span>
+                      <span className={`font-semibold ${registerStrength.textClass}`}>
                         {registerStrength.label}
                       </span>
                     </div>
-
-                    {/* Progress Bar with 4 Segments */}
-                    <div className="grid grid-cols-4 gap-1.5 h-1.5 w-full">
-                      <div className={`rounded-full transition-all ${registerStrength.score >= 1 ? registerStrength.color : 'bg-slate-800'}`} />
-                      <div className={`rounded-full transition-all ${registerStrength.score >= 2 ? registerStrength.color : 'bg-slate-800'}`} />
-                      <div className={`rounded-full transition-all ${registerStrength.score >= 3 ? registerStrength.color : 'bg-slate-800'}`} />
-                      <div className={`rounded-full transition-all ${registerStrength.score >= 4 ? registerStrength.color : 'bg-slate-800'}`} />
+                    <div className="w-full bg-stone-200 dark:bg-stone-800 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 rounded-full ${registerStrength.color}`}
+                        style={{ width: registerStrength.barWidth }}
+                      />
                     </div>
-
-                    {/* Criteria checklist */}
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1 pt-1 text-[10px]">
-                      <span className={`flex items-center gap-1 ${registerStrength.criteria.length ? 'text-emerald-400' : 'text-slate-500'}`}>
-                        {registerStrength.criteria.length ? '✓' : '○'} حداقل ۸ نویسه
-                      </span>
-                      <span className={`flex items-center gap-1 ${registerStrength.criteria.upperLower ? 'text-emerald-400' : 'text-slate-500'}`}>
-                        {registerStrength.criteria.upperLower ? '✓' : '○'} حروف بزرگ و کوچک
-                      </span>
-                      <span className={`flex items-center gap-1 ${registerStrength.criteria.number ? 'text-emerald-400' : 'text-slate-500'}`}>
-                        {registerStrength.criteria.number ? '✓' : '○'} اعداد انگلیسی
-                      </span>
-                      <span className={`flex items-center gap-1 ${registerStrength.criteria.special ? 'text-emerald-400' : 'text-slate-500'}`}>
-                        {registerStrength.criteria.special ? '✓' : '○'} نماد ویژه (!@#$)
-                      </span>
-                    </div>
+                    <p className="text-[10px] text-stone-400 dark:text-stone-500">
+                      راهنما: حداقل ۶ نویسه، ترجیحاً ترکیبی از حروف و اعداد انگلیسی.
+                    </p>
                   </div>
                 )}
 
-                {/* Security Question for Account Recovery */}
-                <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
-                      سؤال امنیتی جهت بازیابی رمز عبور
-                    </span>
-                    <span className="text-[10px] text-amber-400 font-medium">پشتیبان امن</span>
-                  </div>
-
-                  <select
-                    value={securityQuestion}
-                    onChange={(e) => setSecurityQuestion(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none focus:border-amber-400"
+                {/* Optional Security Question for Calm Account Recovery */}
+                <div className="rounded-xl border border-stone-200/80 dark:border-stone-800/80 overflow-hidden bg-stone-50/50 dark:bg-stone-900/30">
+                  <button
+                    type="button"
+                    onClick={() => setShowSecurityFields((prev) => !prev)}
+                    className="w-full p-2.5 px-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-colors cursor-pointer"
                   >
-                    <option value="نام اولین مدرسه یا معلم دوران کودکی شما چیست؟">نام اولین مدرسه یا معلم دوران کودکی شما چیست؟</option>
-                    <option value="نام شهر محل تولد شما یا والدین شما چیست؟">نام شهر محل تولد شما یا والدین شما چیست؟</option>
-                    <option value="نام کتاب یا اثر ادبی موردعلاقه شما چیست؟">نام کتاب یا اثر ادبی موردعلاقه شما چیست؟</option>
-                    <option value="نام اولین حیوان خانگی یا پرنده شما چه بوده است؟">نام اولین حیوان خانگی یا پرنده شما چه بوده است؟</option>
-                  </select>
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <HelpCircle className="w-3.5 h-3.5 text-stone-400" />
+                      سؤال امنیتی جهت بازیابی آسان (اختیاری)
+                    </span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 text-stone-400 transition-transform duration-200 ${
+                        showSecurityFields ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
 
-                  <input
-                    type="text"
-                    value={securityAnswer}
-                    onChange={(e) => setSecurityAnswer(e.target.value)}
-                    placeholder="پاسخ کوتاه شما به سؤال امنیتی (اختیاری اما توصیه می‌شود)..."
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white outline-none focus:border-amber-400 placeholder:text-slate-500"
-                  />
+                  {showSecurityFields && (
+                    <div className="p-3 pt-0 space-y-2 border-t border-stone-200/60 dark:border-stone-800/60 mt-1">
+                      <select
+                        value={securityQuestion}
+                        onChange={(e) => setSecurityQuestion(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-xs text-stone-800 dark:text-stone-200 outline-none focus:border-[var(--accent-primary)]"
+                      >
+                        <option value="نام اولین مدرسه یا معلم دوران کودکی شما چیست؟">نام اولین مدرسه یا معلم دوران کودکی شما چیست؟</option>
+                        <option value="نام شهر محل تولد شما یا والدین شما چیست؟">نام شهر محل تولد شما یا والدین شما چیست؟</option>
+                        <option value="نام کتاب یا اثر ادبی موردعلاقه شما چیست؟">نام کتاب یا اثر ادبی موردعلاقه شما چیست؟</option>
+                        <option value="نام اولین حیوان خانگی یا پرنده شما چه بوده است؟">نام اولین حیوان خانگی یا پرنده شما چه بوده است؟</option>
+                      </select>
+
+                      <input
+                        type="text"
+                        value={securityAnswer}
+                        onChange={(e) => setSecurityAnswer(e.target.value)}
+                        placeholder="پاسخ کوتاه شما (مثال: مدرسه رازی)..."
+                        className="w-full px-3 py-2 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-xs text-stone-800 dark:text-stone-200 outline-none focus:border-[var(--accent-primary)] placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Submit Register Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="w-full py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs active:scale-[0.99] mt-2"
                 >
                   {loading ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                      <span>در حال ساخت حساب و ایجاد پایگاه داده...</span>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>در حال ساخت حساب...</span>
                     </>
                   ) : (
                     <>
-                      <span>ایجاد حساب کاربری مستقل</span>
+                      <span>شروع مسیر و ساخت حساب</span>
                       <ShieldCheck className="w-4 h-4" />
                     </>
                   )}
                 </button>
 
-                {/* Switch to Login Link */}
-                <div className="text-center pt-2 text-xs text-slate-400">
+                {/* Switch to Login */}
+                <div className="text-center pt-1 text-xs text-stone-500 dark:text-stone-400">
                   <span>قبلاً ثبت‌نام کرده‌اید؟ </span>
                   <button
                     type="button"
                     onClick={() => {
                       setMode('login');
                       setError(null);
+                      setSuccessMsg(null);
                     }}
-                    className="text-amber-400 hover:text-amber-300 font-bold hover:underline transition-colors mr-1 cursor-pointer"
+                    className="text-stone-900 dark:text-stone-100 font-bold hover:underline transition-colors mr-1 cursor-pointer"
                   >
                     وارد شوید
                   </button>
@@ -954,72 +984,80 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               </motion.form>
             )}
 
-            {/* -------------------- VIEW 3: FORGOT PASSWORD REQUEST -------------------- */}
+            {/* -------------------- 3. FORGOT PASSWORD VIEW -------------------- */}
             {mode === 'forgot_password' && (
               <motion.form
                 key="forgot-form"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
                 onSubmit={handleForgotRequest}
                 className="space-y-4"
               >
                 <div>
-                  <h3 className="text-xl font-black text-white flex items-center gap-2">
-                    <span>بازیابی رمز عبور</span>
-                    <KeyRound className="w-5 h-5 text-amber-400" />
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    نام کاربری یا آدرس ایمیل ثبت‌شده خود را وارد کنید تا فرآیند بازیابی امن آغاز شود.
+                  <h1 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 tracking-tight">
+                    بازیابی دسترسی به حساب
+                  </h1>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
+                    نام کاربری یا ایمیل ثبت‌شده خود را وارد کنید تا فرآیند بازنشانی رمز آغاز گردد.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    نام کاربری یا ایمیل ثبت شده <span className="text-amber-400">*</span>
+                  <label
+                    htmlFor="recovery-target"
+                    className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1.5"
+                  >
+                    نام کاربری یا آدرس ایمیل <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <input
+                      id="recovery-target"
                       type="text"
                       required
                       value={recoveryIdentifier}
                       onChange={(e) => setRecoveryIdentifier(e.target.value)}
-                      placeholder="مثال: ali یا ali@gmail.com"
-                      className="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 text-sm text-white outline-none transition-all placeholder:text-slate-500 text-left"
+                      placeholder="مثال: ali یا ali@example.com"
+                      className="w-full pl-3 pr-10 py-2.5 sm:py-3 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:bg-white dark:focus:bg-stone-900 focus:border-[var(--accent-primary)] text-sm text-stone-900 dark:text-stone-100 outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-stone-500 text-left"
                       dir="ltr"
                       autoFocus
                     />
-                    <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
+                    <Mail className="w-4 h-4 text-stone-400 absolute right-3.5 top-3 sm:top-3.5" />
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400">
-                  کد تأیید به ایمیل ارسال می‌شود؛ همچنین می‌توانید از سؤال امنیتی برای بازنشانی رمز استفاده کنید.
+                <div className="p-3 rounded-xl bg-stone-100/70 dark:bg-stone-900/50 border border-stone-200/80 dark:border-stone-800 text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
+                  امکان بازیابی از طریق کد تأیید ۶ رقمی یا پاسخ به سؤال امنیتی پیش‌بینی شده است.
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="w-full py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-semibold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {loading ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                      <span>در حال استعلام و ارسال درخواست...</span>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>در حال استعلام...</span>
                     </>
                   ) : (
                     <>
-                      <span>ادامه و دریافت کد بازیابی</span>
+                      <span>دریافت کد بازیابی</span>
                       <Send className="w-4 h-4" />
                     </>
                   )}
                 </button>
 
-                <div className="flex items-center justify-between pt-2 text-xs">
+                <div className="flex items-center justify-between pt-1 text-xs">
                   <button
                     type="button"
-                    onClick={() => setMode('login')}
-                    className="text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setMode('login');
+                      setError(null);
+                      setSuccessMsg(null);
+                    }}
+                    className="text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200 flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <ArrowRight className="w-3.5 h-3.5 rotate-180" />
                     <span>بازگشت به صفحه ورود</span>
@@ -1030,8 +1068,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     onClick={() => {
                       setMode('recovery_token');
                       setRecoveryMethod('security_question');
+                      setError(null);
                     }}
-                    className="text-amber-400 hover:text-amber-300 hover:underline cursor-pointer"
+                    className="text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 hover:underline cursor-pointer"
                   >
                     بازیابی مستقیم با سؤال امنیتی
                   </button>
@@ -1039,35 +1078,35 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               </motion.form>
             )}
 
-            {/* -------------------- VIEW 4: RESET PASSWORD WITH TOKEN / QUESTION -------------------- */}
+            {/* -------------------- 4. RECOVERY TOKEN / QUESTION VIEW -------------------- */}
             {mode === 'recovery_token' && (
               <motion.form
                 key="recovery-token-form"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
                 onSubmit={handleResetSubmit}
                 className="space-y-3.5"
               >
                 <div>
-                  <h3 className="text-xl font-black text-white flex items-center gap-2">
-                    <span>تأیید هویت و ثبت رمز جدید</span>
-                    <ShieldCheck className="w-5 h-5 text-amber-400" />
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    کد تأیید یا پاسخ سؤال امنیتی را وارد نموده و رمز عبور جدید تعیین فرمایید.
+                  <h1 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 tracking-tight">
+                    تعیین رمز عبور جدید
+                  </h1>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
+                    کد تأیید یا پاسخ سؤال امنیتی را وارد نموده و رمز جدیدی ثبت فرمایید.
                   </p>
                 </div>
 
                 {/* Method Switcher */}
-                <div className="grid grid-cols-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+                <div className="grid grid-cols-2 p-1 bg-stone-100 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs">
                   <button
                     type="button"
                     onClick={() => setRecoveryMethod('token')}
-                    className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    className={`py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                       recoveryMethod === 'token'
-                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs font-semibold'
+                        : 'text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200'
                     }`}
                   >
                     کد تأیید ۶ رقمی {countdown > 0 ? `(${formatCountdown(countdown)})` : ''}
@@ -1076,29 +1115,29 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setRecoveryMethod('security_question')}
-                    className={`py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    className={`py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                       recoveryMethod === 'security_question'
-                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs font-semibold'
+                        : 'text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200'
                     }`}
                   >
                     پاسخ سؤال امنیتی
                   </button>
                 </div>
 
-                {/* Method 1: Verification Code */}
+                {/* Token or Security Question input */}
                 {recoveryMethod === 'token' ? (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <label className="font-semibold text-slate-300">
-                        کد تأیید ۶ رقمی بازیابی <span className="text-amber-400">*</span>
+                      <label className="font-medium text-stone-700 dark:text-stone-300">
+                        کد ۶ رقمی تأیید <span className="text-rose-500">*</span>
                       </label>
                       {countdown > 0 ? (
-                        <span className="text-[11px] text-amber-400 flex items-center gap-1 font-mono">
-                          <Clock className="w-3 h-3" /> مهلت انقضا: {formatCountdown(countdown)}
+                        <span className="text-[11px] text-stone-500 dark:text-stone-400 flex items-center gap-1 font-mono">
+                          <Clock className="w-3 h-3" /> مهلت: {formatCountdown(countdown)}
                         </span>
                       ) : (
-                        <span className="text-[11px] text-rose-400">کد منقضی شد</span>
+                        <span className="text-[11px] text-rose-500">مهلت کد پایان یافت</span>
                       )}
                     </div>
 
@@ -1107,36 +1146,36 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       required
                       value={recoveryCode}
                       onChange={(e) => setRecoveryCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
-                      placeholder="مثال: 582914"
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-center font-mono text-lg tracking-[0.3em] text-amber-400 outline-none"
+                      placeholder="• • • • • •"
+                      className="w-full px-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)] text-center font-mono text-lg tracking-[0.3em] text-stone-900 dark:text-stone-100 outline-none"
                       maxLength={6}
                       autoFocus
                     />
 
-                    {/* Temporary Token Display */}
                     {recoverySimulatedToken && (
-                      <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30 flex items-center justify-between text-xs">
+                      <div className="p-2.5 rounded-xl bg-stone-100/90 dark:bg-stone-850 border border-stone-200 dark:border-stone-750 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="text-slate-300">کد بازیابی:</span>
-                          <span className="font-mono font-bold text-amber-300 text-sm tracking-widest">{recoverySimulatedToken}</span>
+                          <span className="text-stone-500 dark:text-stone-400 text-[11px]">کد امنیتی شبیه‌ساز:</span>
+                          <span className="font-mono font-bold text-stone-800 dark:text-stone-200 text-sm tracking-widest">
+                            {recoverySimulatedToken}
+                          </span>
                         </div>
                         <button
                           type="button"
                           onClick={() => setRecoveryCode(recoverySimulatedToken)}
-                          className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold cursor-pointer"
+                          className="px-2.5 py-1 rounded bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600 text-stone-800 dark:text-stone-200 text-xs font-semibold cursor-pointer"
                         >
-                          درج کد
+                          درج مستقیم
                         </button>
                       </div>
                     )}
                   </div>
                 ) : (
-                  /* Method 2: Security Question */
                   <div className="space-y-2">
-                    <label className="block text-xs font-semibold text-slate-300">
-                      پاسخ سؤال امنیتی شما:
+                    <label className="block text-xs font-medium text-stone-700 dark:text-stone-300">
+                      سؤال امنیتی حساب شما:
                     </label>
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-amber-400 font-medium">
+                    <div className="p-2.5 rounded-xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-xs text-stone-800 dark:text-stone-200 font-medium">
                       {retrievedQuestion || securityQuestion}
                     </div>
                     <input
@@ -1144,18 +1183,18 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       required
                       value={securityAnswer}
                       onChange={(e) => setSecurityAnswer(e.target.value)}
-                      placeholder="پاسخ کوتاه ثبت‌شده..."
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none"
+                      placeholder="پاسخ کوتاه شما..."
+                      className="w-full px-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)] text-sm text-stone-900 dark:text-stone-100 outline-none"
                       autoFocus
                     />
                   </div>
                 )}
 
-                {/* New Password & Confirm Password */}
+                {/* New Password & Confirm */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      رمز عبور جدید <span className="text-amber-400">*</span>
+                    <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1">
+                      رمز عبور جدید <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -1163,14 +1202,15 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         required
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none text-left"
+                        placeholder="حداقل ۶ نویسه"
+                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)] text-sm text-stone-900 dark:text-stone-100 outline-none text-left"
                         dir="ltr"
                       />
                       <button
                         type="button"
                         onClick={() => setShowNewPassword((p) => !p)}
-                        className="absolute left-2.5 top-3 text-slate-400 hover:text-amber-400 cursor-pointer"
+                        className="absolute left-2.5 top-3 text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 cursor-pointer p-0.5"
+                        aria-label={showNewPassword ? 'پنهان‌سازی رمز' : 'نمایش رمز'}
                       >
                         {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -1178,28 +1218,25 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
-                      تکرار رمز عبور جدید <span className="text-amber-400">*</span>
+                    <label className="block text-xs font-medium text-stone-700 dark:text-stone-300 mb-1">
+                      تکرار رمز عبور جدید <span className="text-rose-500">*</span>
                     </label>
                     <input
                       type="password"
                       required
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full px-3 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 text-sm text-white outline-none text-left"
+                      placeholder="تکرار رمز جدید"
+                      className="w-full px-3 py-2.5 rounded-xl bg-stone-50/70 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 focus:border-[var(--accent-primary)] text-sm text-stone-900 dark:text-stone-100 outline-none text-left"
                       dir="ltr"
                     />
                   </div>
                 </div>
 
-                {/* Strength Meter for New Password */}
                 {newPassword && (
-                  <div className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-[11px] flex items-center justify-between">
-                    <span className="text-slate-400">سطح امنیت رمز جدید:</span>
-                    <span className={`font-bold ${
-                      newPasswordStrength.score >= 3 ? 'text-emerald-400' : 'text-amber-400'
-                    }`}>
+                  <div className="p-2 rounded-xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800 text-[11px] flex items-center justify-between">
+                    <span className="text-stone-500">سطح امنیت:</span>
+                    <span className={`font-semibold ${newPasswordStrength.textClass}`}>
                       {newPasswordStrength.label}
                     </span>
                   </div>
@@ -1208,16 +1245,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="w-full py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-semibold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs mt-2"
                 >
                   {loading ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                      <span>در حال راستی‌آزمایی و بازنشانی...</span>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>در حال راستی‌آزمایی...</span>
                     </>
                   ) : (
                     <>
-                      <span>ثبت و ذخیره رمز عبور جدید</span>
+                      <span>ثبت و ذخیره رمز جدید</span>
                       <Check className="w-4 h-4" />
                     </>
                   )}
@@ -1226,8 +1263,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div className="text-center pt-1">
                   <button
                     type="button"
-                    onClick={() => setMode('login')}
-                    className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    onClick={() => {
+                      setMode('login');
+                      setError(null);
+                      setSuccessMsg(null);
+                    }}
+                    className="text-xs text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200 transition-colors cursor-pointer"
                   >
                     لغو و بازگشت به صفحه ورود
                   </button>
@@ -1236,80 +1277,124 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             )}
           </div>
 
-          {/* Form Footer Note */}
-          <div className="pt-4 mt-4 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500">
+          {/* Reassuring Footer */}
+          <div className="pt-4 mt-6 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between text-[11px] text-stone-400 dark:text-stone-500">
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              سرور ابری فعال
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80" />
+              ذخیره‌سازی رمزنگاری‌شده ابری
             </span>
-            <span>حفظ کامل حریم خصوصی</span>
+            <span>حفظ کامل استقلال و حریم خصوصی</span>
           </div>
         </div>
 
-        {/* ----------------- COLUMN 2: HERO SHOWCASE (5 cols on lg) ----------------- */}
-        <div className="hidden lg:flex lg:col-span-5 p-8 flex-col justify-between bg-stone-50 dark:bg-[#121212] border-t lg:border-t-0 lg:border-r border-slate-200 dark:border-[#242424] relative overflow-hidden">
-          {/* Top Showcase Content */}
-          <div className="relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-700 dark:text-amber-400 text-xs font-semibold">
-              <Zap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              <span>فضای کاری آرام و متمرکز</span>
+        {/* ===================== SIDE 2: CALMING INSPIRATIONAL PANEL (5 cols on lg) ===================== */}
+        <div className="hidden lg:flex lg:col-span-5 p-8 md:p-10 flex-col justify-between bg-stone-50/70 dark:bg-[#111214] border-t lg:border-t-0 lg:border-r border-stone-200/80 dark:border-stone-800/80 relative overflow-hidden">
+          {/* Subtle ambient motif */}
+          <div className="space-y-6 relative z-10">
+            {/* Minimal Tag */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200/60 dark:bg-stone-800/70 text-stone-700 dark:text-stone-300 text-xs font-medium">
+              <Leaf className="w-3.5 h-3.5 text-stone-500 dark:text-stone-400" />
+              <span>نظم پایدار، آرامش ذهن</span>
             </div>
 
+            {/* Mindful headline & philosophy */}
             <div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white leading-snug tracking-tight">
-                مسیر یکپارچه رشد،
+              <h2 className="text-2xl font-bold text-stone-900 dark:text-stone-100 leading-snug tracking-tight">
+                پیشرفت واقعی در
                 <br />
-                <span className="text-amber-600 dark:text-amber-400">
-                  یادگیری و مهارت‌های آینده
+                <span className="text-stone-600 dark:text-stone-400 font-normal">
+                  گام‌های کوچک و پیوسته است
                 </span>
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                برنامه‌ریزی درسی، پروژه‌ها، چالش‌های مسابقات و مرور فاصله‌دار در یک محیط آرام و منسجم
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-3 leading-relaxed">
+                فضایی فارغ از شلوغی و اضطراب برای شفاف‌کردن مسیر روزانه، مدیریت درس‌ها، پروژه‌ها و مهارت‌ها.
               </p>
             </div>
 
-            {/* Feature Showcase Cards */}
-            <div className="space-y-2.5">
-              <div className="p-3.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-slate-200 dark:border-[#2A2A2A] shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
-                  <GraduationCap className="w-4 h-4" />
+            {/* Elegant Path Illustration (Mindful SVG) */}
+            <div className="py-4 my-2 flex items-center justify-center">
+              <svg
+                width="200"
+                height="110"
+                viewBox="0 0 200 110"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="opacity-80 text-stone-400 dark:text-stone-600"
+                aria-hidden="true"
+              >
+                {/* Gentle curving path */}
+                <path
+                  d="M10 90 C 60 90, 70 30, 110 30 C 150 30, 160 70, 190 70"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray="4 4"
+                />
+                {/* Peaceful stepping stones along the path */}
+                <circle cx="10" cy="90" r="4" fill="currentColor" opacity="0.4" />
+                <circle cx="65" cy="55" r="4" fill="currentColor" opacity="0.6" />
+                <circle cx="110" cy="30" r="5" fill="currentColor" />
+                <circle cx="155" cy="55" r="4" fill="currentColor" opacity="0.6" />
+                <circle cx="190" cy="70" r="4" fill="currentColor" opacity="0.4" />
+
+                {/* Subtle soft horizon sun arc */}
+                <circle cx="110" cy="30" r="14" stroke="currentColor" strokeWidth="1" strokeDasharray="2 3" opacity="0.3" />
+              </svg>
+            </div>
+
+            {/* 3 Core Calming Principles (Zero-Pill Discipline) */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-lg bg-stone-200/50 dark:bg-stone-800/50 flex items-center justify-center text-stone-700 dark:text-stone-300 shrink-0 mt-0.5">
+                  <Compass className="w-3.5 h-3.5" />
                 </div>
-                <div className="flex-1">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">مدرسه و نمرات تحلیلی</div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">کارنامه، برنامه هفتگی و پیگیری تکالیف</span>
+                <div>
+                  <div className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                    برنامه‌ریزی منعطف و واقع‌بینانه
+                  </div>
+                  <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
+                    تنظیم ساعات مطالعه و وظایف بر اساس انرژی روزانه با تقویم شمسی.
+                  </div>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-slate-200 dark:border-[#2A2A2A] shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0">
-                  <FolderGit2 className="w-4 h-4" />
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-lg bg-stone-200/50 dark:bg-stone-800/50 flex items-center justify-center text-stone-700 dark:text-stone-300 shrink-0 mt-0.5">
+                  <Sparkles className="w-3.5 h-3.5" />
                 </div>
-                <div className="flex-1">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">پروژه‌ها و مهارت‌ها</div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">برد کانبان و نقشه‌راه گام‌به‌گام یادگیری</span>
+                <div>
+                  <div className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                    یکپارچگی مهارت‌ها و پروژه‌ها
+                  </div>
+                  <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
+                    نگاهی جامع به روند یادگیری درسی، پروژه‌های عملی و اهداف بلندمدت.
+                  </div>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-slate-200 dark:border-[#2A2A2A] shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/25 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
-                  <Trophy className="w-4 h-4" />
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-lg bg-stone-200/50 dark:bg-stone-800/50 flex items-center justify-center text-stone-700 dark:text-stone-300 shrink-0 mt-0.5">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                 </div>
-                <div className="flex-1">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">مسابقات و آزمون‌ها</div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">زمان‌بندی مراحل و ارزیابی آمادگی</span>
+                <div>
+                  <div className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                    دسترسی پیوسته و بدون دغدغه
+                  </div>
+                  <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-relaxed">
+                    اطلاعات شما همیشه در دسترس است؛ حتی در حالت آفلاین یا دستگاه جدید.
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Trust Note */}
-          <div className="relative z-10 pt-4 mt-4 border-t border-slate-200 dark:border-[#242424]">
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed">
-              ذخیره‌سازی امن و دسترسی پیوسته به اطلاعات در تمام دستگاه‌ها
+          {/* Bottom gentle footnote */}
+          <div className="relative z-10 pt-4 mt-6 border-t border-stone-200/60 dark:border-stone-800/60">
+            <p className="text-[11px] text-stone-500 dark:text-stone-400 text-center leading-relaxed">
+              «هر روز یک شروع تازه است؛ کافیست گام نخست را بردارید.»
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );

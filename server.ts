@@ -13,7 +13,7 @@ import { formatJalaliFull } from './src/utils/jalali.ts';
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'pathly-super-secure-production-jwt-key-2026';
 
 app.use(express.json({ limit: '25mb' }));

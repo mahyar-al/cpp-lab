@@ -104,6 +104,136 @@
       "securityAnswerHash": "$2b$10$jjdxMwSUE8/n3N15nItP1exxAkcH47zPr/rsO3ieZfPtvOrN4AA3y",
       "createdAt": "2026-10-16T12:18:00.129Z",
       "updatedAt": "2026-10-16T12:18:00.129Z"
+    },
+    "07157c13-9067-457a-b3d8-cf070abd7408": {
+      "id": "07157c13-9067-457a-b3d8-cf070abd7408",
+      "email": "usera_1792170999387@test.com",
+      "username": "usera_999387",
+      "passwordHash": "$2b$10$m84EB2JumbNXnRk8a6/lEOJcN3byhWqTxf3XP89CNp8XC3wOeqEB6",
+      "name": "کاربر آزمایشی الف",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=usera_999387",
+      "securityQuestion": "رنگ مورد علاقه؟",
+      "securityAnswerHash": "$2b$10$m0Tbs8VJM69.c9zR9OA1C.8Y5b/GL/EHWnPCy7I5VgTxzX/LJxwy.",
+      "createdAt": "2026-10-16T17:16:39.755Z",
+      "updatedAt": "2026-10-16T17:16:39.755Z"
+    },
+    "55d90b87-1615-4e0e-854f-0b6017c3e361": {
+      "id": "55d90b87-1615-4e0e-854f-0b6017c3e361",
+      "email": "userb_1792170999387@test.com",
+      "username": "userb_999387",
+      "passwordHash": "$2b$10$jf0FIgIJQBLY.I5p1y8sSONtS/Ii5zQ4kBBI9yMs1Vk8tffffCQe.",
+      "name": "کاربر آزمایشی ب",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=userb_999387",
+      "securityQuestion": "شهر تولد؟",
+      "securityAnswerHash": "$2b$10$ovbQYBeu9vKs0WxLHA1JYOGNtWqZnwBlE5zohj9UZ0rnYZvXY/sBq",
+      "createdAt": "2026-10-16T17:16:40.009Z",
+      "updatedAt": "2026-10-16T17:16:40.009Z"
+    },
+    "869d44e4-953c-44b8-95e8-a4becf0aea67": {
+      "id": "869d44e4-953c-44b8-95e8-a4becf0aea67",
+      "email": "usera_1792171290840@test.com",
+      "username": "usera_290840",
+      "passwordHash": "$2b$10$yix.SX7Hm8mZqg9Em3o3POJ7jxDjxn2gwP.DnkoI4mGKQ6XBE4GWi",
+      "name": "کاربر آزمایشی الف",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=usera_290840",
+      "securityQuestion": "رنگ مورد علاقه؟",
+      "securityAnswerHash": "$2b$10$lL6gsVrh1XZCO2F0bkU/QOC1RV9qajGnmCVnsrplkiXrzCrjuj9oO",
+      "createdAt": "2026-10-16T17:21:31.196Z",
+      "updatedAt": "2026-10-16T17:21:31.196Z"
+    },
+    "c23f81d9-ded6-4690-97e6-642d5afb65b8": {
+      "id": "c23f81d9-ded6-4690-97e6-642d5afb65b8",
+      "email": "userb_1792171290840@test.com",
+      "username": "userb_290840",
+      "passwordHash": "$2b$10$/a0rJr58sF4O9mAl9aHCdu337IqweQ7lsYVfEnHPFV7TbSby9wYfC",
+      "name": "کاربر آزمایشی ب",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=userb_290840",
+      "securityQuestion": "شهر تولد؟",
+      "securityAnswerHash": "$2b$10$nV95a/AnaKpOUb5HKLSJO.ZW8EtDUM9cJo1U5rODZ6YPQTFrN3vfS",
+      "createdAt": "2026-10-16T17:21:31.471Z",
+      "updatedAt": "2026-10-16T17:21:31.471Z"
+    },
+    "bb33f354-4736-450c-a831-d3ec452c0963": {
+      "id": "bb33f354-4736-450c-a831-d3ec452c0963",
+      "email": "usera_1792171344159@test.com",
+      "username": "usera_344159",
+      "passwordHash": "$2b$10$tkIarFkjWt9jOqKiYSOY9enc/oFPD96lIy/opQMlPFXA5ZhiFQsHm",
+      "name": "کاربر آزمایشی الف",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=usera_344159",
+      "securityQuestion": "رنگ مورد علاقه؟",
+      "securityAnswerHash": "$2b$10$qVhkd7TY8dSWTdmPJxb6q.6I1EMEX0l8cF6TnsTm9Oxf9NDd5UPFG",
+      "createdAt": "2026-10-16T17:22:24.518Z",
+      "updatedAt": "2026-10-16T17:22:24.518Z"
+    },
+    "723fd1e9-238a-495b-9ac9-510628ef239e": {
+      "id": "723fd1e9-238a-495b-9ac9-510628ef239e",
+      "email": "userb_1792171344159@test.com",
+      "username": "userb_344159",
+      "passwordHash": "$2b$10$bzMMohtJPU/TQTaoizcJ8u54SZOEscLNaDs2FdQqx5sytgnm1kUXi",
+      "name": "کاربر آزمایشی ب",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=userb_344159",
+      "securityQuestion": "شهر تولد؟",
+      "securityAnswerHash": "$2b$10$2XYUWryhWS6GXYsFN1opB.dModcRi7q08AeVE6ntC6o6dE5vDddI6",
+      "createdAt": "2026-10-16T17:22:24.771Z",
+      "updatedAt": "2026-10-16T17:22:24.771Z"
+    },
+    "d4d3b053-efa7-4cbd-a656-36cf52c4ac73": {
+      "id": "d4d3b053-efa7-4cbd-a656-36cf52c4ac73",
+      "email": "usera_1792174232771@test.com",
+      "username": "usera_232771",
+      "passwordHash": "$2b$10$h2ULeMkvAFjds9mBjO.ce.MDUKvlVJuT788RQCaUn6FTYnk1LDB3W",
+      "name": "کاربر آزمایشی الف",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=usera_232771",
+      "securityQuestion": "رنگ مورد علاقه؟",
+      "securityAnswerHash": "$2b$10$q/OI67y7RYiIEB4wyAsjSeNRhWyFIx07..gDcTkkTYZA5VtpbTjIS",
+      "createdAt": "2026-10-16T18:10:33.123Z",
+      "updatedAt": "2026-10-16T18:10:33.123Z"
+    },
+    "0c82c5da-8eda-403e-bf72-6c7211b4e2b5": {
+      "id": "0c82c5da-8eda-403e-bf72-6c7211b4e2b5",
+      "email": "userb_1792174232771@test.com",
+      "username": "userb_232771",
+      "passwordHash": "$2b$10$vRFM.vq7qq9i6rQO.FhmmeAc2iYh12G6TW/AlTQqRp.ltIWxMsBy.",
+      "name": "کاربر آزمایشی ب",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=userb_232771",
+      "securityQuestion": "شهر تولد؟",
+      "securityAnswerHash": "$2b$10$ngqOsbNF0pKtRIqebDADyOKse2jbHFkkSed0.khjsd/ij1OIo4seK",
+      "createdAt": "2026-10-16T18:10:33.367Z",
+      "updatedAt": "2026-10-16T18:10:33.367Z"
+    },
+    "6886c243-632f-4285-9f86-88b4a4c551ba": {
+      "id": "6886c243-632f-4285-9f86-88b4a4c551ba",
+      "email": "usera_1792213985381@test.com",
+      "username": "usera_985381",
+      "passwordHash": "$2b$10$QYeKPKDW0SQFmzrKkJtOFu5JGPjRquKxW/byeWMO5WvL/wRXZsuuC",
+      "name": "کاربر آزمایشی الف",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=usera_985381",
+      "securityQuestion": "رنگ مورد علاقه؟",
+      "securityAnswerHash": "$2b$10$QTlNhUr4Y8AHrrtG0BIz/.o0tfCGIMxeSArM57.pVaXzDLTA80y2O",
+      "createdAt": "2026-10-17T05:13:05.730Z",
+      "updatedAt": "2026-10-17T05:13:05.730Z"
+    },
+    "11a6f9ec-43b0-438b-9648-29fcee8e2e8f": {
+      "id": "11a6f9ec-43b0-438b-9648-29fcee8e2e8f",
+      "email": "userb_1792213985381@test.com",
+      "username": "userb_985381",
+      "passwordHash": "$2b$10$JT7eU.Nf276ZFUhfp6tTSuXCl675hT2T8Nt3ZsCBNJGsPGNoIkiNq",
+      "name": "کاربر آزمایشی ب",
+      "role": "user",
+      "avatarUrl": "https://api.dicebear.com/7.x/bottts/svg?seed=userb_985381",
+      "securityQuestion": "شهر تولد؟",
+      "securityAnswerHash": "$2b$10$4jgzWmFUUY3HWJOVPKbThe9iX1iwAfW/h86gMSQnPEKrSfNhk.WuG",
+      "createdAt": "2026-10-17T05:13:05.986Z",
+      "updatedAt": "2026-10-17T05:13:05.986Z"
     }
   },
   "userData": {
@@ -378,6 +508,346 @@
         }
       ],
       "_lastModified": "2026-10-16T12:18:00.330Z"
+    },
+    "07157c13-9067-457a-b3d8-cf070abd7408": {
+      "profile": {
+        "name": "کاربر آزمایشی الف",
+        "theme": "dark"
+      },
+      "subjects": [
+        {
+          "id": "sub-1792170999387",
+          "name": "هندسه تحلیلی و جبر خطی",
+          "teacher": "استاد حسینی",
+          "color": "#00F5FF"
+        }
+      ],
+      "projects": [
+        {
+          "id": "proj-1792170999387",
+          "title": "سامانه پایش هوشمند",
+          "status": "in_progress",
+          "priority": "high"
+        }
+      ],
+      "notes": [
+        {
+          "id": "note-1792170999387",
+          "title": "یادداشت محرمانه کاربر الف",
+          "content": "اطلاعات سری پروژه الف",
+          "tags": [
+            "محرمانه"
+          ]
+        }
+      ],
+      "calendarEvents": [
+        {
+          "id": "cev-1792170999387",
+          "title": "جلسه تمرینی المپیاد",
+          "date": "1405-02-15",
+          "section": "competition"
+        }
+      ],
+      "homeworks": [],
+      "exams": [],
+      "studySessions": [],
+      "skills": [],
+      "competitions": [],
+      "goals": [],
+      "weeklyReviews": [],
+      "weeklyCells": [],
+      "dayData": {},
+      "activityLogs": [],
+      "notifications": [],
+      "habits": [],
+      "reviews": [],
+      "resources": [],
+      "inboxItems": [],
+      "trash": [],
+      "userId": "07157c13-9067-457a-b3d8-cf070abd7408",
+      "_lastModified": "2026-10-16T17:16:40.018Z"
+    },
+    "55d90b87-1615-4e0e-854f-0b6017c3e361": {
+      "userId": "55d90b87-1615-4e0e-854f-0b6017c3e361",
+      "notes": [
+        {
+          "title": "نفوذ کاربر ب به داده‌های الف",
+          "content": "هک شد"
+        }
+      ],
+      "_lastModified": "2026-10-16T17:16:40.220Z"
+    },
+    "869d44e4-953c-44b8-95e8-a4becf0aea67": {
+      "profile": {
+        "name": "کاربر آزمایشی الف",
+        "theme": "dark"
+      },
+      "subjects": [
+        {
+          "id": "sub-1792171290840",
+          "name": "هندسه تحلیلی و جبر خطی",
+          "teacher": "استاد حسینی",
+          "color": "#00F5FF"
+        }
+      ],
+      "projects": [
+        {
+          "id": "proj-1792171290840",
+          "title": "سامانه پایش هوشمند",
+          "status": "in_progress",
+          "priority": "high"
+        }
+      ],
+      "notes": [
+        {
+          "id": "note-1792171290840",
+          "title": "یادداشت محرمانه کاربر الف",
+          "content": "اطلاعات سری پروژه الف",
+          "tags": [
+            "محرمانه"
+          ]
+        }
+      ],
+      "calendarEvents": [
+        {
+          "id": "cev-1792171290840",
+          "title": "جلسه تمرینی المپیاد",
+          "date": "1405-02-15",
+          "section": "competition"
+        }
+      ],
+      "homeworks": [],
+      "exams": [],
+      "studySessions": [],
+      "skills": [],
+      "competitions": [],
+      "goals": [],
+      "weeklyReviews": [],
+      "weeklyCells": [],
+      "dayData": {},
+      "activityLogs": [],
+      "notifications": [],
+      "habits": [],
+      "reviews": [],
+      "resources": [],
+      "inboxItems": [],
+      "trash": [],
+      "userId": "869d44e4-953c-44b8-95e8-a4becf0aea67",
+      "_lastModified": "2026-10-16T17:21:31.480Z"
+    },
+    "c23f81d9-ded6-4690-97e6-642d5afb65b8": {
+      "userId": "c23f81d9-ded6-4690-97e6-642d5afb65b8",
+      "notes": [
+        {
+          "title": "نفوذ کاربر ب به داده‌های الف",
+          "content": "هک شد"
+        }
+      ],
+      "_lastModified": "2026-10-16T17:21:31.618Z"
+    },
+    "bb33f354-4736-450c-a831-d3ec452c0963": {
+      "profile": {
+        "name": "کاربر آزمایشی الف",
+        "theme": "dark"
+      },
+      "subjects": [
+        {
+          "id": "sub-1792171344159",
+          "name": "هندسه تحلیلی و جبر خطی",
+          "teacher": "استاد حسینی",
+          "color": "#00F5FF"
+        }
+      ],
+      "projects": [
+        {
+          "id": "proj-1792171344159",
+          "title": "سامانه پایش هوشمند",
+          "status": "in_progress",
+          "priority": "high"
+        }
+      ],
+      "notes": [
+        {
+          "id": "note-1792171344159",
+          "title": "یادداشت محرمانه کاربر الف",
+          "content": "اطلاعات سری پروژه الف",
+          "tags": [
+            "محرمانه"
+          ]
+        }
+      ],
+      "calendarEvents": [
+        {
+          "id": "cev-1792171344159",
+          "title": "جلسه تمرینی المپیاد",
+          "date": "1405-02-15",
+          "section": "competition"
+        }
+      ],
+      "homeworks": [],
+      "exams": [],
+      "studySessions": [],
+      "skills": [],
+      "competitions": [],
+      "goals": [],
+      "weeklyReviews": [],
+      "weeklyCells": [],
+      "dayData": {},
+      "activityLogs": [],
+      "notifications": [],
+      "habits": [],
+      "reviews": [],
+      "resources": [],
+      "inboxItems": [],
+      "trash": [],
+      "userId": "bb33f354-4736-450c-a831-d3ec452c0963",
+      "_lastModified": "2026-10-16T17:22:24.780Z"
+    },
+    "723fd1e9-238a-495b-9ac9-510628ef239e": {
+      "userId": "723fd1e9-238a-495b-9ac9-510628ef239e",
+      "notes": [
+        {
+          "title": "نفوذ کاربر ب به داده‌های الف",
+          "content": "هک شد"
+        }
+      ],
+      "_lastModified": "2026-10-16T17:22:25.008Z"
+    },
+    "d4d3b053-efa7-4cbd-a656-36cf52c4ac73": {
+      "profile": {
+        "name": "کاربر آزمایشی الف",
+        "theme": "dark"
+      },
+      "subjects": [
+        {
+          "id": "sub-1792174232771",
+          "name": "هندسه تحلیلی و جبر خطی",
+          "teacher": "استاد حسینی",
+          "color": "#00F5FF"
+        }
+      ],
+      "projects": [
+        {
+          "id": "proj-1792174232771",
+          "title": "سامانه پایش هوشمند",
+          "status": "in_progress",
+          "priority": "high"
+        }
+      ],
+      "notes": [
+        {
+          "id": "note-1792174232771",
+          "title": "یادداشت محرمانه کاربر الف",
+          "content": "اطلاعات سری پروژه الف",
+          "tags": [
+            "محرمانه"
+          ]
+        }
+      ],
+      "calendarEvents": [
+        {
+          "id": "cev-1792174232771",
+          "title": "جلسه تمرینی المپیاد",
+          "date": "1405-02-15",
+          "section": "competition"
+        }
+      ],
+      "homeworks": [],
+      "exams": [],
+      "studySessions": [],
+      "skills": [],
+      "competitions": [],
+      "goals": [],
+      "weeklyReviews": [],
+      "weeklyCells": [],
+      "dayData": {},
+      "activityLogs": [],
+      "notifications": [],
+      "habits": [],
+      "reviews": [],
+      "resources": [],
+      "inboxItems": [],
+      "trash": [],
+      "userId": "d4d3b053-efa7-4cbd-a656-36cf52c4ac73",
+      "_lastModified": "2026-10-16T18:10:33.375Z"
+    },
+    "0c82c5da-8eda-403e-bf72-6c7211b4e2b5": {
+      "userId": "0c82c5da-8eda-403e-bf72-6c7211b4e2b5",
+      "notes": [
+        {
+          "title": "نفوذ کاربر ب به داده‌های الف",
+          "content": "هک شد"
+        }
+      ],
+      "_lastModified": "2026-10-16T18:10:33.531Z"
+    },
+    "6886c243-632f-4285-9f86-88b4a4c551ba": {
+      "profile": {
+        "name": "کاربر آزمایشی الف",
+        "theme": "dark"
+      },
+      "subjects": [
+        {
+          "id": "sub-1792213985381",
+          "name": "هندسه تحلیلی و جبر خطی",
+          "teacher": "استاد حسینی",
+          "color": "#00F5FF"
+        }
+      ],
+      "projects": [
+        {
+          "id": "proj-1792213985381",
+          "title": "سامانه پایش هوشمند",
+          "status": "in_progress",
+          "priority": "high"
+        }
+      ],
+      "notes": [
+        {
+          "id": "note-1792213985381",
+          "title": "یادداشت محرمانه کاربر الف",
+          "content": "اطلاعات سری پروژه الف",
+          "tags": [
+            "محرمانه"
+          ]
+        }
+      ],
+      "calendarEvents": [
+        {
+          "id": "cev-1792213985381",
+          "title": "جلسه تمرینی المپیاد",
+          "date": "1405-02-15",
+          "section": "competition"
+        }
+      ],
+      "homeworks": [],
+      "exams": [],
+      "studySessions": [],
+      "skills": [],
+      "competitions": [],
+      "goals": [],
+      "weeklyReviews": [],
+      "weeklyCells": [],
+      "dayData": {},
+      "activityLogs": [],
+      "notifications": [],
+      "habits": [],
+      "reviews": [],
+      "resources": [],
+      "inboxItems": [],
+      "trash": [],
+      "userId": "6886c243-632f-4285-9f86-88b4a4c551ba",
+      "_lastModified": "2026-10-17T05:13:05.995Z"
+    },
+    "11a6f9ec-43b0-438b-9648-29fcee8e2e8f": {
+      "userId": "11a6f9ec-43b0-438b-9648-29fcee8e2e8f",
+      "notes": [
+        {
+          "title": "نفوذ کاربر ب به داده‌های الف",
+          "content": "هک شد"
+        }
+      ],
+      "_lastModified": "2026-10-17T05:13:06.142Z"
     }
   },
   "snapshots": [
@@ -880,12 +1350,637 @@
         "userId": "a1869c2d-16a2-4c46-8165-642c8bdb771d",
         "_lastModified": "2026-10-16T12:18:00.480Z"
       }
+    },
+    {
+      "id": "07520801-1efc-4b71-9d3d-b2e8987b28f1",
+      "userId": "07157c13-9067-457a-b3d8-cf070abd7408",
+      "createdAt": "2026-10-16T17:16:40.207Z",
+      "reason": "نسخه اختصاصی الف قبل از تست نفوذ",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792170999387",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792170999387",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "note-1792170999387",
+            "title": "یادداشت محرمانه کاربر الف",
+            "content": "اطلاعات سری پروژه الف",
+            "tags": [
+              "محرمانه"
+            ]
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792170999387",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "07157c13-9067-457a-b3d8-cf070abd7408",
+        "_lastModified": "2026-10-16T17:16:40.018Z"
+      }
+    },
+    {
+      "id": "741bed7c-04ea-4f42-a470-7e870422f8bf",
+      "userId": "07157c13-9067-457a-b3d8-cf070abd7408",
+      "createdAt": "2026-10-16T17:16:40.364Z",
+      "reason": "Pre-restore safety snapshot",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792170999387",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792170999387",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "temp-note",
+            "title": "یادداشت موقت که باید بعد از Restore پاک شود",
+            "content": "تست"
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792170999387",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "07157c13-9067-457a-b3d8-cf070abd7408",
+        "_lastModified": "2026-10-16T17:16:40.360Z"
+      }
+    },
+    {
+      "id": "a2a28be7-c47a-4989-9add-a7431bec8efe",
+      "userId": "869d44e4-953c-44b8-95e8-a4becf0aea67",
+      "createdAt": "2026-10-16T17:21:31.610Z",
+      "reason": "نسخه اختصاصی الف قبل از تست نفوذ",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792171290840",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792171290840",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "note-1792171290840",
+            "title": "یادداشت محرمانه کاربر الف",
+            "content": "اطلاعات سری پروژه الف",
+            "tags": [
+              "محرمانه"
+            ]
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792171290840",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "869d44e4-953c-44b8-95e8-a4becf0aea67",
+        "_lastModified": "2026-10-16T17:21:31.480Z"
+      }
+    },
+    {
+      "id": "cbe543a8-fdac-44bd-a060-ae9d9d5dde42",
+      "userId": "869d44e4-953c-44b8-95e8-a4becf0aea67",
+      "createdAt": "2026-10-16T17:21:31.773Z",
+      "reason": "Pre-restore safety snapshot",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792171290840",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792171290840",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "temp-note",
+            "title": "یادداشت موقت که باید بعد از Restore پاک شود",
+            "content": "تست"
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792171290840",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "869d44e4-953c-44b8-95e8-a4becf0aea67",
+        "_lastModified": "2026-10-16T17:21:31.770Z"
+      }
+    },
+    {
+      "id": "23f27136-cba9-44d9-b4af-92d67e66bb7c",
+      "userId": "bb33f354-4736-450c-a831-d3ec452c0963",
+      "createdAt": "2026-10-16T17:22:24.997Z",
+      "reason": "نسخه اختصاصی الف قبل از تست نفوذ",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792171344159",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792171344159",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "note-1792171344159",
+            "title": "یادداشت محرمانه کاربر الف",
+            "content": "اطلاعات سری پروژه الف",
+            "tags": [
+              "محرمانه"
+            ]
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792171344159",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "bb33f354-4736-450c-a831-d3ec452c0963",
+        "_lastModified": "2026-10-16T17:22:24.780Z"
+      }
+    },
+    {
+      "id": "ac769fca-ccfc-4fcc-b690-ad38af78d919",
+      "userId": "bb33f354-4736-450c-a831-d3ec452c0963",
+      "createdAt": "2026-10-16T17:22:25.169Z",
+      "reason": "Pre-restore safety snapshot",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792171344159",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792171344159",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "temp-note",
+            "title": "یادداشت موقت که باید بعد از Restore پاک شود",
+            "content": "تست"
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792171344159",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "bb33f354-4736-450c-a831-d3ec452c0963",
+        "_lastModified": "2026-10-16T17:22:25.166Z"
+      }
+    },
+    {
+      "id": "905bc23a-82cf-4959-92ce-0bc6dda51752",
+      "userId": "d4d3b053-efa7-4cbd-a656-36cf52c4ac73",
+      "createdAt": "2026-10-16T18:10:33.523Z",
+      "reason": "نسخه اختصاصی الف قبل از تست نفوذ",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792174232771",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792174232771",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "note-1792174232771",
+            "title": "یادداشت محرمانه کاربر الف",
+            "content": "اطلاعات سری پروژه الف",
+            "tags": [
+              "محرمانه"
+            ]
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792174232771",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "d4d3b053-efa7-4cbd-a656-36cf52c4ac73",
+        "_lastModified": "2026-10-16T18:10:33.375Z"
+      }
+    },
+    {
+      "id": "c4e49e84-f1f2-4660-a40e-0209ee685bb8",
+      "userId": "d4d3b053-efa7-4cbd-a656-36cf52c4ac73",
+      "createdAt": "2026-10-16T18:10:33.669Z",
+      "reason": "Pre-restore safety snapshot",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792174232771",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792174232771",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "temp-note",
+            "title": "یادداشت موقت که باید بعد از Restore پاک شود",
+            "content": "تست"
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792174232771",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "d4d3b053-efa7-4cbd-a656-36cf52c4ac73",
+        "_lastModified": "2026-10-16T18:10:33.666Z"
+      }
+    },
+    {
+      "id": "05813d29-a14c-472d-a61c-b1a32fccb428",
+      "userId": "6886c243-632f-4285-9f86-88b4a4c551ba",
+      "createdAt": "2026-10-17T05:13:06.132Z",
+      "reason": "نسخه اختصاصی الف قبل از تست نفوذ",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792213985381",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792213985381",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "note-1792213985381",
+            "title": "یادداشت محرمانه کاربر الف",
+            "content": "اطلاعات سری پروژه الف",
+            "tags": [
+              "محرمانه"
+            ]
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792213985381",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "6886c243-632f-4285-9f86-88b4a4c551ba",
+        "_lastModified": "2026-10-17T05:13:05.995Z"
+      }
+    },
+    {
+      "id": "a9596f1d-b213-4ce7-a273-d49c6188181f",
+      "userId": "6886c243-632f-4285-9f86-88b4a4c551ba",
+      "createdAt": "2026-10-17T05:13:06.286Z",
+      "reason": "Pre-restore safety snapshot",
+      "data": {
+        "profile": {
+          "name": "کاربر آزمایشی الف",
+          "theme": "dark"
+        },
+        "subjects": [
+          {
+            "id": "sub-1792213985381",
+            "name": "هندسه تحلیلی و جبر خطی",
+            "teacher": "استاد حسینی",
+            "color": "#00F5FF"
+          }
+        ],
+        "projects": [
+          {
+            "id": "proj-1792213985381",
+            "title": "سامانه پایش هوشمند",
+            "status": "in_progress",
+            "priority": "high"
+          }
+        ],
+        "notes": [
+          {
+            "id": "temp-note",
+            "title": "یادداشت موقت که باید بعد از Restore پاک شود",
+            "content": "تست"
+          }
+        ],
+        "calendarEvents": [
+          {
+            "id": "cev-1792213985381",
+            "title": "جلسه تمرینی المپیاد",
+            "date": "1405-02-15",
+            "section": "competition"
+          }
+        ],
+        "homeworks": [],
+        "exams": [],
+        "studySessions": [],
+        "skills": [],
+        "competitions": [],
+        "goals": [],
+        "weeklyReviews": [],
+        "weeklyCells": [],
+        "dayData": {},
+        "activityLogs": [],
+        "notifications": [],
+        "habits": [],
+        "reviews": [],
+        "resources": [],
+        "inboxItems": [],
+        "trash": [],
+        "userId": "6886c243-632f-4285-9f86-88b4a4c551ba",
+        "_lastModified": "2026-10-17T05:13:06.283Z"
+      }
     }
   ],
   "conversations": {},
   "metadata": {
     "createdAt": "2026-10-16T09:40:47.670Z",
-    "lastSavedAt": "2026-10-16T12:18:00.484Z",
-    "totalWrites": 33
+    "lastSavedAt": "2026-10-17T05:13:06.287Z",
+    "totalWrites": 73
   }
 }

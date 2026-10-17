@@ -28,6 +28,8 @@ import {
   Edit2,
   ChevronDown,
   ChevronUp,
+  ListTodo,
+  FileText,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -38,14 +40,13 @@ import {
   getRelativeTimeString,
 } from '../../utils/jalali';
 import { NavTab } from '../layout/Sidebar';
-import { Priority, SectionType, TaskItem } from '../../types';
+import { Priority, SectionType } from '../../types';
 
 interface DashboardViewProps {
   onNavigate: (tab: NavTab) => void;
   onOpenQuickAdd: () => void;
 }
 
-// Standard Modular Section IDs for Layout Order & Visibility
 export type DashboardSectionId =
   | 'today_tasks'
   | 'quick_pillars'
@@ -104,7 +105,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     toggleNotePinned,
     notifications,
     clearNotification,
-    rolloverOverdueTasks,
     activityLogs,
     customization,
     updateCustomization,
@@ -118,8 +118,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   // Filter for today's tasks: 'all' | 'pending' | 'completed'
   const [taskFilter, setTaskFilter] = useState<'all' | 'pending' | 'completed'>('all');
 
-  // Inline Quick Add Task for Today State
-  const [showInlineAddForm, setShowInlineAddForm] = useState(false);
+  // Compact Inline Quick Add Task for Today
+  const [showInlineTaskInput, setShowInlineTaskInput] = useState(false);
   const [quickTaskTitle, setQuickTaskTitle] = useState('');
   const [quickTaskTime, setQuickTaskTime] = useState('');
   const [quickTaskPriority, setQuickTaskPriority] = useState<Priority>('medium');
@@ -152,20 +152,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   const currentIranianDayIdx = getIranianDayOfWeek(today);
   const isSchoolDay = currentIranianDayIdx >= 0 && currentIranianDayIdx <= 4;
 
-  // 1. GREETING BASED ON TIME OF DAY
+  // 1. Time-of-day greeting (peaceful and warm)
   const hour = today.getHours();
   const greeting =
     hour >= 5 && hour < 12
       ? 'صبح بخیر'
       : hour >= 12 && hour < 17
       ? 'بعدازظهر بخیر'
-      : hour >= 17 && hour < 21
+      : hour >= 17 && hour < 22
       ? 'عصر بخیر'
       : 'شب بخیر';
 
   const userName = currentUser?.name || profile.name || 'همراه گرامی';
 
-  // 2. TODAY'S TASKS CALCULATION
+  // 2. Today's Tasks
   const currentDayData = dayData[currentIranianDayIdx] || { preSchoolTasks: [], postSchoolTasks: [], notes: '' };
 
   const todayPostTasks = (currentDayData.postSchoolTasks || []).map((t) => ({
@@ -174,7 +174,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     time: t.dueTime || '',
     priority: t.priority || 'medium',
     completed: t.completed,
-    source: 'برنامه‌ریز روزانه',
+    source: 'برنامه روزانه',
     type: 'postSchool' as const,
   }));
 
@@ -184,7 +184,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     time: t.dueTime || '',
     priority: t.priority || 'medium',
     completed: t.completed,
-    source: 'کارهای صبح',
+    source: 'برنامه صبحگاهی',
     type: 'preSchool' as const,
   }));
 
@@ -217,21 +217,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       }))
   );
 
-  // Unified sorted tasks for today (sorted by high priority > medium > low, then time)
+  // Unified sorted tasks for today
   const allTodayTasks = useMemo(() => {
     const list = [...todayHomeworkTasks, ...todayPreTasks, ...todayPostTasks, ...highPriorityProjectTasks];
     const priorityWeight: Record<Priority, number> = { high: 3, medium: 2, low: 1 };
 
     return list.sort((a, b) => {
-      // Overdue items come first
       if ((a as any).isOverdue && !(b as any).isOverdue) return -1;
       if (!(a as any).isOverdue && (b as any).isOverdue) return 1;
 
-      // Then by priority
       const weightDiff = (priorityWeight[b.priority] || 2) - (priorityWeight[a.priority] || 2);
       if (weightDiff !== 0) return weightDiff;
 
-      // Then by time if present
       if (a.time && b.time) return a.time.localeCompare(b.time);
       return 0;
     });
@@ -241,7 +238,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   const completedTasksCount = allTodayTasks.filter((t) => t.completed).length;
   const remainingTasksCount = totalTasksCount - completedTasksCount;
 
-  // Filtered tasks based on active filter tab
+  // Filtered tasks based on active filter
   const filteredTasks = useMemo(() => {
     if (taskFilter === 'pending') return allTodayTasks.filter((t) => !t.completed);
     if (taskFilter === 'completed') return allTodayTasks.filter((t) => t.completed);
@@ -319,15 +316,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     setQuickTaskTitle('');
     setQuickTaskTime('');
     setQuickTaskPriority('medium');
-    setShowInlineAddForm(false);
+    setShowInlineTaskInput(false);
   };
 
-  // 3. QUICK ACCESS PILLARS DATA
+  // 3. 4 Pillars Overview Data
   const pendingHomeworks = homeworks.filter((h) => !h.completed);
   const overdueHomeworks = homeworks.filter((h) => !h.completed && h.dueDate < todayIso);
   const activeProjects = projects.filter((p) => p.status !== 'completed');
 
-  // Next competition
   const nextCompetition = competitions
     .filter((c) => c.readinessStatus !== 'completed')
     .slice()
@@ -337,7 +333,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     ? Math.max(0, Math.ceil((new Date(nextCompetition.registrationDeadline).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
     : null;
 
-  // 4. UPCOMING DEADLINES & SCHEDULE (Next 14 Days)
+  // 4. Upcoming Deadlines & Schedule (Exams, Events, Future Homeworks)
   const upcomingDeadlines = useMemo(() => {
     const list: Array<{
       id: string;
@@ -393,7 +389,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
         });
       });
 
-    // Sort by date ascending and take max 4
     return list.sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
   }, [exams, calendarEvents, homeworks, todayIso]);
 
@@ -416,7 +411,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     setShowQuickEventForm(false);
   };
 
-  // 5. PROGRESS & ACTIVE GOALS
+  // 5. Active Goals
   const activeGoals = useMemo(() => {
     return goals
       .filter((g) => g.status !== 'completed')
@@ -425,10 +420,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   }, [goals]);
 
   const completedGoalsCount = goals.filter((g) => g.status === 'completed').length;
-  const overallGoalsProgress =
-    goals.length > 0
-      ? Math.round(goals.reduce((acc, g) => acc + (g.progressPercentage || 0), 0) / goals.length)
-      : 0;
 
   // Handle Quick Goal Add
   const handleCreateQuickGoal = (e: React.FormEvent) => {
@@ -451,7 +442,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     setShowQuickGoalForm(false);
   };
 
-  // 6. NOTES & REMINDERS
+  // 6. Notes & Reminders
   const importantNotes = useMemo(() => {
     const pinned = notes.filter((n) => n.pinned);
     if (pinned.length >= 3) return pinned.slice(0, 3);
@@ -476,7 +467,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
     setShowQuickNoteForm(false);
   };
 
-  // 7. SCHOOL TIMETABLE (Secondary)
+  // 7. School Timetable for Today
   const todayBells = isSchoolDay
     ? [1, 2, 3, 4, 5].map((period) => {
         const cell = weeklyCells.find((c) => c.dayIndex === currentIranianDayIdx && c.period === period);
@@ -491,7 +482,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       })
     : [];
 
-  // CUSTOMIZATION & SECTION ORDERING
+  // Customization & Section Order
   const savedOrder = customization.dashboardCardsOrder || [];
   const hiddenCards = customization.hiddenDashboardCards || [];
 
@@ -544,74 +535,94 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
   return (
     <div className="space-y-6 w-full min-w-0" dir="rtl">
       {/* =========================================================================
-          SECTION 1: سربرگ ساده، شخصی و مدرن
+          1. MINIMAL, WARM & CALMING HEADER
           ========================================================================= */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-4 border-b border-[#E7E5DF] dark:border-[#252525]">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-4 border-b border-stone-200/80 dark:border-stone-800">
         <div>
-          {/* Persian Date & Day of Week */}
-          <div className="flex items-center gap-2 text-xs text-[#74756F] dark:text-[#A0A0A0] mb-1 font-medium">
-            <CalendarIcon className="w-3.5 h-3.5 text-[#D6A62E]" />
+          {/* Persian Date & Weekday */}
+          <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-1 font-medium">
+            <CalendarIcon className="w-3.5 h-3.5 text-[var(--accent-primary)] opacity-90" />
             <span>{formatJalaliFull(today)}</span>
             <span aria-hidden="true" className="opacity-40">·</span>
             <span>{getIranianDayName(today)}</span>
           </div>
 
-          {/* Personal Greeting & Subtle Today Summary */}
+          {/* Personal Greeting & Calm Status Subtitle */}
           <div className="flex items-baseline gap-2.5 flex-wrap">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#292A27] dark:text-[#E8E8E8]">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
               {greeting}، {userName}
             </h1>
 
-            {/* Subtle status text (concise, peaceful) */}
-            <span className="text-xs text-[#74756F] dark:text-[#A0A0A0] font-normal">
+            <span className="text-xs text-stone-500 dark:text-stone-400 font-normal">
               {totalTasksCount === 0
-                ? 'امروز زمان آرام و منعطفی داری'
+                ? 'امروز زمان آرامی داری؛ کاری در صف انتظار نیست.'
                 : remainingTasksCount === 0
-                ? 'تمام کارهای امروز با موفقیت تکمیل شده‌اند'
-                : `${toPersianDigits(remainingTasksCount)} کار باقی‌مانده داری`}
+                ? 'تمام کارهای امروز با موفقیت تکمیل شده‌اند.'
+                : `${toPersianDigits(remainingTasksCount)} کار برای امروز باقی‌مانده است.`}
             </span>
           </div>
         </div>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Layout Configuration Button */}
+          {/* Dashboard Section Customizer */}
           <button
+            type="button"
             onClick={() => setShowConfigModal(true)}
-            className="p-2 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] bg-white dark:bg-[#0D0D0D] hover:bg-[#F9F8F5] dark:hover:bg-[#151515] border border-[#E7E5DF] dark:border-[#252525] rounded-xl transition-all cursor-pointer shadow-2xs"
-            title="چیدمان داشبورد"
+            className="p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 bg-white dark:bg-[#121316] hover:bg-stone-50 dark:hover:bg-stone-800/80 border border-stone-200/80 dark:border-stone-800 rounded-xl transition-all cursor-pointer shadow-2xs"
+            title="شخصی‌سازی چیدمان داشبورد"
+            aria-label="تنظیمات چیدمان"
           >
             <SlidersHorizontal className="w-4 h-4" />
           </button>
 
-          {/* Prominent Primary "ثبت کار امروز" Button with Matte Gold Accent */}
+          {/* Quick Note Fast Toggle */}
           <button
-            onClick={() => setShowInlineAddForm((prev) => !prev)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-[#D6A62E] hover:bg-[#c4931a] text-black text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs active:scale-98"
+            type="button"
+            onClick={() => {
+              setShowQuickNoteForm((prev) => !prev);
+              setShowInlineTaskInput(false);
+            }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-stone-700 dark:text-stone-300 bg-white dark:bg-[#121316] hover:bg-stone-50 dark:hover:bg-stone-800/80 border border-stone-200/80 dark:border-stone-800 rounded-xl text-xs font-medium transition-all cursor-pointer shadow-2xs"
+            title="ثبت سریع یادداشت"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <FileText className="w-3.5 h-3.5 text-stone-400" />
+            <span>یادداشت سریع</span>
+          </button>
+
+          {/* Primary Quick Task Add Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setShowInlineTaskInput((prev) => !prev);
+              setShowQuickNoteForm(false);
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-xs active:scale-[0.99]"
+          >
+            <Plus className="w-4 h-4" />
             <span>ثبت کار امروز</span>
           </button>
         </div>
       </header>
 
-      {/* Notifications / Alerts banner (Minimal & Dismissable) */}
+      {/* Floating Notifications (if any) */}
       {activeNotifications.length > 0 && (
         <div className="space-y-2">
           {activeNotifications.map((n) => (
             <div
               key={n.id}
-              className="p-3 bg-[#D6A62E]/10 border border-[#D6A62E]/30 rounded-xl flex items-center justify-between gap-3 text-xs text-[#292A27] dark:text-[#E8E8E8]"
+              className="p-3 bg-stone-50 dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 rounded-xl flex items-center justify-between gap-3 text-xs text-stone-800 dark:text-stone-200"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <Bell className="w-4 h-4 text-[#D6A62E] shrink-0" />
+                <Bell className="w-4 h-4 text-[var(--accent-primary)] shrink-0" />
                 <span className="font-semibold">{n.title}:</span>
-                <span className="truncate text-[#74756F] dark:text-[#A0A0A0]">{n.message}</span>
+                <span className="truncate text-stone-600 dark:text-stone-400">{n.message}</span>
               </div>
               <button
+                type="button"
                 onClick={() => clearNotification(n.id)}
-                className="text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] p-1 rounded-md cursor-pointer"
-                title="بستن"
+                className="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-1 rounded-md cursor-pointer"
+                title="بستن اعلان"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -621,128 +632,130 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       )}
 
       {/* =========================================================================
-          SECTION 2: کارت‌های اصلی (4 Pillars: مدرسه، مهارت‌ها، پروژه‌ها، مسابقات)
+          2. THE 4 PILLARS (مدرسه، مهارت‌ها، پروژه‌ها، مسابقات)
           ========================================================================= */}
       {isSectionVisible('quick_pillars') && (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
-          {/* Pillar 1: School */}
-          <div
-            onClick={() => onNavigate('school')}
-            className="group p-3.5 sm:p-4 bg-white dark:bg-[#0D0D0D] rounded-2xl border border-[#E7E5DF] dark:border-[#252525] hover:border-[#D6A62E]/50 transition-all cursor-pointer shadow-2xs"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-[#292A27] dark:text-[#E8E8E8]">مدرسه</span>
-              <div className="w-7 h-7 rounded-xl bg-[#D6A62E]/10 text-[#D6A62E] flex items-center justify-center">
-                <GraduationCap className="w-4 h-4" />
+        <section aria-label="بخش‌های اصلی">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* Pillar 1: School */}
+            <div
+              onClick={() => onNavigate('school')}
+              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">مدرسه و درس‌ها</span>
+                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
               </div>
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100">
+                {toPersianDigits(pendingHomeworks.length)}
+                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">تکلیف در انتظار</span>
+              </div>
+              {overdueHomeworks.length > 0 ? (
+                <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1">
+                  {toPersianDigits(overdueHomeworks.length)} تکلیف عقب‌افتاده
+                </p>
+              ) : (
+                <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 flex items-center justify-between">
+                  <span>تکالیف به‌روز</span>
+                  <ChevronLeft className="w-3 h-3 text-stone-400 group-hover:-translate-x-0.5 transition-transform" />
+                </p>
+              )}
             </div>
-            <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8]">
-              {toPersianDigits(pendingHomeworks.length)}
-              <span className="text-xs font-normal text-[#74756F] dark:text-[#A0A0A0] mr-1.5">تکلیف در انتظار</span>
-            </div>
-            {overdueHomeworks.length > 0 ? (
-              <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium mt-1">
-                {toPersianDigits(overdueHomeworks.length)} تکلیف عقب‌افتاده
+
+            {/* Pillar 2: Skills */}
+            <div
+              onClick={() => onNavigate('skills')}
+              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">توسعه مهارت‌ها</span>
+                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100">
+                {toPersianDigits(skills.length)}
+                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">مهارت فعال</span>
+              </div>
+              <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 flex items-center justify-between">
+                <span>نقشه‌راه و تمرین‌ها</span>
+                <ChevronLeft className="w-3 h-3 text-stone-400 group-hover:-translate-x-0.5 transition-transform" />
               </p>
-            ) : (
-              <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-1 flex items-center justify-between">
-                <span>تکالیف به‌روز</span>
-                <ChevronLeft className="w-3 h-3 text-[#A0A0A0] group-hover:-translate-x-0.5 transition-transform" />
+            </div>
+
+            {/* Pillar 3: Projects */}
+            <div
+              onClick={() => onNavigate('projects')}
+              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">مدیریت پروژه‌ها</span>
+                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                  <FolderGit2 className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100">
+                {toPersianDigits(activeProjects.length)}
+                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">پروژه در جریان</span>
+              </div>
+              <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 flex items-center justify-between">
+                <span>تخته وظایف کانبان</span>
+                <ChevronLeft className="w-3 h-3 text-stone-400 group-hover:-translate-x-0.5 transition-transform" />
               </p>
-            )}
-          </div>
+            </div>
 
-          {/* Pillar 2: Skills */}
-          <div
-            onClick={() => onNavigate('skills')}
-            className="group p-3.5 sm:p-4 bg-white dark:bg-[#0D0D0D] rounded-2xl border border-[#E7E5DF] dark:border-[#252525] hover:border-[#D6A62E]/50 transition-all cursor-pointer shadow-2xs"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-[#292A27] dark:text-[#E8E8E8]">مهارت‌ها</span>
-              <div className="w-7 h-7 rounded-xl bg-[#D6A62E]/10 text-[#D6A62E] flex items-center justify-center">
-                <Sparkles className="w-4 h-4" />
+            {/* Pillar 4: Competitions */}
+            <div
+              onClick={() => onNavigate('competitions')}
+              className="group p-4 bg-white dark:bg-[#121316] rounded-2xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 transition-all cursor-pointer shadow-2xs"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">مسابقات و المپیاد</span>
+                <div className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
+                  <Trophy className="w-4 h-4" />
+                </div>
               </div>
-            </div>
-            <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8]">
-              {toPersianDigits(skills.length)}
-              <span className="text-xs font-normal text-[#74756F] dark:text-[#A0A0A0] mr-1.5">مهارت فعال</span>
-            </div>
-            <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-1 flex items-center justify-between">
-              <span>نقشه‌راه و تمرین‌ها</span>
-              <ChevronLeft className="w-3 h-3 text-[#A0A0A0] group-hover:-translate-x-0.5 transition-transform" />
-            </p>
-          </div>
-
-          {/* Pillar 3: Projects */}
-          <div
-            onClick={() => onNavigate('projects')}
-            className="group p-3.5 sm:p-4 bg-white dark:bg-[#0D0D0D] rounded-2xl border border-[#E7E5DF] dark:border-[#252525] hover:border-[#D6A62E]/50 transition-all cursor-pointer shadow-2xs"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-[#292A27] dark:text-[#E8E8E8]">پروژه‌ها</span>
-              <div className="w-7 h-7 rounded-xl bg-[#D6A62E]/10 text-[#D6A62E] flex items-center justify-center">
-                <FolderGit2 className="w-4 h-4" />
+              <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-stone-900 dark:text-stone-100 truncate">
+                {daysToNextComp !== null ? `${toPersianDigits(daysToNextComp)} روز` : toPersianDigits(competitions.length)}
+                <span className="text-xs font-normal text-stone-500 dark:text-stone-400 mr-1.5">
+                  {daysToNextComp !== null ? 'تا موعد بعدی' : 'رویداد ثبت‌شده'}
+                </span>
               </div>
+              <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-1 truncate">
+                {nextCompetition ? nextCompetition.title : 'آماده‌سازی آزمون'}
+              </p>
             </div>
-            <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8]">
-              {toPersianDigits(activeProjects.length)}
-              <span className="text-xs font-normal text-[#74756F] dark:text-[#A0A0A0] mr-1.5">پروژه در جریان</span>
-            </div>
-            <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-1 flex items-center justify-between">
-              <span>تخته کانبان و تسک‌ها</span>
-              <ChevronLeft className="w-3 h-3 text-[#A0A0A0] group-hover:-translate-x-0.5 transition-transform" />
-            </p>
           </div>
-
-          {/* Pillar 4: Competitions */}
-          <div
-            onClick={() => onNavigate('competitions')}
-            className="group p-3.5 sm:p-4 bg-white dark:bg-[#0D0D0D] rounded-2xl border border-[#E7E5DF] dark:border-[#252525] hover:border-[#D6A62E]/50 transition-all cursor-pointer shadow-2xs"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-[#292A27] dark:text-[#E8E8E8]">مسابقات</span>
-              <div className="w-7 h-7 rounded-xl bg-[#D6A62E]/10 text-[#D6A62E] flex items-center justify-center">
-                <Trophy className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="text-base sm:text-lg font-bold font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8]">
-              {daysToNextComp !== null ? `${toPersianDigits(daysToNextComp)} روز` : toPersianDigits(competitions.length)}
-              <span className="text-xs font-normal text-[#74756F] dark:text-[#A0A0A0] mr-1.5">
-                {daysToNextComp !== null ? 'تا رویداد بعدی' : 'رویداد ثبت‌شده'}
-              </span>
-            </div>
-            <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-1 truncate">
-              {nextCompetition ? nextCompetition.title : 'آماده‌سازی المپیاد'}
-            </p>
-          </div>
-        </div>
+        </section>
       )}
 
       {/* =========================================================================
-          MAIN 2-COLUMN BALANCED WORKSPACE
-          Right: Today's Tasks & MIT (Centerpiece)
+          3. MAIN 2-COLUMN BALANCED WORKSPACE
+          Right: Today's Tasks & MIT (Focal Centerpiece)
           Left: Upcoming Deadlines + Goals + Notes
           ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 xl:gap-7 items-start">
-        {/* RIGHT COLUMN (7 of 12 cols on desktop, 8 on 2xl): برنامه امروز (Centerpiece) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+        {/* RIGHT COLUMN (7 cols on lg, 8 on 2xl): Today's Tasks */}
         <div className="lg:col-span-7 xl:col-span-7 2xl:col-span-8 space-y-6 min-w-0">
-          {/* SECTION: برنامه امروز */}
+          {/* Section: Today's Tasks */}
           {isSectionVisible('today_tasks') && (
-            <section className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 sm:p-6 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">
-              {/* Header of Today's Tasks */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-[#E7E5DF] dark:border-[#252525] gap-2.5">
+            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 sm:p-6 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+              {/* Header with Title and Filter Tabs */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-stone-100 dark:border-stone-800/80 gap-2.5">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#D6A62E]" />
-                  <h2 className="text-sm font-bold text-[#292A27] dark:text-[#E8E8E8]">
-                    برنامه و کارهای امروز
+                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                    کارهای امروز
                   </h2>
-                  <span className="text-xs text-[#74756F] dark:text-[#A0A0A0] font-mono tabular-nums">
-                    ({toPersianDigits(remainingTasksCount)} باقیمانده · {toPersianDigits(completedTasksCount)} انجام‌شده)
+                  <span className="text-xs text-stone-400 dark:text-stone-500 font-mono tabular-nums">
+                    ({toPersianDigits(remainingTasksCount)} در انتظار · {toPersianDigits(completedTasksCount)} انجام‌شده)
                   </span>
                 </div>
 
-                {/* Filter Tabs: همه / انجام‌نشده / تکمیل‌شده */}
-                <div className="flex items-center gap-1 bg-[#F9F8F5] dark:bg-[#151515] p-0.5 rounded-xl border border-[#E7E5DF] dark:border-[#252525]">
+                {/* Filter Tabs */}
+                <div className="flex items-center gap-1 bg-stone-100/70 dark:bg-stone-900/80 p-0.5 rounded-xl border border-stone-200/60 dark:border-stone-800/80">
                   {(['all', 'pending', 'completed'] as const).map((filterKey) => (
                     <button
                       key={filterKey}
@@ -750,21 +763,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       onClick={() => setTaskFilter(filterKey)}
                       className={`px-2.5 py-1 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                         taskFilter === filterKey
-                          ? 'bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] shadow-2xs font-semibold'
-                          : 'text-[#74756F] dark:text-[#A0A0A0] hover:text-[#292A27] dark:hover:text-[#E8E8E8]'
+                          ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-2xs font-semibold'
+                          : 'text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200'
                       }`}
                     >
-                      {filterKey === 'all' ? 'همه' : filterKey === 'pending' ? 'انجام‌نشده' : 'تکمیل‌شده'}
+                      {filterKey === 'all' ? 'همه' : filterKey === 'pending' ? 'در انتظار' : 'انجام‌شده'}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Inline Quick Add Task Form */}
-              {showInlineAddForm && (
+              {/* Compact Inline Quick-Add Task Form */}
+              {showInlineTaskInput && (
                 <form
                   onSubmit={handleAddTodayTask}
-                  className="mb-4 p-3 bg-[#F9F8F5] dark:bg-[#151515] border border-[#E7E5DF] dark:border-[#252525] rounded-xl space-y-2.5 animate-in fade-in duration-150"
+                  className="mb-4 p-3 bg-stone-50/80 dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 rounded-xl space-y-2 animate-in fade-in duration-150"
                 >
                   <input
                     type="text"
@@ -773,7 +786,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     placeholder="عنوان کار جدید برای امروز..."
                     autoFocus
                     required
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] placeholder-[#74756F]/60 dark:placeholder-[#A0A0A0]/60 focus:outline-none focus:ring-1 focus:ring-[#D6A62E]"
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-[var(--accent-primary)]"
                   />
 
                   <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -782,16 +795,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         type="time"
                         value={quickTaskTime}
                         onChange={(e) => setQuickTaskTime(e.target.value)}
-                        className="px-2 py-1 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] font-mono"
+                        className="px-2 py-1 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 font-mono"
                         title="ساعت انجام"
                       />
 
                       <select
                         value={quickTaskPriority}
                         onChange={(e) => setQuickTaskPriority(e.target.value as Priority)}
-                        className="px-2 py-1 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8]"
+                        className="px-2 py-1 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
                       >
-                        <option value="high">اولویت فوری</option>
+                        <option value="high">اولویت بالا</option>
                         <option value="medium">اولویت متوسط</option>
                         <option value="low">اولویت عادی</option>
                       </select>
@@ -800,32 +813,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     <div className="flex items-center gap-2 mr-auto">
                       <button
                         type="button"
-                        onClick={() => setShowInlineAddForm(false)}
-                        className="px-2.5 py-1 text-xs text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] cursor-pointer"
+                        onClick={() => setShowInlineTaskInput(false)}
+                        className="px-2.5 py-1 text-xs text-stone-500 hover:text-stone-800 dark:text-stone-400 cursor-pointer"
                       >
                         انصراف
                       </button>
                       <button
                         type="submit"
-                        className="px-3 py-1 bg-[#D6A62E] text-black text-xs font-semibold rounded-lg hover:bg-[#c4931a] cursor-pointer"
+                        className="px-3 py-1 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded-lg cursor-pointer"
                       >
-                        ثبت کار
+                        افزودن
                       </button>
                     </div>
                   </div>
                 </form>
               )}
 
-              {/* HIGHLIGHTED: مهم‌ترین کار روز (Most Important Task - MIT) */}
+              {/* HIGHLIGHTED: Most Important Task (MIT) */}
               {mostImportantTask && taskFilter !== 'completed' && !mostImportantTask.completed && (
-                <div className="mb-4 p-3.5 rounded-xl border border-[#D6A62E]/40 bg-[#D6A62E]/5 flex items-start justify-between gap-3 transition-all">
+                <div className="mb-4 p-3.5 rounded-xl border border-stone-200/90 dark:border-stone-800 bg-stone-50/60 dark:bg-stone-900/40 flex items-start justify-between gap-3 transition-all">
                   <div className="flex items-start gap-3 min-w-0">
                     <button
+                      type="button"
                       onClick={() => handleToggleTask(mostImportantTask)}
                       className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 mt-0.5 cursor-pointer ${
                         mostImportantTask.completed
-                          ? 'bg-[#D6A62E] text-black'
-                          : 'border border-[#D6A62E]/60 hover:bg-[#D6A62E]/10'
+                          ? 'bg-[var(--accent-primary)] text-white'
+                          : 'border border-stone-400 dark:border-stone-600 hover:border-stone-800 dark:hover:border-stone-300'
                       }`}
                       title="علامت به عنوان انجام‌شده"
                     >
@@ -834,28 +848,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#D6A62E]/20 text-[#D6A62E]">
-                          <Star className="w-3 h-3 fill-current" />
-                          <span>مهم‌ترین کار روز</span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--accent-primary)]">
+                          <Star className="w-3.5 h-3.5 fill-current" />
+                          <span>تمرکز اصلی امروز</span>
                         </span>
                         {mostImportantTask.time && (
-                          <span className="text-[11px] font-mono tabular-nums text-[#74756F] dark:text-[#A0A0A0]">
-                            {toPersianDigits(mostImportantTask.time)}
+                          <span className="text-[11px] font-mono tabular-nums text-stone-500 dark:text-stone-400">
+                            · {toPersianDigits(mostImportantTask.time)}
                           </span>
                         )}
                       </div>
 
-                      <p className="text-sm font-semibold text-[#292A27] dark:text-[#E8E8E8]">
+                      <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
                         {mostImportantTask.title}
                       </p>
 
-                      <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-0.5">
+                      <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
                         {mostImportantTask.source}
                       </p>
                     </div>
                   </div>
 
-                  <span className="text-[10px] text-[#D6A62E] font-medium px-2 py-0.5 rounded bg-[#D6A62E]/10 shrink-0">
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 px-2 py-0.5 rounded bg-stone-200/50 dark:bg-stone-800/50 shrink-0">
                     اولویت اصلی
                   </span>
                 </div>
@@ -865,24 +879,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <div className="space-y-2">
                 {filteredTasks.length === 0 ? (
                   /* Calm, Graceful Empty State */
-                  <div className="py-8 text-center px-4 rounded-xl border border-dashed border-[#E7E5DF] dark:border-[#252525] bg-[#F9F8F5]/60 dark:bg-[#151515]/60">
-                    <CheckCircle2 className="w-7 h-7 text-[#A0A0A0] mx-auto mb-2 opacity-50" />
-                    <p className="text-xs font-semibold text-[#292A27] dark:text-[#E8E8E8]">
+                  <div className="py-8 text-center px-4 rounded-xl border border-dashed border-stone-200/80 dark:border-stone-800 bg-stone-50/40 dark:bg-stone-900/30">
+                    <CheckCircle2 className="w-7 h-7 text-stone-400 dark:text-stone-500 mx-auto mb-2 opacity-60" />
+                    <p className="text-xs font-semibold text-stone-800 dark:text-stone-200">
                       {taskFilter === 'completed'
-                        ? 'هنوز کاری تکمیل نشده است'
+                        ? 'هنوز کاری تکمیل نشده است.'
                         : taskFilter === 'pending'
-                        ? 'کاری در وضعیت انجام‌نشده وجود ندارد'
-                        : 'امروز هیچ کاری ثبت نشده است'}
+                        ? 'کاری در صف انتظار وجود ندارد.'
+                        : 'امروز هیچ کاری ثبت نشده است.'}
                     </p>
-                    <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-1 max-w-sm mx-auto">
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 max-w-sm mx-auto">
                       {taskFilter === 'all'
-                        ? 'می‌توانی روز را با افزودن کارهای ضروری یا آغاز یک فعالیت تازه آغاز کنی.'
-                        : 'از فیلترهای بالا برای مشاهده سایر وضعیت‌ها استفاده کن.'}
+                        ? 'می‌توانی روز را با افزودن یک کار کوچک یا ثبت یادداشت روزانه آغاز کنی.'
+                        : 'از تب‌های بالا برای بررسی سایر وضعیت‌ها استفاده کن.'}
                     </p>
                     {taskFilter === 'all' && (
                       <button
-                        onClick={() => setShowInlineAddForm(true)}
-                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#0D0D0D] border border-[#E7E5DF] dark:border-[#252525] text-[#292A27] dark:text-[#E8E8E8] hover:bg-[#F9F8F5] dark:hover:bg-[#151515] transition-colors cursor-pointer"
+                        type="button"
+                        onClick={() => setShowInlineTaskInput(true)}
+                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-50 transition-colors cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>افزودن اولین کار امروز</span>
@@ -898,13 +913,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       return (
                         <div
                           key={task.id}
-                          className="p-3 rounded-xl border border-[#D6A62E] bg-[#F9F8F5] dark:bg-[#151515] space-y-2"
+                          className="p-3 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/80 space-y-2"
                         >
                           <input
                             type="text"
                             value={editingTaskTitle}
                             onChange={(e) => setEditingTaskTitle(e.target.value)}
-                            className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] focus:outline-none"
+                            className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none"
                             placeholder="عنوان کار..."
                             autoFocus
                           />
@@ -914,14 +929,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                                 type="time"
                                 value={editingTaskTime}
                                 onChange={(e) => setEditingTaskTime(e.target.value)}
-                                className="px-2 py-1 text-xs rounded border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8]"
+                                className="px-2 py-1 text-xs rounded border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
                               />
                               <select
                                 value={editingTaskPriority}
                                 onChange={(e) => setEditingTaskPriority(e.target.value as Priority)}
-                                className="px-2 py-1 text-xs rounded border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8]"
+                                className="px-2 py-1 text-xs rounded border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
                               >
-                                <option value="high">فوری</option>
+                                <option value="high">بالا</option>
                                 <option value="medium">متوسط</option>
                                 <option value="low">عادی</option>
                               </select>
@@ -930,14 +945,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                               <button
                                 type="button"
                                 onClick={() => setEditingTaskId(null)}
-                                className="px-2 py-1 text-xs text-[#74756F] dark:text-[#A0A0A0]"
+                                className="px-2 py-1 text-xs text-stone-500 hover:text-stone-800 dark:text-stone-400"
                               >
                                 لغو
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleSaveEditTask(task)}
-                                className="px-2.5 py-1 text-xs bg-[#D6A62E] text-black font-semibold rounded"
+                                className="px-2.5 py-1 text-xs bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-semibold rounded"
                               >
                                 ذخیره
                               </button>
@@ -952,10 +967,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         key={task.id}
                         className={`group flex items-center justify-between p-3 rounded-xl border transition-all ${
                           task.completed
-                            ? 'bg-[#F9F8F5]/50 dark:bg-[#151515]/50 border-[#E7E5DF]/70 dark:border-[#252525]/70 opacity-70'
+                            ? 'bg-stone-50/40 dark:bg-stone-900/30 border-stone-200/50 dark:border-stone-800/50 opacity-60'
                             : (task as any).isOverdue
-                            ? 'bg-rose-500/5 border-rose-500/30'
-                            : 'bg-[#F9F8F5] dark:bg-[#151515] border-[#E7E5DF] dark:border-[#252525] hover:border-[#74756F]/40 dark:hover:border-[#A0A0A0]/40'
+                            ? 'bg-rose-50/30 dark:bg-rose-950/20 border-rose-200/60 dark:border-rose-900/40'
+                            : 'bg-stone-50/70 dark:bg-stone-900/60 border-stone-200/70 dark:border-stone-800/70 hover:border-stone-300 dark:hover:border-stone-700'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -965,9 +980,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                             onClick={() => handleToggleTask(task)}
                             className={`w-4 h-4 rounded flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                               task.completed
-                                ? 'bg-[#D6A62E] text-black'
-                                : 'border border-[#74756F] dark:border-[#A0A0A0] hover:border-[#292A27] dark:hover:border-[#E8E8E8]'
+                                ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900'
+                                : 'border border-stone-300 dark:border-stone-600 hover:border-stone-800 dark:hover:border-stone-200'
                             }`}
+                            aria-label={task.completed ? 'علامت به عنوان انجام‌نشده' : 'علامت به عنوان انجام‌شده'}
                           >
                             {task.completed && <Check className="w-3 h-3 stroke-[3]" />}
                           </button>
@@ -976,13 +992,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                             <p
                               className={`text-xs font-medium truncate ${
                                 task.completed
-                                  ? 'line-through text-[#74756F] dark:text-[#A0A0A0]'
-                                  : 'text-[#292A27] dark:text-[#E8E8E8]'
+                                  ? 'line-through text-stone-400 dark:text-stone-500'
+                                  : 'text-stone-800 dark:text-stone-200'
                               }`}
                             >
                               {task.title}
                             </p>
-                            <div className="flex items-center gap-2 text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-0.5">
+                            <div className="flex items-center gap-2 text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
                               <span>{task.source}</span>
                               {task.time && (
                                 <>
@@ -1000,19 +1016,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                           </div>
                         </div>
 
-                        {/* Actions: Priority indicator, Edit, Delete, Pin MIT */}
+                        {/* Actions */}
                         <div className="flex items-center gap-1.5 shrink-0">
-                          {/* Priority badge */}
+                          {/* Priority Indicator */}
                           <span
                             className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
                               task.priority === 'high'
-                                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                                ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300'
                                 : task.priority === 'medium'
-                                ? 'bg-[#D6A62E]/15 text-[#D6A62E]'
-                                : 'bg-slate-200 dark:bg-slate-800 text-[#74756F] dark:text-[#A0A0A0]'
+                                ? 'bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300'
+                                : 'text-stone-400 dark:text-stone-500'
                             }`}
                           >
-                            {task.priority === 'high' ? 'فوری' : task.priority === 'medium' ? 'متوسط' : 'عادی'}
+                            {task.priority === 'high' ? 'بالا' : task.priority === 'medium' ? 'متوسط' : 'عادی'}
                           </span>
 
                           {/* Set as MIT toggle */}
@@ -1021,10 +1037,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                             onClick={() => setDesignatedMitId(isMit ? null : task.id)}
                             className={`p-1 rounded cursor-pointer transition-colors ${
                               isMit
-                                ? 'text-[#D6A62E]'
-                                : 'text-[#A0A0A0] hover:text-[#D6A62E] opacity-0 group-hover:opacity-100'
+                                ? 'text-[var(--accent-primary)]'
+                                : 'text-stone-400 hover:text-[var(--accent-primary)] opacity-0 group-hover:opacity-100'
                             }`}
-                            title={isMit ? 'اولویت اصلی کنونی' : 'تعیین به عنوان مهم‌ترین کار'}
+                            title={isMit ? 'تمرکز اصلی روز' : 'انتخاب به عنوان تمرکز اصلی'}
                           >
                             <Star className={`w-3.5 h-3.5 ${isMit ? 'fill-current' : ''}`} />
                           </button>
@@ -1034,7 +1050,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                             <button
                               type="button"
                               onClick={() => handleStartEditTask(task)}
-                              className="p-1 text-[#A0A0A0] hover:text-[#292A27] dark:hover:text-[#E8E8E8] opacity-0 group-hover:opacity-100 transition-opacity rounded cursor-pointer"
+                              className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 opacity-0 group-hover:opacity-100 transition-opacity rounded cursor-pointer"
                               title="ویرایش"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
@@ -1046,7 +1062,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                             <button
                               type="button"
                               onClick={() => handleDeleteTask(task)}
-                              className="p-1 text-[#A0A0A0] hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity rounded cursor-pointer"
+                              className="p-1 text-stone-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity rounded cursor-pointer"
                               title="حذف"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -1061,19 +1077,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </section>
           )}
 
-          {/* SECTION: عادت‌ها و استمرار (Optional / Modular) */}
+          {/* Section: Today's Habits (if habits exist) */}
           {isSectionVisible('today_habits') && habits.length > 0 && (
-            <div className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E7E5DF] dark:border-[#252525]">
+            <div className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-[#D6A62E]" />
-                  <h3 className="text-sm font-bold text-[#292A27] dark:text-[#E8E8E8]">
+                  <Flame className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
                     عادت‌ها و استمرار روزانه
                   </h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => onNavigate('habits')}
-                  className="text-xs text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] flex items-center gap-0.5 cursor-pointer"
+                  className="text-xs text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200 flex items-center gap-0.5 cursor-pointer"
                 >
                   مشاهده همه <ChevronLeft className="w-3 h-3" />
                 </button>
@@ -1087,17 +1104,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       key={h.id}
                       className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${
                         isDoneToday
-                          ? 'bg-[#D6A62E]/10 border-[#D6A62E]/30'
-                          : 'bg-[#F9F8F5] dark:bg-[#151515] border-[#E7E5DF] dark:border-[#252525]'
+                          ? 'bg-stone-50/90 dark:bg-stone-900/80 border-stone-200/90 dark:border-stone-750'
+                          : 'bg-stone-50/50 dark:bg-stone-900/40 border-stone-200/60 dark:border-stone-800'
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <button
+                          type="button"
                           onClick={() => toggleHabitToday(h.id)}
                           className={`w-4 h-4 rounded flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                             isDoneToday
-                              ? 'bg-[#D6A62E] text-black'
-                              : 'border border-[#74756F] dark:border-[#A0A0A0]'
+                              ? 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900'
+                              : 'border border-stone-300 dark:border-stone-600'
                           }`}
                         >
                           {isDoneToday && <Check className="w-3 h-3 stroke-[3]" />}
@@ -1105,13 +1123,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         <div className="min-w-0">
                           <p
                             className={`text-xs font-medium truncate ${
-                              isDoneToday ? 'line-through text-[#74756F] dark:text-[#A0A0A0]' : 'text-[#292A27] dark:text-[#E8E8E8]'
+                              isDoneToday ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-800 dark:text-stone-200'
                             }`}
                           >
                             {h.title}
                           </p>
-                          <span className="text-[10px] text-[#74756F] dark:text-[#A0A0A0] font-mono tabular-nums">
-                            {toPersianDigits(h.streak)} روز پیوسته
+                          <span className="text-[10px] text-stone-400 dark:text-stone-500 font-mono tabular-nums">
+                            {toPersianDigits(h.streak)} روز استمرار
                           </span>
                         </div>
                       </div>
@@ -1123,40 +1141,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
           )}
         </div>
 
-        {/* LEFT COLUMN (5 of 12 cols on desktop, 4 on 2xl): تقویم، اهداف، یادداشت‌ها */}
+        {/* LEFT COLUMN (5 cols on lg, 4 on 2xl): Deadlines, Goals & Notes */}
         <div className="lg:col-span-5 xl:col-span-5 2xl:col-span-4 space-y-6 min-w-0">
-          {/* SECTION 4: تقویم و رویدادهای آینده */}
+          {/* Section: Upcoming Deadlines */}
           {isSectionVisible('upcoming_deadlines') && (
-            <section className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E7E5DF] dark:border-[#252525]">
+            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
-                  <CalendarIcon className="w-4 h-4 text-[#D6A62E]" />
-                  <h3 className="text-sm font-bold text-[#292A27] dark:text-[#E8E8E8]">
-                    تقویم و رویدادهای پیش‌رو
+                  <CalendarIcon className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                    تقویم و موعدهای پیش‌رو
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={() => setShowQuickEventForm((prev) => !prev)}
-                    className="text-xs text-[#D6A62E] hover:underline cursor-pointer flex items-center gap-0.5"
+                    className="text-xs text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white cursor-pointer flex items-center gap-0.5"
                   >
                     <Plus className="w-3 h-3" />
                     <span>رویداد</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => onNavigate('calendar')}
-                    className="text-xs text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] flex items-center gap-0.5 cursor-pointer"
+                    className="text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 flex items-center gap-0.5 cursor-pointer"
                   >
-                    تقویم کامل <ChevronLeft className="w-3 h-3" />
+                    تقویم <ChevronLeft className="w-3 h-3" />
                   </button>
                 </div>
               </div>
 
-              {/* Quick Event inline form */}
+              {/* Inline Quick Event Form */}
               {showQuickEventForm && (
                 <form
                   onSubmit={handleCreateQuickEvent}
-                  className="mb-3 p-3 bg-[#F9F8F5] dark:bg-[#151515] rounded-xl border border-[#E7E5DF] dark:border-[#252525] space-y-2 animate-in fade-in duration-150"
+                  className="mb-3 p-3 bg-stone-50/80 dark:bg-stone-900/60 rounded-xl border border-stone-200 dark:border-stone-800 space-y-2 animate-in fade-in duration-150"
                 >
                   <input
                     type="text"
@@ -1164,33 +1184,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     onChange={(e) => setQuickEventTitle(e.target.value)}
                     placeholder="عنوان رویداد..."
                     required
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none"
                   />
                   <div className="flex items-center gap-2">
                     <input
                       type="date"
                       value={quickEventDate}
                       onChange={(e) => setQuickEventDate(e.target.value)}
-                      className="px-2 py-1 text-xs rounded border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8]"
+                      className="px-2 py-1 text-xs rounded border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
                     />
                     <input
                       type="time"
                       value={quickEventTime}
                       onChange={(e) => setQuickEventTime(e.target.value)}
-                      className="px-2 py-1 text-xs rounded border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8]"
+                      className="px-2 py-1 text-xs rounded border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
                     />
                   </div>
                   <div className="flex justify-end gap-2 pt-1">
                     <button
                       type="button"
                       onClick={() => setShowQuickEventForm(false)}
-                      className="px-2 py-1 text-xs text-[#74756F] dark:text-[#A0A0A0]"
+                      className="px-2 py-1 text-xs text-stone-500 dark:text-stone-400"
                     >
                       لغو
                     </button>
                     <button
                       type="submit"
-                      className="px-3 py-1 bg-[#D6A62E] text-black text-xs font-semibold rounded"
+                      className="px-3 py-1 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded"
                     >
                       ثبت رویداد
                     </button>
@@ -1200,18 +1220,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
               <div className="space-y-2">
                 {upcomingDeadlines.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-[#74756F] dark:text-[#A0A0A0]">
-                    رویداد یا موعد فوری در روزهای آینده وجود ندارد.
+                  <div className="py-5 text-center text-xs text-stone-400 dark:text-stone-500">
+                    رویداد یا موعد فوری در روزهای آینده ثبت نشده است.
                   </div>
                 ) : (
                   upcomingDeadlines.map((item) => (
                     <div
                       key={item.id}
-                      className="p-2.5 rounded-xl bg-[#F9F8F5] dark:bg-[#151515] border border-[#E7E5DF] dark:border-[#252525] flex items-center justify-between gap-3 text-xs"
+                      className="p-2.5 rounded-xl bg-stone-50/60 dark:bg-stone-900/50 border border-stone-200/70 dark:border-stone-800/70 flex items-center justify-between gap-3 text-xs"
                     >
                       <div className="min-w-0">
-                        <p className="font-medium text-[#292A27] dark:text-[#E8E8E8] truncate">{item.title}</p>
-                        <div className="flex items-center gap-1.5 text-[11px] text-[#74756F] dark:text-[#A0A0A0] mt-0.5">
+                        <p className="font-medium text-stone-800 dark:text-stone-200 truncate">{item.title}</p>
+                        <div className="flex items-center gap-1.5 text-[11px] text-stone-400 dark:text-stone-500 mt-0.5">
                           <span>{item.subtitle}</span>
                           {item.time && (
                             <>
@@ -1222,11 +1242,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         </div>
                       </div>
 
-                      <div className="text-left shrink-0">
-                        <span className="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-white dark:bg-[#0D0D0D] border border-[#E7E5DF] dark:border-[#252525] text-[#292A27] dark:text-[#E8E8E8]">
-                          {getRelativeTimeString(item.date)}
-                        </span>
-                      </div>
+                      <span className="text-[10px] text-stone-600 dark:text-stone-400 px-2 py-0.5 rounded bg-white dark:bg-stone-800 border border-stone-200/60 dark:border-stone-700/60 shrink-0">
+                        {getRelativeTimeString(item.date)}
+                      </span>
                     </div>
                   ))
                 )}
@@ -1234,38 +1252,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </section>
           )}
 
-          {/* SECTION 5: پیشرفت و اهداف */}
+          {/* Section: Active Goals */}
           {isSectionVisible('active_goals') && (
-            <section className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E7E5DF] dark:border-[#252525]">
+            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4 text-[#D6A62E]" />
-                  <h3 className="text-sm font-bold text-[#292A27] dark:text-[#E8E8E8]">
-                    پیشرفت و اهداف
+                  <Target className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                    اهداف فعال
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={() => setShowQuickGoalForm((prev) => !prev)}
-                    className="text-xs text-[#D6A62E] hover:underline cursor-pointer flex items-center gap-0.5"
+                    className="text-xs text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white cursor-pointer flex items-center gap-0.5"
                   >
                     <Plus className="w-3 h-3" />
                     <span>هدف</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => onNavigate('goals')}
-                    className="text-xs text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] flex items-center gap-0.5 cursor-pointer"
+                    className="text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 flex items-center gap-0.5 cursor-pointer"
                   >
-                    همه ({toPersianDigits(completedGoalsCount)} تکمیل‌شده) <ChevronLeft className="w-3 h-3" />
+                    همه ({toPersianDigits(completedGoalsCount)} انجام‌شده) <ChevronLeft className="w-3 h-3" />
                   </button>
                 </div>
               </div>
 
-              {/* Quick Goal inline form */}
+              {/* Inline Quick Goal Form */}
               {showQuickGoalForm && (
                 <form
                   onSubmit={handleCreateQuickGoal}
-                  className="mb-3 p-3 bg-[#F9F8F5] dark:bg-[#151515] rounded-xl border border-[#E7E5DF] dark:border-[#252525] space-y-2 animate-in fade-in duration-150"
+                  className="mb-3 p-3 bg-stone-50/80 dark:bg-stone-900/60 rounded-xl border border-stone-200 dark:border-stone-800 space-y-2 animate-in fade-in duration-150"
                 >
                   <input
                     type="text"
@@ -1273,13 +1293,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     onChange={(e) => setQuickGoalTitle(e.target.value)}
                     placeholder="عنوان هدف جدید..."
                     required
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none"
                   />
                   <div className="flex items-center justify-between gap-2">
                     <select
                       value={quickGoalCategory}
                       onChange={(e) => setQuickGoalCategory(e.target.value as SectionType)}
-                      className="px-2 py-1 text-xs rounded border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8]"
+                      className="px-2 py-1 text-xs rounded border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
                     >
                       <option value="general">عمومی</option>
                       <option value="school">مدرسه</option>
@@ -1291,13 +1311,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       <button
                         type="button"
                         onClick={() => setShowQuickGoalForm(false)}
-                        className="px-2 py-1 text-xs text-[#74756F] dark:text-[#A0A0A0]"
+                        className="px-2 py-1 text-xs text-stone-500 dark:text-stone-400"
                       >
                         لغو
                       </button>
                       <button
                         type="submit"
-                        className="px-3 py-1 bg-[#D6A62E] text-black text-xs font-semibold rounded"
+                        className="px-3 py-1 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded"
                       >
                         ثبت هدف
                       </button>
@@ -1308,8 +1328,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
               <div className="space-y-3">
                 {activeGoals.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-[#74756F] dark:text-[#A0A0A0]">
-                    هنوز هدفی تعریف نشده است.
+                  <div className="py-5 text-center text-xs text-stone-400 dark:text-stone-500">
+                    هدف فعالی ثبت نشده است.
                   </div>
                 ) : (
                   activeGoals.map((goal) => {
@@ -1317,15 +1337,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     return (
                       <div key={goal.id} className="space-y-1.5">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium text-[#292A27] dark:text-[#E8E8E8] truncate">{goal.title}</span>
-                          <span className="font-mono tabular-nums text-[11px] text-[#74756F] dark:text-[#A0A0A0]">
+                          <span className="font-medium text-stone-800 dark:text-stone-200 truncate">{goal.title}</span>
+                          <span className="font-mono tabular-nums text-[11px] text-stone-500 dark:text-stone-400">
                             {toPersianDigits(pct)}٪
                           </span>
                         </div>
-                        {/* Sleek Minimal Progress Bar with Matte Gold */}
-                        <div className="h-1.5 w-full bg-[#E7E5DF] dark:bg-[#252525] rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-[#D6A62E] rounded-full transition-all duration-300"
+                            className="h-full bg-[var(--accent-primary)] rounded-full transition-all duration-300"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -1337,38 +1356,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
             </section>
           )}
 
-          {/* SECTION 6: یادداشت‌های مهم */}
+          {/* Section: Quick Notes */}
           {isSectionVisible('quick_notes') && (
-            <section className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525] shadow-xs">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E7E5DF] dark:border-[#252525]">
+            <section className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-[#D6A62E]" />
-                  <h3 className="text-sm font-bold text-[#292A27] dark:text-[#E8E8E8]">
+                  <BookOpen className="w-4 h-4 text-[var(--accent-primary)]" />
+                  <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
                     یادداشت‌های مهم
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={() => setShowQuickNoteForm((prev) => !prev)}
-                    className="text-xs text-[#D6A62E] hover:underline cursor-pointer flex items-center gap-1"
+                    className="text-xs text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white cursor-pointer flex items-center gap-0.5"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>یادداشت سریع</span>
+                    <Plus className="w-3 h-3" />
+                    <span>یادداشت</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => onNavigate('notes')}
-                    className="text-xs text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] flex items-center gap-0.5 cursor-pointer"
+                    className="text-xs text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 flex items-center gap-0.5 cursor-pointer"
                   >
                     همه <ChevronLeft className="w-3 h-3" />
                   </button>
                 </div>
               </div>
 
-              {/* Quick Note Form */}
+              {/* Inline Quick Note Form */}
               {showQuickNoteForm && (
                 <form
                   onSubmit={handleCreateQuickNote}
-                  className="mb-3 p-3 bg-[#F9F8F5] dark:bg-[#151515] rounded-xl border border-[#E7E5DF] dark:border-[#252525] space-y-2 animate-in fade-in duration-150"
+                  className="mb-3 p-3 bg-stone-50/80 dark:bg-stone-900/60 rounded-xl border border-stone-200 dark:border-stone-800 space-y-2 animate-in fade-in duration-150"
                 >
                   <input
                     type="text"
@@ -1376,26 +1397,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     onChange={(e) => setQuickNoteTitle(e.target.value)}
                     placeholder="عنوان یادداشت..."
                     required
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none"
                   />
                   <textarea
                     value={quickNoteContent}
                     onChange={(e) => setQuickNoteContent(e.target.value)}
                     placeholder="متن یادداشت..."
                     rows={2}
-                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-[#E7E5DF] dark:border-[#252525] bg-white dark:bg-[#0D0D0D] text-[#292A27] dark:text-[#E8E8E8] focus:outline-none"
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 focus:outline-none"
                   />
                   <div className="flex justify-end gap-2">
                     <button
                       type="button"
                       onClick={() => setShowQuickNoteForm(false)}
-                      className="px-2.5 py-1 text-xs text-[#74756F] dark:text-[#A0A0A0] cursor-pointer"
+                      className="px-2.5 py-1 text-xs text-stone-500 dark:text-stone-400 cursor-pointer"
                     >
                       انصراف
                     </button>
                     <button
                       type="submit"
-                      className="px-3 py-1 bg-[#D6A62E] text-black text-xs font-semibold rounded-lg cursor-pointer"
+                      className="px-3 py-1 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded cursor-pointer"
                     >
                       ذخیره
                     </button>
@@ -1405,31 +1426,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
               <div className="space-y-2">
                 {importantNotes.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-[#74756F] dark:text-[#A0A0A0]">
+                  <div className="py-5 text-center text-xs text-stone-400 dark:text-stone-500">
                     یادداشتی ثبت نشده است.
                   </div>
                 ) : (
                   importantNotes.map((note) => (
                     <div
                       key={note.id}
-                      className="p-2.5 rounded-xl bg-[#F9F8F5] dark:bg-[#151515] border border-[#E7E5DF] dark:border-[#252525] text-xs flex items-start justify-between gap-2"
+                      className="p-2.5 rounded-xl bg-stone-50/60 dark:bg-stone-900/50 border border-stone-200/70 dark:border-stone-800/70 text-xs flex items-start justify-between gap-2"
                     >
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          {note.pinned && <Pin className="w-3 h-3 text-[#D6A62E] shrink-0" />}
-                          <p className="font-semibold text-[#292A27] dark:text-[#E8E8E8] truncate">{note.title}</p>
+                          {note.pinned && <Pin className="w-3 h-3 text-[var(--accent-primary)] shrink-0" />}
+                          <p className="font-semibold text-stone-800 dark:text-stone-200 truncate">{note.title}</p>
                         </div>
                         {note.content && (
-                          <p className="text-[11px] text-[#74756F] dark:text-[#A0A0A0] line-clamp-1 mt-0.5">
+                          <p className="text-[11px] text-stone-500 dark:text-stone-400 line-clamp-1 mt-0.5">
                             {note.content}
                           </p>
                         )}
                       </div>
 
                       <button
+                        type="button"
                         onClick={() => toggleNotePinned(note.id)}
                         className={`p-1 rounded cursor-pointer ${
-                          note.pinned ? 'text-[#D6A62E]' : 'text-[#A0A0A0] hover:text-[#74756F]'
+                          note.pinned ? 'text-[var(--accent-primary)]' : 'text-stone-400 hover:text-stone-600'
                         }`}
                         title={note.pinned ? 'برداشتن پین' : 'پین کردن'}
                       >
@@ -1445,31 +1467,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       </div>
 
       {/* =========================================================================
-          COLLAPSIBLE SECONDARY DETAILS (School Bells & Activity Logs)
+          4. COLLAPSIBLE SECONDARY DETAILS (School Bells & Activity Logs)
           ========================================================================= */}
       <div className="pt-2">
         <button
+          type="button"
           onClick={() => setShowSecondaryDetails((prev) => !prev)}
-          className="w-full py-2.5 px-4 rounded-xl border border-dashed border-[#E7E5DF] dark:border-[#252525] hover:border-[#74756F]/50 text-xs font-medium text-[#74756F] dark:text-[#A0A0A0] hover:text-[#292A27] dark:hover:text-[#E8E8E8] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+          className="w-full py-2.5 px-4 rounded-xl border border-dashed border-stone-200/80 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-700 text-xs font-medium text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
         >
           <span>{showSecondaryDetails ? 'بستن زنگ‌های مدرسه و وقایع' : 'مشاهده برنامه زنگ‌های مدرسه و گزارش وقایع'}</span>
           {showSecondaryDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
 
         {showSecondaryDetails && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 animate-in fade-in duration-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4 animate-in fade-in duration-150">
             {/* School Bells */}
-            <div className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525]">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E7E5DF] dark:border-[#252525]">
+            <div className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
                 <div className="flex items-center gap-2">
-                  <GraduationCap className="w-4 h-4 text-[#74756F] dark:text-[#A0A0A0]" />
-                  <span className="text-xs font-bold text-[#292A27] dark:text-[#E8E8E8]">
+                  <GraduationCap className="w-4 h-4 text-stone-400" />
+                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">
                     زنگ‌های مدرسه امروز ({getIranianDayName(today)})
                   </span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => onNavigate('school')}
-                  className="text-xs text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] flex items-center gap-0.5 cursor-pointer"
+                  className="text-xs text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200 flex items-center gap-0.5 cursor-pointer"
                 >
                   برنامه هفتگی <ChevronLeft className="w-3 h-3" />
                 </button>
@@ -1480,52 +1504,52 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                   {todayBells.map((bell) => (
                     <div
                       key={bell.period}
-                      className="p-2 rounded-xl bg-[#F9F8F5] dark:bg-[#151515] border border-[#E7E5DF] dark:border-[#252525] flex items-center justify-between text-xs"
+                      className="p-2 rounded-xl bg-stone-50/60 dark:bg-stone-900/50 border border-stone-200/60 dark:border-stone-800/60 flex items-center justify-between text-xs"
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="w-5 h-5 rounded bg-white dark:bg-[#0D0D0D] text-[#74756F] dark:text-[#A0A0A0] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                        <span className="w-5 h-5 rounded bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                           {toPersianDigits(bell.period)}
                         </span>
-                        <span className="font-medium text-[#292A27] dark:text-[#E8E8E8] truncate">
+                        <span className="font-medium text-stone-800 dark:text-stone-200 truncate">
                           {bell.subjectName || '— بدون درس —'}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono tabular-nums text-[#74756F] dark:text-[#A0A0A0]">
+                      <span className="text-[10px] font-mono tabular-nums text-stone-400 dark:text-stone-500">
                         {toPersianDigits(bell.bellTime.startTime)} تا {toPersianDigits(bell.bellTime.endTime)}
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="py-6 text-center text-xs text-[#74756F] dark:text-[#A0A0A0]">
-                  امروز تعطیل یا بدون کلاس است.
+                <div className="py-5 text-center text-xs text-stone-400 dark:text-stone-500">
+                  امروز روز تعطیل یا بدون کلاس است.
                 </div>
               )}
             </div>
 
             {/* Recent Activity Log */}
-            <div className="bg-white dark:bg-[#0D0D0D] rounded-2xl p-5 border border-[#E7E5DF] dark:border-[#252525]">
-              <div className="flex items-center gap-2 pb-3 mb-3 border-b border-[#E7E5DF] dark:border-[#252525]">
-                <Activity className="w-4 h-4 text-[#74756F] dark:text-[#A0A0A0]" />
-                <span className="text-xs font-bold text-[#292A27] dark:text-[#E8E8E8]">
+            <div className="bg-white dark:bg-[#121316] rounded-2xl p-5 border border-stone-200/80 dark:border-stone-800">
+              <div className="flex items-center gap-2 pb-3 mb-3 border-b border-stone-100 dark:border-stone-800/80">
+                <Activity className="w-4 h-4 text-stone-400" />
+                <span className="text-xs font-bold text-stone-800 dark:text-stone-200">
                   گزارش فعالیت‌های اخیر
                 </span>
               </div>
 
               <div className="space-y-2">
                 {activityLogs.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-[#74756F] dark:text-[#A0A0A0]">
+                  <div className="py-5 text-center text-xs text-stone-400 dark:text-stone-500">
                     هنوز فعالیتی ثبت نشده است.
                   </div>
                 ) : (
                   activityLogs.slice(0, 5).map((log) => (
                     <div key={log.id} className="text-xs flex items-start gap-2 py-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#D6A62E] mt-1.5 shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] mt-1.5 shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-[#292A27] dark:text-[#E8E8E8] text-[11px] leading-relaxed">
+                        <p className="text-stone-700 dark:text-stone-300 text-[11px] leading-relaxed">
                           {log.description}
                         </p>
-                        <span className="text-[10px] text-[#74756F] dark:text-[#A0A0A0] font-mono tabular-nums">
+                        <span className="text-[10px] text-stone-400 dark:text-stone-500 font-mono tabular-nums">
                           {new Date(log.timestamp).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
@@ -1539,31 +1563,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
       </div>
 
       {/* =========================================================================
-          MODAL: شخصی‌سازی و جابه‌جایی چیدمان داشبورد
+          5. MODAL: DASHBOARD LAYOUT & SECTION REORDERING
           ========================================================================= */}
       {showConfigModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-[#0D0D0D] rounded-2xl max-w-md w-full p-5 sm:p-6 border border-[#E7E5DF] dark:border-[#252525] shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#E7E5DF] dark:border-[#252525] pb-3">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="شخصی‌سازی چیدمان داشبورد"
+          className="fixed inset-0 z-50 bg-stone-900/40 dark:bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150"
+        >
+          <div className="bg-white dark:bg-[#121316] rounded-2xl max-w-md w-full p-5 sm:p-6 border border-stone-200 dark:border-stone-800 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800/80 pb-3">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-[#D6A62E]" />
-                <h3 className="text-sm font-bold text-[#292A27] dark:text-[#E8E8E8]">
+                <SlidersHorizontal className="w-4 h-4 text-[var(--accent-primary)]" />
+                <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
                   شخصی‌سازی چیدمان داشبورد
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setShowConfigModal(false)}
-                className="p-1 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] rounded-lg cursor-pointer"
+                className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-lg cursor-pointer"
+                aria-label="بستن"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-[#74756F] dark:text-[#A0A0A0] leading-relaxed">
-              می‌توانی بخش‌های داشبورد را به دلخواه بالا و پایین ببری یا بخش‌های اختیاری را مخفی کنی. تنظیمات شما به‌طور خودکار ذخیره می‌شود.
+            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+              می‌توانی ترتیب بخش‌های داشبورد را تغییر داده یا بخش‌های اختیاری را پنهان کنی. تنظیمات شما ذخیره می‌شود.
             </p>
 
-            {/* List of Sections with Reorder & Visibility controls */}
             <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
               {activeSections.map((secId, index) => {
                 const meta = DASHBOARD_SECTIONS.find((s) => s.id === secId) || {
@@ -1579,17 +1609,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     key={secId}
                     className={`flex items-center justify-between p-2.5 rounded-xl border transition-colors ${
                       !visible
-                        ? 'bg-[#F9F8F5]/40 dark:bg-[#151515]/40 border-dashed border-[#E7E5DF] dark:border-[#252525] opacity-50'
-                        : 'bg-[#F9F8F5] dark:bg-[#151515] border-[#E7E5DF] dark:border-[#252525]'
+                        ? 'bg-stone-50/40 dark:bg-stone-900/30 border-dashed border-stone-200 dark:border-stone-800 opacity-50'
+                        : 'bg-stone-50/80 dark:bg-stone-900/60 border-stone-200/80 dark:border-stone-800'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-5 h-5 rounded bg-white dark:bg-[#0D0D0D] text-[#74756F] dark:text-[#A0A0A0] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                      <span className="w-5 h-5 rounded bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                         {toPersianDigits(index + 1)}
                       </span>
                       <span
                         className={`text-xs font-medium truncate ${
-                          !visible ? 'line-through text-[#74756F] dark:text-[#A0A0A0]' : 'text-[#292A27] dark:text-[#E8E8E8]'
+                          !visible ? 'line-through text-stone-400' : 'text-stone-800 dark:text-stone-200'
                         }`}
                       >
                         {meta.label}
@@ -1601,7 +1631,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         type="button"
                         disabled={index === 0}
                         onClick={() => handleMoveSection(index, 'up')}
-                        className="p-1 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] disabled:opacity-20 rounded cursor-pointer"
+                        className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 disabled:opacity-20 rounded cursor-pointer"
                         title="انتقال به بالا"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -1611,7 +1641,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         type="button"
                         disabled={index === activeSections.length - 1}
                         onClick={() => handleMoveSection(index, 'down')}
-                        className="p-1 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] disabled:opacity-20 rounded cursor-pointer"
+                        className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 disabled:opacity-20 rounded cursor-pointer"
                         title="انتقال به پایین"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -1622,8 +1652,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         onClick={() => handleToggleSectionVisibility(secId)}
                         className={`p-1 rounded cursor-pointer ${
                           !visible
-                            ? 'text-[#A0A0A0] hover:text-[#D6A62E]'
-                            : 'text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8]'
+                            ? 'text-stone-400 hover:text-stone-700'
+                            : 'text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100'
                         }`}
                         title={!visible ? 'نمایش مجدد' : 'مخفی کردن'}
                       >
@@ -1635,21 +1665,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               })}
             </div>
 
-            <div className="pt-2 flex items-center justify-between border-t border-[#E7E5DF] dark:border-[#252525]">
+            <div className="pt-2 flex items-center justify-between border-t border-stone-100 dark:border-stone-800/80">
               <button
                 type="button"
                 onClick={handleResetLayout}
                 className="text-xs text-rose-600 dark:text-rose-400 hover:underline cursor-pointer flex items-center gap-1"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>بازنشانی به پیش‌فرض</span>
+                <span>بازنشانی پیش‌فرض</span>
               </button>
 
               <button
+                type="button"
                 onClick={() => setShowConfigModal(false)}
-                className="px-4 py-2 bg-[#D6A62E] text-black text-xs font-semibold rounded-xl hover:bg-[#c4931a] cursor-pointer"
+                className="px-4 py-2 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded-xl cursor-pointer"
               >
-                تأیید و ذخیره
+                تأیید و بازگشت
               </button>
             </div>
           </div>

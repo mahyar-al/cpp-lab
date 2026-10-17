@@ -259,14 +259,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar Aside */}
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white dark:bg-[#0D0D0D] border-l border-[#E7E5DF] dark:border-[#252525] transition-all duration-300 ease-in-out shadow-lg ${
+        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white/80 dark:bg-black/75 backdrop-blur-2xl border-l border-stone-200/80 dark:border-white/10 transition-all duration-300 ease-in-out shadow-2xl ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}
         dir="rtl"
       >
         {/* Top Header / Branding */}
         <div
-          className={`flex items-center h-16 border-b border-[#E7E5DF] dark:border-[#252525] transition-all relative ${
+          className={`flex items-center h-16 border-b border-stone-200/70 dark:border-white/10 transition-all relative ${
             isCollapsed ? 'px-2 justify-center' : 'px-4 justify-between'
           }`}
         >
@@ -352,8 +352,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => handleNavClick(item.id)}
                           className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all group cursor-pointer relative ${
                             isActive
-                              ? 'font-semibold'
-                              : 'text-[#74756F] dark:text-[#A0A0A0] hover:bg-[#F9F8F5] dark:hover:bg-[#151515] hover:text-[#292A27] dark:hover:text-[#E8E8E8]'
+                              ? 'font-semibold border border-[var(--accent-primary-border)]/50 shadow-xs'
+                              : 'text-[#74756F] dark:text-[#A0A0A0] hover:bg-stone-500/[0.06] dark:hover:bg-white/[0.06] hover:text-[#292A27] dark:hover:text-[#E8E8E8]'
                           } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
                           style={{
                             color: isActive ? 'var(--accent-primary)' : undefined,
@@ -404,7 +404,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer Streak & Progress Widget */}
         {!isCollapsed && (
-          <div className="p-3 mx-2.5 mb-3 bg-[#F9F8F5] dark:bg-[#151515] rounded-xl border border-[#E7E5DF] dark:border-[#252525]">
+          <div className="p-3.5 mx-2.5 mb-3 bg-stone-500/[0.04] dark:bg-white/[0.03] backdrop-blur-md rounded-2xl border border-stone-200/80 dark:border-white/10 shadow-xs">
             <div className="flex items-center justify-between text-xs text-[#292A27] dark:text-[#E8E8E8] font-medium mb-1.5">
               <span className="flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
@@ -420,7 +420,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>پیشرفت هفتگی اهداف</span>
                 <span className="font-mono tabular-nums">{toPersianDigits(weeklyGoalPercent)}٪</span>
               </div>
-              <div className="w-full bg-[#E7E5DF] dark:bg-[#252525] h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-stone-200/80 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{ width: `${weeklyGoalPercent}%`, backgroundColor: 'var(--accent-primary)' }}

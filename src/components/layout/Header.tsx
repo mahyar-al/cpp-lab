@@ -124,13 +124,13 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#000000]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#242424] transition-colors w-full">
+    <header className="sticky top-0 z-30 bg-white/80 dark:bg-black/75 backdrop-blur-2xl border-b border-stone-200/70 dark:border-white/10 transition-colors w-full shadow-xs">
       <div className="flex items-center justify-between px-3.5 sm:px-5 md:px-6 lg:px-8 xl:px-10 2xl:px-12 h-15 gap-4 w-full">
         {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onToggleSidebar}
-            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 lg:hidden rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 lg:hidden rounded-xl hover:bg-stone-500/10 dark:hover:bg-white/10 transition-colors"
             aria-label="منوی ناوبری"
           >
             <Menu className="w-5 h-5" />
@@ -151,18 +151,18 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Search Trigger */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-stone-600 dark:text-stone-300 bg-stone-100/70 hover:bg-stone-200/80 dark:bg-[#151515] dark:hover:bg-[#1C1C1C] rounded-lg border border-stone-200 dark:border-[#262626] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-stone-700 dark:text-stone-300 bg-stone-500/[0.05] hover:bg-stone-500/[0.10] dark:bg-white/[0.05] dark:hover:bg-white/[0.10] rounded-xl border border-stone-200/80 dark:border-white/10 backdrop-blur-md transition-all cursor-pointer shadow-2xs hover:shadow-xs active:scale-[0.98]"
             aria-label="جستجو در سامانه"
             title="جستجو (Ctrl + K)"
           >
             <Search className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500" />
-            <span className="hidden sm:inline">جستجو</span>
+            <span className="hidden sm:inline font-medium">جستجو</span>
           </button>
 
           {/* Primary Action: Quick Add with Warm Accent */}
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-stone-950 text-xs font-bold rounded-lg transition-all whitespace-nowrap cursor-pointer active:scale-98 shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-stone-950 text-xs font-bold rounded-xl transition-all whitespace-nowrap cursor-pointer active:scale-98 shadow-xs hover:shadow-md"
             title="ثبت سریع وظیفه یا رویداد جدید"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 rounded-lg hover:bg-stone-100/80 dark:hover:bg-[#151515] transition-colors cursor-pointer"
+              className="relative p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 rounded-xl hover:bg-stone-500/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="اعلان‌ها"
             >
               <Bell className="w-4 h-4" />
@@ -183,8 +183,8 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {showNotifications && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-88 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-4 z-50 animate-in fade-in duration-150">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-88 max-w-[calc(100vw-1.5rem)] glass-dropdown rounded-2xl p-4 z-50 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between pb-3 border-b border-stone-200/60 dark:border-white/10">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-slate-900 dark:text-white">
                       مرکز یادآوری‌ها
@@ -300,11 +300,11 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           {/* Simple One-Click Theme Switcher with Sun & Moon Icons */}
-          <div className="relative flex items-center rounded-lg border border-slate-200 dark:border-[#242424] bg-white dark:bg-[#0A0A0A] overflow-visible" ref={themeMenuRef}>
+          <div className="relative flex items-center rounded-xl border border-stone-200/80 dark:border-white/10 bg-stone-500/[0.04] dark:bg-white/[0.04] backdrop-blur-md overflow-visible shadow-2xs" ref={themeMenuRef}>
             <button
               type="button"
               onClick={() => setThemeMode(resolvedTheme === 'dark' ? 'light' : 'dark', true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-700 dark:text-[#E6E6E6] hover:bg-[#EFEFEF] dark:hover:bg-[#161616] transition-colors cursor-pointer select-none"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-slate-700 dark:text-[#E6E6E6] hover:bg-stone-500/10 dark:hover:bg-white/10 transition-colors cursor-pointer select-none"
               aria-label={resolvedTheme === 'dark' ? 'تغییر به حالت روشن' : 'تغییر به حالت مشکی واقعی'}
               title={resolvedTheme === 'dark' ? 'تغییر به حالت روشن (سفید ملایم)' : 'تغییر به حالت تاریک (مشکی واقعی)'}
             >
@@ -321,7 +321,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => setShowThemeMenu((prev) => !prev)}
-              className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-[#EFEFEF] dark:hover:bg-[#161616] border-r border-slate-200 dark:border-[#242424] transition-colors cursor-pointer"
+              className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-stone-500/10 dark:hover:bg-white/10 border-r border-stone-200/70 dark:border-white/10 transition-colors cursor-pointer"
               title="تنظیمات بیشتر پوسته (سیستم / دستی)"
               aria-label="منوی گزینه‌های پوسته"
             >
@@ -330,10 +330,10 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Theme Dropdown Popover */}
             {showThemeMenu && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-64 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-[#0A0A0A] rounded-xl shadow-xl border border-slate-200 dark:border-[#242424] p-2 z-50 text-right animate-in fade-in duration-150">
-                <div className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 dark:text-[#777777] border-b border-slate-100 dark:border-[#242424] mb-1 flex items-center justify-between">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-64 max-w-[calc(100vw-1.5rem)] glass-dropdown rounded-2xl p-2.5 z-50 text-right animate-in fade-in duration-150">
+                <div className="px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 dark:text-[#777777] border-b border-stone-200/60 dark:border-white/10 mb-1 flex items-center justify-between">
                   <span>انتخاب حالت پوسته</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#111111] text-slate-600 dark:text-[#A0A0A0]">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-stone-500/10 dark:bg-white/10 text-slate-600 dark:text-[#A0A0A0]">
                     {resolvedTheme === 'dark' ? 'مشکی خالص' : 'سفید ملایم'}
                   </span>
                 </div>
@@ -435,9 +435,9 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Profile Popover */}
             {showProfileMenu && (
-              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-4 z-50 text-right animate-in fade-in duration-150">
+              <div className="fixed inset-x-3 sm:inset-x-auto sm:absolute left-auto sm:left-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] glass-dropdown rounded-2xl p-4 z-50 text-right animate-in fade-in duration-150">
                 {/* User identity summary */}
-                <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-3 pb-3 border-b border-stone-200/60 dark:border-white/10">
                   <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
                     <AvatarIcon className="w-5 h-5" />
                   </div>

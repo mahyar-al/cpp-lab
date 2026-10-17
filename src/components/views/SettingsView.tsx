@@ -291,7 +291,7 @@ export const SettingsView: React.FC = () => {
             {!currentUser && (
               <button
                 onClick={() => openAuthModal('login')}
-                className="mr-2 px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs transition-colors cursor-pointer"
+                className="mr-2 px-3 py-1 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 font-medium rounded-lg text-xs transition-colors cursor-pointer"
               >
                 ورود
               </button>
@@ -784,17 +784,17 @@ export const SettingsView: React.FC = () => {
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <button
                   onClick={() => openAuthModal('login')}
-                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
+                  className="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded-xl transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>ورود به حساب کاربری</span>
                 </button>
                 <button
                   onClick={() => openAuthModal('register')}
-                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
+                  className="px-5 py-2.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-750 text-stone-900 dark:text-stone-100 border border-stone-200 dark:border-stone-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer flex items-center gap-2 shadow-xs"
                 >
                   <UserPlus className="w-4 h-4" />
-                  <span>ثبت‌نام حساب مستقل</span>
+                  <span>ثبت‌نام حساب جدید</span>
                 </button>
               </div>
             </div>

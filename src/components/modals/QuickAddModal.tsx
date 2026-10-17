@@ -116,24 +116,27 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/45 dark:bg-black/80 backdrop-blur-xl animate-in fade-in duration-200" dir="rtl">
+      <div className="w-full max-w-lg max-h-[90dvh] flex flex-col glass-modal rounded-3xl shadow-2xl overflow-hidden text-right relative">
+        {/* Ambient subtle glow inside modal */}
+        <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--accent-primary)] opacity-10 dark:opacity-[0.06] rounded-full blur-2xl pointer-events-none" />
+
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
-          <span className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-stone-200/60 dark:border-white/10 shrink-0 bg-stone-500/[0.04] dark:bg-white/[0.03] relative z-10">
+          <span className="text-sm font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)]" />
             ثبت سریع در سامانه
           </span>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-xl hover:bg-stone-500/10 dark:hover:bg-white/10 cursor-pointer transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab selection */}
-        <div className="flex p-2 gap-1.5 bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800 overflow-x-auto shrink-0">
+        <div className="flex p-2 gap-1.5 bg-stone-500/[0.03] dark:bg-white/[0.02] border-b border-stone-200/60 dark:border-white/10 overflow-x-auto shrink-0 relative z-10">
           {[
             { id: 'task', label: 'تکلیف / کار', icon: GraduationCap },
             { id: 'event', label: 'رویداد تقویم', icon: CalendarDays },
@@ -148,10 +151,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                 key={tab.id}
                 type="button"
                 onClick={() => setAddType(tab.id as AddType)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer shrink-0 sm:shrink ${
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 text-xs font-semibold rounded-xl transition-all whitespace-nowrap cursor-pointer shrink-0 sm:shrink ${
                   active
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs border border-slate-200 dark:border-slate-700'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                    ? 'bg-white dark:bg-white/15 text-stone-900 dark:text-stone-100 shadow-xs border border-stone-200/80 dark:border-white/15'
+                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-500/[0.05] dark:hover:bg-white/[0.05]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5 shrink-0" />
