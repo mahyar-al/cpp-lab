@@ -321,7 +321,7 @@ export const CalendarView: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-2 btn-primary text-xs rounded-lg transition-colors whitespace-nowrap cursor-pointer shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span>رویداد جدید</span>
@@ -345,10 +345,10 @@ export const CalendarView: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setSectionFilter(item.id as typeof sectionFilter)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 text-xs rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
                 sectionFilter === item.id
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'btn-secondary font-semibold'
+                  : 'btn-ghost'
               }`}
             >
               {item.label}

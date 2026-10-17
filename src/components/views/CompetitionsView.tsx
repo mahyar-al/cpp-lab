@@ -134,7 +134,7 @@ export const CompetitionsView: React.FC = () => {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
+          className="flex items-center gap-1.5 px-3.5 py-2 btn-primary text-xs rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
         >
           <Plus className="w-4 h-4" />
           <span>مسابقه جدید</span>
@@ -148,7 +148,7 @@ export const CompetitionsView: React.FC = () => {
           <p className="text-xs text-slate-500 mt-1 mb-4">مسابقه علمی، هکاتون یا المپیاد خود را ثبت کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer"
+            className="px-4 py-2 btn-secondary rounded-lg text-xs font-semibold cursor-pointer"
           >
             افزودن اولین مسابقه
           </button>

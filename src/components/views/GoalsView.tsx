@@ -140,7 +140,7 @@ export const GoalsView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
+            className="flex items-center gap-2 px-3.5 py-2 btn-primary text-xs rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
           >
             <Plus className="w-4 h-4" />
             تعریف هدف جدید
@@ -190,9 +190,9 @@ export const GoalsView: React.FC = () => {
             </div>
             <button
               onClick={() => setShowReviewForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-500/15 text-emerald-600 dark:text-[#39FF88] border border-emerald-500/30 hover:bg-emerald-500/25 text-xs font-bold rounded-xl transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 btn-secondary text-xs font-semibold rounded-xl transition-all cursor-pointer"
             >
-              <FileCheck className="w-4 h-4" />
+              <FileCheck className="w-4 h-4 text-muted" />
               ثبت مرور هفتگی جدید
             </button>
           </div>

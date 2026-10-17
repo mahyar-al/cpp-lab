@@ -236,34 +236,34 @@ export const DailyPlannerView: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setIsRescueModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle hover:bg-chip text-fg rounded-[14px] text-xs font-medium transition-colors cursor-pointer shadow-xs active:scale-98"
+              className="flex items-center gap-1.5 px-3 py-1.5 btn-secondary text-xs rounded-[14px] transition-colors cursor-pointer active:scale-98"
               title="کاهش استرس و بازسازی کارهای امروز"
             >
-              <LifeBuoy className="w-3.5 h-3.5" />
+              <LifeBuoy className="w-3.5 h-3.5 text-muted" />
               <span>نجات روز</span>
             </button>
 
             <button
               onClick={() => setIsSmartPlannerModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle hover:bg-chip text-fg rounded-[14px] text-xs font-medium transition-colors cursor-pointer shadow-xs active:scale-98"
+              className="flex items-center gap-1.5 px-3 py-1.5 btn-secondary text-xs rounded-[14px] transition-colors cursor-pointer active:scale-98"
               title="چینش خودکار فعالیت‌ها بر اساس اولویت"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 text-muted" />
               <span>چینش خودکار</span>
             </button>
 
             <button
               onClick={() => rolloverOverdueTasks()}
-              className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle hover:bg-chip text-fg rounded-[14px] text-xs font-medium transition-colors cursor-pointer shadow-xs active:scale-98"
+              className="flex items-center gap-1.5 px-3 py-1.5 btn-secondary text-xs rounded-[14px] transition-colors cursor-pointer active:scale-98"
               title="انتقال کارهای عقب‌افتاده"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-3.5 h-3.5 text-muted" />
               <span>انتقال معوقه‌ها</span>
             </button>
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-fg text-bg hover:opacity-90 font-semibold rounded-[14px] text-xs transition-colors cursor-pointer shadow-xs btn-primary-glass active:scale-98"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 btn-primary font-semibold rounded-[14px] text-xs transition-colors cursor-pointer shadow-xs active:scale-98"
             >
               <Plus className="w-4 h-4" />
               <span>افزودن فعالیت</span>

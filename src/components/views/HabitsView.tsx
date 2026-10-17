@@ -126,7 +126,7 @@ export const HabitsView: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer self-start md:self-auto shadow-xs"
+            className="flex items-center gap-1.5 px-3.5 py-2 btn-primary font-semibold rounded-lg text-xs transition-colors cursor-pointer self-start md:self-auto shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span>تعریف عادت جدید</span>
@@ -207,7 +207,7 @@ export const HabitsView: React.FC = () => {
             <p>هنوز عادتی ثبت نشده است. از گزینه‌های پیشنهادی بالا برای شروع استفاده کنید.</p>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl font-bold"
+              className="px-4 py-2 btn-secondary rounded-xl font-medium cursor-pointer"
             >
               + تعریف اولین عادت
             </button>

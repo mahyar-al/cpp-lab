@@ -597,7 +597,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               setShowInlineTaskInput((prev) => !prev);
               setShowQuickNoteForm(false);
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-fg hover:opacity-90 text-bg text-xs font-semibold rounded-[14px] transition-all cursor-pointer shadow-xs active:scale-[0.98] btn-primary-glass"
+            className="flex items-center gap-1.5 px-3.5 py-2 btn-primary text-xs rounded-[14px] transition-all cursor-pointer shadow-xs active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
             <span>ثبت کار امروز</span>

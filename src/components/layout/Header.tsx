@@ -125,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 glass-strong border-b border-line/60 transition-colors w-full shadow-xs">
+    <header className="sticky top-0 z-30 glass-nav border-b border-[var(--glass-nav-border)] transition-colors w-full">
       <div className="flex items-center justify-between px-3.5 sm:px-5 md:px-6 lg:px-8 xl:px-10 2xl:px-12 h-15 gap-4 w-full">
         {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
@@ -149,35 +149,35 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action buttons on the left (in RTL) */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Search Trigger */}
+          {/* Search Trigger (Secondary) */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-fg glass-subtle hover:bg-chip rounded-[14px] border border-line/60 backdrop-blur-md transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs btn-secondary rounded-[14px] transition-all cursor-pointer active:scale-[0.98]"
             aria-label="جستجو در سامانه"
             title="جستجو (Ctrl + K)"
           >
             <Search className="w-3.5 h-3.5 text-muted" />
-            <span className="hidden sm:inline font-bold">جستجو</span>
+            <span className="hidden sm:inline font-semibold">جستجو</span>
           </button>
 
-          {/* Primary Action: Quick Add */}
+          {/* Quick Add Action (Secondary in global header) */}
           <button
             onClick={onOpenQuickAdd}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-fg text-bg hover:opacity-90 text-xs font-bold rounded-[14px] transition-all whitespace-nowrap cursor-pointer active:scale-98 shadow-xs btn-primary-glass"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 btn-secondary text-xs font-semibold rounded-[14px] transition-all whitespace-nowrap cursor-pointer active:scale-98"
             title="ثبت سریع وظیفه یا رویداد جدید"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 text-muted" />
             <span>ثبت سریع</span>
           </button>
 
-          {/* Notifications Dropdown */}
+          {/* Notifications Dropdown (Ghost icon button) */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-muted hover:text-fg rounded-xl hover:bg-chip transition-colors cursor-pointer"
+              className="relative p-2 btn-ghost rounded-xl transition-colors cursor-pointer"
               aria-label="اعلان‌ها"
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-4 h-4 text-muted" />
               {unreadCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-fg rounded-full" />
               )}
@@ -288,14 +288,14 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Login CTA if guest */}
+          {/* Login CTA if guest (Secondary) */}
           {!currentUser && (
             <button
               onClick={() => openAuthModal('login')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-chip hover:bg-chip/80 text-fg border border-line text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 btn-secondary text-xs rounded-lg transition-colors cursor-pointer"
               title="ورود یا ثبت‌نام حساب چندکاربره"
             >
-              <LogIn className="w-3.5 h-3.5" />
+              <LogIn className="w-3.5 h-3.5 text-muted" />
               <span className="hidden sm:inline">ورود / ثبت‌نام</span>
             </button>
           )}
@@ -307,7 +307,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setShowProfileMenu((prev) => !prev)}
-              className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-lg hover:bg-chip transition-colors text-right cursor-pointer"
+              className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-lg btn-ghost transition-colors text-right cursor-pointer"
               title="پروفایل کاربر"
             >
               <div className="w-7 h-7 rounded-lg bg-chip text-fg flex items-center justify-center font-semibold text-xs shrink-0">

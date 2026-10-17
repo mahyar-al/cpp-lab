@@ -181,7 +181,7 @@ export const SkillsView: React.FC = () => {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
+          className="flex items-center gap-2 px-3.5 py-2 btn-primary text-xs rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
         >
           <Plus className="w-4 h-4" />
           افزودن مهارت جدید
@@ -195,7 +195,7 @@ export const SkillsView: React.FC = () => {
           <p className="text-xs text-slate-500 mt-1 mb-4">اولین مهارت خود را برای ثبت پیشرفت و نقشه یادگیری اضافه کنید.</p>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 rounded-lg text-xs font-semibold cursor-pointer"
+            className="px-4 py-2 btn-secondary rounded-lg text-xs font-semibold cursor-pointer"
           >
             افزودن اولین مهارت
           </button>

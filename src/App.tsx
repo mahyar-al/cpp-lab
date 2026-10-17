@@ -119,7 +119,7 @@ const MainContent: React.FC = () => {
       rafId = requestAnimationFrame(() => {
         rafId = null;
         const target = (e.target as HTMLElement | null)?.closest?.(
-          '.glass, .glass-strong, .glass-subtle, .glass-card, .glass-panel, .glass-modal, .glass-dropdown'
+          '.glass, .glass-strong, .glass-subtle, .glass-card, .glass-panel, .glass-modal, .glass-dropdown, .glass-nav'
         ) as HTMLElement | null;
 
         if (lastTarget && lastTarget !== target) {

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits } from '../../utils/jalali';
+import { getBrand } from '../../utils/brand';
 
 export type NavTab =
   | 'dashboard'
@@ -71,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
 }) => {
   const { homeworks, skills, goals, habits, reviews, dayData, getSectionTitle, customization } = useApp();
+  const brand = getBrand();
 
   const pendingHomeworkCount = homeworks.filter((h) => !h.completed).length;
 
@@ -259,14 +261,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar Aside */}
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex flex-col glass-strong border-l border-line/60 transition-all duration-300 ease-in-out shadow-2xl ${
+        className={`fixed inset-y-0 right-0 z-50 flex flex-col glass-nav border-l border-[var(--glass-nav-border)] transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}
         dir="rtl"
       >
         {/* Top Header / Branding */}
         <div
-          className={`flex items-center h-16 border-b border-line transition-all relative ${
+          className={`flex items-center h-16 border-b border-[var(--glass-nav-border)] transition-all relative ${
             isCollapsed ? 'px-2 justify-center' : 'px-4 justify-between'
           }`}
         >
@@ -277,16 +279,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             title={isCollapsed ? 'برای گسترش منو کلیک کنید' : undefined}
           >
             <div className="w-8 h-8 rounded-xl bg-fg text-bg font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
-              P
+              {brand.logoLetter}
             </div>
 
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
                 <span className="font-bold text-sm tracking-tight text-fg truncate">
-                  Pathly
+                  {brand.name}
                 </span>
                 <span className="text-[10px] text-muted truncate">
-                  مسیر پیشرفت من
+                  {brand.tagline}
                 </span>
               </div>
             )}

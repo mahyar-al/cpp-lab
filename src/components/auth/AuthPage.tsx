@@ -25,6 +25,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { getBrand } from '../../utils/brand';
 
 export type AuthMode = 'login' | 'register' | 'forgot_password' | 'recovery_token';
 
@@ -52,6 +53,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     currentUser,
     logout,
   } = useApp();
+  const brand = getBrand();
 
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [loading, setLoading] = useState(false);
@@ -390,15 +392,15 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-200/60 dark:border-white/10">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 flex items-center justify-center font-bold text-sm tracking-wider shadow-xs">
-                  P
+                  {brand.logoLetter}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-base text-stone-900 dark:text-stone-100 tracking-wide font-sans">
-                      Pathly
+                      {brand.name}
                     </span>
                     <span className="text-[11px] font-medium text-stone-500 dark:text-stone-400">
-                      مسیر پیشرفت من
+                      {brand.tagline}
                     </span>
                   </div>
                 </div>

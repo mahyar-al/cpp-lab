@@ -79,7 +79,7 @@ export const authenticateTokenOrGuest = (req: AuthenticatedRequest, _res: Respon
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    system: 'Pathly Multi-User Cloud Engine',
+    system: 'Alef Plans Multi-User Cloud Engine',
     timestamp: new Date().toISOString(),
     stats: db.getStats(),
   });
@@ -1002,7 +1002,7 @@ async function startServer() {
   }
 
   app.listen(Number(PORT), '0.0.0.0', () => {
-    console.log(`🚀 Pathly Multi-User Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`🚀 Alef Plans Multi-User Server listening on http://0.0.0.0:${PORT}`);
   });
 }
 

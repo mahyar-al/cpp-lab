@@ -101,7 +101,7 @@ export const NotesView: React.FC = () => {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-[0_0_16px_rgba(6,182,212,0.35)] hover:shadow-[0_0_22px_rgba(6,182,212,0.5)] transition-all cursor-pointer shrink-0 active:scale-95"
+          className="relative z-10 flex items-center gap-2 px-4 py-2 btn-primary text-xs font-semibold rounded-xl transition-all cursor-pointer shrink-0 active:scale-95 shadow-xs"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
           یادداشت جدید
