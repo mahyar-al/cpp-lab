@@ -42,7 +42,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
         {/* Close Button floating comfortably */}
         <button
           onClick={onClose}
-          className="absolute -top-3 -left-3 sm:-top-3.5 sm:-left-3.5 z-50 p-2 text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100 bg-white/85 dark:bg-[#141418]/85 backdrop-blur-xl hover:bg-white dark:hover:bg-[#1c1c22] border border-stone-200/90 dark:border-white/15 rounded-full shadow-xl transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-stone-400 active:scale-95"
+          className="absolute -top-3 -left-3 sm:-top-3.5 sm:-left-3.5 z-50 p-2 text-muted hover:text-fg bg-surface hover:bg-chip border border-line rounded-full shadow-sm transition-all cursor-pointer focus:outline-none active:scale-95"
           title="بستن و بازگشت (Esc)"
           aria-label="بستن پنجره"
         >

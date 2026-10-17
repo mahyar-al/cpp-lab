@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { ThemeProvider } from './theme/ThemeProvider';
 import { Sidebar, NavTab } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DashboardView } from './components/views/DashboardView';
@@ -22,6 +23,7 @@ import { QuickAddModal } from './components/modals/QuickAddModal';
 import { AuthModal } from './components/modals/AuthModal';
 import { RescueModeModal } from './components/modals/RescueModeModal';
 import { BottomNav } from './components/layout/BottomNav';
+import { FloatingBackground } from './components/FloatingBackground';
 
 const TAB_TITLES: Record<NavTab, string> = {
   dashboard: 'داشبورد',
@@ -104,41 +106,10 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div data-app-canvas="true" className="min-h-[100dvh] w-full bg-[#F5F4F1] dark:bg-[#000000] text-[#23211E] dark:text-[#ECEAE6] flex flex-col md:flex-row transition-colors duration-200 relative overflow-x-hidden selection:bg-amber-200 dark:selection:bg-amber-950/70 font-sans" dir="rtl">
+    <div data-app-canvas="true" className="min-h-[100dvh] w-full bg-transparent text-fg flex flex-col md:flex-row transition-colors duration-200 relative isolate overflow-x-hidden selection:bg-fg selection:text-bg font-sans" dir="rtl">
 
-      {/* Background Ambient Depth & Glow Layer for Realistic Frosted Glass Refraction */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none" aria-hidden="true">
-        {/* Primary Ambient Glow (Soft Accent Refraction Orb) */}
-        <div
-          className="absolute -top-32 -right-32 w-96 sm:w-[42rem] h-96 sm:h-[42rem] rounded-full blur-[110px] transition-all duration-700 opacity-25 dark:opacity-[0.12]"
-          style={{
-            background: 'radial-gradient(circle, var(--accent-primary) 0%, transparent 70%)',
-          }}
-        />
-        {/* Secondary Soft Depth Orb (Delicate Violet/Slate Depth) */}
-        <div
-          className="absolute top-1/4 -left-32 w-80 sm:w-[34rem] h-80 sm:h-[34rem] rounded-full blur-[130px] transition-all duration-700 opacity-20 dark:opacity-[0.09]"
-          style={{
-            background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)',
-          }}
-        />
-        {/* Tertiary Ambient Glow (Center Soft Accent) */}
-        <div
-          className="absolute top-2/3 right-10 w-72 sm:w-[28rem] h-72 sm:h-[28rem] rounded-full blur-[120px] transition-all duration-700 opacity-15 dark:opacity-[0.07]"
-          style={{
-            background: 'radial-gradient(circle, #06B6D4 0%, transparent 70%)',
-          }}
-        />
-        {/* Lower Ambient Subtle Glow */}
-        <div
-          className="absolute -bottom-28 left-1/4 w-88 sm:w-[36rem] h-88 sm:h-[36rem] rounded-full blur-[110px] transition-all duration-700 opacity-20 dark:opacity-[0.08]"
-          style={{
-            background: 'radial-gradient(circle, var(--accent-primary) 0%, transparent 70%)',
-          }}
-        />
-        {/* Subtle Frosted Canvas Pattern (Ultra-fine micro texture) */}
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.025)_1px,transparent_1px)] dark:bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px] opacity-60" />
-      </div>
+      {/* Floating Animated Decorative Background */}
+      <FloatingBackground />
 
       {/* Sidebar Navigation */}
       <Sidebar
@@ -224,8 +195,8 @@ const MainContent: React.FC = () => {
 
       {/* Global Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs font-semibold rounded-xl shadow-2xl border border-slate-700/60 dark:border-slate-200 backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600 shrink-0" />
+        <div className="fixed bottom-6 start-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-fg text-bg text-xs font-semibold rounded-xl shadow-lg border border-line backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <span className="w-2 h-2 rounded-full bg-bg shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -235,8 +206,10 @@ const MainContent: React.FC = () => {
 
 export default function App() {
   return (
-    <AppProvider>
-      <MainContent />
-    </AppProvider>
+    <ThemeProvider>
+      <AppProvider>
+        <MainContent />
+      </AppProvider>
+    </ThemeProvider>
   );
 }

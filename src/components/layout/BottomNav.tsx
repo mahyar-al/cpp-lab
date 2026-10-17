@@ -87,7 +87,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border-t border-stone-200/70 dark:border-white/10 lg:hidden transition-colors shadow-2xl"
+      className="fixed bottom-0 inset-x-0 z-40 bg-surface/90 backdrop-blur-2xl border-t border-line lg:hidden transition-colors shadow-lg"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label="ناوبری سریع موبایل"
     >
@@ -102,22 +102,18 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => onSelectTab(item.id)}
               className={`relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-colors cursor-pointer select-none ${
                 isActive
-                  ? 'font-semibold'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  ? 'text-fg font-semibold'
+                  : 'text-muted hover:text-fg'
               }`}
-              style={{ color: isActive ? 'var(--accent-primary)' : undefined }}
             >
               {isActive && (
-                <span
-                  className="absolute top-0 w-6 h-0.5 rounded-full transition-colors"
-                  style={{ backgroundColor: 'var(--accent-primary)' }}
-                />
+                <span className="absolute top-0 w-6 h-0.5 rounded-full bg-fg transition-colors" />
               )}
 
               <div className="relative mt-0.5">
                 <Icon className="w-4 h-4" />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1 -right-2 px-1 min-w-[14px] h-3.5 text-[8px] font-mono tabular-nums font-bold rounded-full bg-rose-500 text-white flex items-center justify-center">
+                  <span className="absolute -top-1 -right-2 px-1 min-w-[14px] h-3.5 text-[8px] font-mono tabular-nums font-bold rounded-full bg-fg text-bg flex items-center justify-center">
                     {toPersianDigits(item.badge)}
                   </span>
                 )}
@@ -130,10 +126,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           );
         })}
 
-        {/* 5th button: Full Menu (Toggles complete 15-view sidebar drawer) */}
+        {/* 5th button: Full Menu */}
         <button
           onClick={onOpenMenu}
-          className="relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer select-none"
+          className="relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center text-muted hover:text-fg transition-colors cursor-pointer select-none"
           aria-label="تمام بخش‌ها و امکانات"
         >
           <div className="relative mt-0.5">

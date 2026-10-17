@@ -259,14 +259,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar Aside */}
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-white/80 dark:bg-black/75 backdrop-blur-2xl border-l border-stone-200/80 dark:border-white/10 transition-all duration-300 ease-in-out shadow-2xl ${
+        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col bg-surface/90 backdrop-blur-2xl border-l border-line transition-all duration-300 ease-in-out shadow-lg ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}
         dir="rtl"
       >
         {/* Top Header / Branding */}
         <div
-          className={`flex items-center h-16 border-b border-stone-200/70 dark:border-white/10 transition-all relative ${
+          className={`flex items-center h-16 border-b border-line transition-all relative ${
             isCollapsed ? 'px-2 justify-center' : 'px-4 justify-between'
           }`}
         >
@@ -276,16 +276,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className={`flex items-center ${isCollapsed ? 'justify-center cursor-pointer' : 'gap-3'} overflow-hidden`}
             title={isCollapsed ? 'برای گسترش منو کلیک کنید' : undefined}
           >
-            <div className="w-8 h-8 rounded-xl bg-[#D6A62E] text-black font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-fg text-bg font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
               P
             </div>
 
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm tracking-tight text-[#292A27] dark:text-[#E8E8E8] truncate">
+                <span className="font-bold text-sm tracking-tight text-fg truncate">
                   Pathly
                 </span>
-                <span className="text-[10px] text-[#74756F] dark:text-[#A0A0A0] truncate">
+                <span className="text-[10px] text-muted truncate">
                   مسیر پیشرفت من
                 </span>
               </div>
@@ -296,7 +296,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={onToggleCollapse}
-              className={`hidden lg:flex items-center justify-center p-1.5 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] rounded-lg hover:bg-[#F9F8F5] dark:hover:bg-[#151515] transition-colors cursor-pointer ${
+              className={`hidden lg:flex items-center justify-center p-1.5 text-muted hover:text-fg rounded-lg hover:bg-chip transition-colors cursor-pointer ${
                 isCollapsed ? 'w-8 h-8' : ''
               }`}
               aria-label={isCollapsed ? 'گسترش منو' : 'جمع‌کردن منو'}
@@ -307,7 +307,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             <button
               onClick={onCloseMobile}
-              className="lg:hidden p-1.5 text-[#74756F] hover:text-[#292A27] dark:text-[#A0A0A0] dark:hover:text-[#E8E8E8] rounded-lg hover:bg-[#F9F8F5] dark:hover:bg-[#151515] cursor-pointer"
+              className="lg:hidden p-1.5 text-muted hover:text-fg rounded-lg hover:bg-chip cursor-pointer"
               aria-label="بستن منو"
               title="بستن منو"
             >
@@ -350,44 +350,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <button
                           key={item.id}
                           onClick={() => handleNavClick(item.id)}
-                          className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all group cursor-pointer relative ${
+                          className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs transition-all group cursor-pointer relative ${
                             isActive
-                              ? 'font-semibold border border-[var(--accent-primary-border)]/50 shadow-xs'
-                              : 'text-[#74756F] dark:text-[#A0A0A0] hover:bg-stone-500/[0.06] dark:hover:bg-white/[0.06] hover:text-[#292A27] dark:hover:text-[#E8E8E8]'
+                              ? 'bg-chip text-fg font-semibold border border-line shadow-xs'
+                              : 'text-muted hover:text-fg hover:bg-chip/60'
                           } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
-                          style={{
-                            color: isActive ? 'var(--accent-primary)' : undefined,
-                            backgroundColor: isActive ? 'var(--accent-primary-subtle)' : undefined,
-                          }}
                           title={isCollapsed ? item.label : undefined}
                         >
-                          {/* Active Theme Accent Indicator Bar */}
+                          {/* Active Indicator Bar */}
                           {isActive && (
-                            <span
-                              className="absolute right-0 inset-y-1 w-1 rounded-full transition-colors"
-                              style={{ backgroundColor: 'var(--accent-primary)' }}
-                            />
+                            <span className="absolute end-0 inset-y-1 w-1 rounded-full bg-fg" />
                           )}
 
                           <div className="flex items-center gap-2.5 truncate">
                             <Icon
-                              className="w-4 h-4 shrink-0 transition-colors"
-                              style={{ color: isActive ? 'var(--accent-primary)' : undefined }}
+                              className={`w-4 h-4 shrink-0 transition-colors ${
+                                isActive ? 'text-fg' : 'text-muted group-hover:text-fg'
+                              }`}
                             />
                             {!isCollapsed && <span className="truncate">{item.label}</span>}
                           </div>
 
                           {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
                             <span
-                              className={`px-1.5 py-0.2 text-[10px] rounded-md font-mono tabular-nums font-semibold ${
+                              className={`px-1.5 py-0.5 text-[10px] rounded-md font-mono tabular-nums font-semibold ${
                                 isActive
-                                  ? ''
-                                  : 'text-[#74756F] dark:text-[#A0A0A0] bg-[#E7E5DF] dark:bg-[#252525]'
+                                  ? 'bg-fg text-bg'
+                                  : 'text-muted bg-chip'
                               }`}
-                              style={{
-                                backgroundColor: isActive ? 'var(--accent-primary)' : undefined,
-                                color: isActive ? 'var(--btn-primary-text)' : undefined,
-                              }}
                             >
                               {toPersianDigits(item.badge)}
                             </span>
@@ -404,26 +394,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer Streak & Progress Widget */}
         {!isCollapsed && (
-          <div className="p-3.5 mx-2.5 mb-3 bg-stone-500/[0.04] dark:bg-white/[0.03] backdrop-blur-md rounded-2xl border border-stone-200/80 dark:border-white/10 shadow-xs">
-            <div className="flex items-center justify-between text-xs text-[#292A27] dark:text-[#E8E8E8] font-medium mb-1.5">
+          <div className="p-3.5 mx-2.5 mb-3 bg-surface rounded-2xl border border-line shadow-xs">
+            <div className="flex items-center justify-between text-xs text-fg font-medium mb-1.5">
               <span className="flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
+                <Flame className="w-3.5 h-3.5 text-fg" />
                 استمرار روزانه
               </span>
-              <span className="font-mono tabular-nums text-[#292A27] dark:text-[#E8E8E8] font-bold">
+              <span className="font-mono tabular-nums text-fg font-bold">
                 {toPersianDigits(maxStreak)} روز
               </span>
             </div>
 
             <div className="space-y-1">
-              <div className="flex justify-between text-[11px] text-[#74756F] dark:text-[#A0A0A0]">
+              <div className="flex justify-between text-[11px] text-muted">
                 <span>پیشرفت هفتگی اهداف</span>
                 <span className="font-mono tabular-nums">{toPersianDigits(weeklyGoalPercent)}٪</span>
               </div>
-              <div className="w-full bg-stone-200/80 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-chip h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all duration-300"
-                  style={{ width: `${weeklyGoalPercent}%`, backgroundColor: 'var(--accent-primary)' }}
+                  className="h-full rounded-full transition-all duration-300 bg-fg"
+                  style={{ width: `${weeklyGoalPercent}%` }}
                 />
               </div>
             </div>

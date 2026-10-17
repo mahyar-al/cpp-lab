@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" class="bg-bg">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,69 +20,26 @@
     <script>
       (function() {
         try {
-          var mode = 'dark';
-          // 1. Check standalone theme mode preference first
-          var standalone = localStorage.getItem('pathly_theme_mode');
-          if (standalone) {
-            mode = standalone;
-          } else {
-            // 2. Check full cached app state
-            var saved = localStorage.getItem('pathly_app_data_v3_clean');
-            if (saved) {
-              var data = JSON.parse(saved);
-              if (data && data.profile) {
-                mode = (data.profile.customization && data.profile.customization.themeMode) || data.profile.theme || 'dark';
-              }
-            }
-          }
-
-          var isDark = true;
-          if (mode === 'light') {
-            isDark = false;
-          } else if (mode === 'system') {
-            var mql = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
-            isDark = mql ? mql.matches : false;
-          } else {
-            // Any other dark theme mode (dark, cyber-purple, emerald-matrix, ocean-deep, sunset-gold, rose-quartz)
+          var saved = localStorage.getItem('theme') || localStorage.getItem('pathly_theme_mode');
+          var isDark;
+          if (saved === 'dark') {
             isDark = true;
-          }
-
-          if (isDark) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.backgroundColor = '#000000';
-            document.documentElement.style.color = '#ECEAE6';
+          } else if (saved === 'light') {
+            isDark = false;
           } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.style.backgroundColor = '#F5F4F1';
-            document.documentElement.style.color = '#23211E';
+            var mql = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+            isDark = mql ? mql.matches : true;
           }
-          document.documentElement.setAttribute('data-theme', mode);
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
           document.documentElement.setAttribute('data-resolved-theme', isDark ? 'dark' : 'light');
-
-          // Read accent color from localStorage or cached state for instant anti-flash render
-          var accent = localStorage.getItem('pathly_accent_color');
-          if (!accent) {
-            var themeToAccent = {
-              'sunset-gold': 'amber',
-              'cyber-purple': 'violet',
-              'emerald-matrix': 'emerald',
-              'ocean-deep': 'blue',
-              'rose-quartz': 'rose',
-              'cyan-matrix': 'cyan'
-            };
-            accent = themeToAccent[mode] || 'amber';
-          }
-          document.documentElement.setAttribute('data-accent', accent);
         } catch (e) {
           document.documentElement.classList.add('dark');
-          document.documentElement.style.backgroundColor = '#000000';
-          document.documentElement.style.color = '#ECEAE6';
-          document.documentElement.setAttribute('data-accent', 'amber');
         }
       })();
     </script>
   </head>
-  <body class="bg-[#F5F4F1] text-[#23211E] dark:bg-[#000000] dark:text-[#ECEAE6] antialiased font-sans selection:bg-amber-200 dark:selection:bg-amber-950/70">
+  <body class="bg-transparent text-fg antialiased font-sans selection:bg-fg selection:text-bg">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
