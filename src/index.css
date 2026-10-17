@@ -22,25 +22,25 @@
 }
 
 :root {
-  --bg: #fafafa;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --text: #0a0a0a;
-  --text-muted: #52525b;
+  --text: #000000;
+  --text-muted: #3f3f46;
   --border: #e4e4e7;
-  --pattern: rgba(0, 0, 0, 0.12);
-  --chip: #e4e4e7;
+  --pattern: rgba(0, 0, 0, 0.16);
+  --chip: #f4f4f5;
 
   /* Aliases to enforce pure grayscale across all legacy variables */
   --bg-page: var(--bg);
   --bg-card: var(--surface);
-  --bg-subsurface: var(--bg);
+  --bg-subsurface: #fafafa;
   --border-subtle: var(--border);
-  --border-hover: var(--text-muted);
+  --border-hover: #71717a;
   --text-main: var(--text);
   --text-secondary: var(--text-muted);
 
   --accent-primary: var(--text);
-  --accent-primary-hover: #27272a;
+  --accent-primary-hover: #18181b;
   --accent-primary-subtle: var(--chip);
   --accent-primary-border: var(--border);
   --accent-primary-text: var(--bg);
@@ -49,22 +49,31 @@
 
   --btn-primary-bg: var(--text);
   --btn-primary-text: var(--bg);
-  --btn-primary-hover: #27272a;
+  --btn-primary-hover: #18181b;
 
   --hover-subtle: var(--chip);
   --hover-card: var(--surface);
-  --scrollbar-thumb: var(--border);
+  --scrollbar-thumb: #d4d4d8;
   --scrollbar-hover: var(--text-muted);
 
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-bg-strong: rgba(255, 255, 255, 0.75);
-  --glass-bg-subtle: rgba(255, 255, 255, 0.28);
-  --glass-border: rgba(255, 255, 255, 0.7);
-  --glass-edge: rgba(0, 0, 0, 0.08);
-  --glass-highlight: rgba(255, 255, 255, 0.9);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --glass-specular: rgba(255, 255, 255, 0.6);
-  --glass-sheen: rgba(0, 0, 0, 0.03);
+  /* Glass tokens in light mode: higher opacity, clear edges, no washout */
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-bg-strong: rgba(255, 255, 255, 0.92);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.60);
+  --glass-border: rgba(0, 0, 0, 0.10);
+  --glass-edge: rgba(0, 0, 0, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --glass-specular: rgba(255, 255, 255, 0.85);
+  --glass-sheen: rgba(0, 0, 0, 0.04);
+  --glass-filter: blur(16px) saturate(140%);
+  --glass-filter-subtle: blur(10px) saturate(130%);
+
+  /* Background effects: pure black in light mode */
+  --bg-fx-base: #000000;
+  --bg-fx-hover: #000000;
+  --spot-color: rgba(0, 0, 0, 0.06);
+  --dot-hover: rgba(0, 0, 0, 0.40);
 }
 
 .dark,
@@ -112,6 +121,13 @@
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
   --glass-specular: rgba(255, 255, 255, 0.12);
   --glass-sheen: rgba(255, 255, 255, 0.06);
+  --glass-filter: blur(20px) saturate(160%) brightness(1.05);
+  --glass-filter-subtle: blur(10px) saturate(150%) brightness(1.02);
+
+  --bg-fx-base: var(--text-muted);
+  --bg-fx-hover: var(--text);
+  --spot-color: rgba(255, 255, 255, 0.06);
+  --dot-hover: rgba(255, 255, 255, 0.35);
 }
 
 /* Neutralize all data-accent attributes to pure monochrome */
@@ -308,110 +324,7 @@
    ========================================================================== */
 
 @utility glass {
-  position: relative;
-  isolation: isolate;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-edge),
-    inset 0 0 20px rgba(255, 255, 255, 0.04),
-    var(--glass-shadow);
-}
-
-@utility glass-strong {
-  position: relative;
-  isolation: isolate;
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-edge),
-    inset 0 0 20px rgba(255, 255, 255, 0.06),
-    var(--glass-shadow);
-}
-
-@utility glass-subtle {
-  position: relative;
-  isolation: isolate;
-  background: var(--glass-bg-subtle);
-  backdrop-filter: blur(10px) saturate(150%) brightness(1.02);
-  -webkit-backdrop-filter: blur(10px) saturate(150%) brightness(1.02);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-edge),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-/* Explicit class mappings for legacy and direct utility usage */
-.glass,
-.glass-panel,
-.glass-card {
-  position: relative;
-  isolation: isolate;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-edge),
-    inset 0 0 20px rgba(255, 255, 255, 0.04),
-    var(--glass-shadow);
-}
-
-.glass-strong,
-.glass-modal,
-.glass-dropdown,
-.glass-panel-elevated {
-  position: relative;
-  isolation: isolate;
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-edge),
-    inset 0 0 20px rgba(255, 255, 255, 0.06),
-    var(--glass-shadow);
-}
-
-.glass-subtle,
-.glass-panel-subtle {
-  position: relative;
-  isolation: isolate;
-  background: var(--glass-bg-subtle);
-  backdrop-filter: blur(10px) saturate(150%) brightness(1.02);
-  -webkit-backdrop-filter: blur(10px) saturate(150%) brightness(1.02);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-edge),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-/* Diagonal Sheen + Cursor Radial Specular Highlight pseudo-element */
-.glass::before,
-.glass-strong::before,
-.glass-subtle::before,
-.glass-panel::before,
-.glass-card::before,
-.glass-modal::before,
-.glass-dropdown::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.85;
-  transition: opacity 0.3s ease;
+  background-color: var(--glass-bg);
   background-image:
     radial-gradient(
       circle 180px at var(--gx, -9999px) var(--gy, -9999px),
@@ -424,12 +337,151 @@
       transparent 35%,
       transparent 70%,
       var(--glass-sheen) 100%
-    );
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  padding: 1px;
+    ),
+    linear-gradient(var(--glass-bg), var(--glass-bg));
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-edge),
+    inset 0 0 20px rgba(255, 255, 255, 0.04),
+    var(--glass-shadow);
+}
+
+@utility glass-strong {
+  background-color: var(--glass-bg-strong);
+  background-image:
+    radial-gradient(
+      circle 180px at var(--gx, -9999px) var(--gy, -9999px),
+      var(--glass-specular),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--glass-highlight) 0%,
+      transparent 35%,
+      transparent 70%,
+      var(--glass-sheen) 100%
+    ),
+    linear-gradient(var(--glass-bg-strong), var(--glass-bg-strong));
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-edge),
+    inset 0 0 20px rgba(255, 255, 255, 0.06),
+    var(--glass-shadow);
+}
+
+@utility glass-subtle {
+  background-color: var(--glass-bg-subtle);
+  background-image:
+    radial-gradient(
+      circle 180px at var(--gx, -9999px) var(--gy, -9999px),
+      var(--glass-specular),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--glass-highlight) 0%,
+      transparent 35%,
+      transparent 70%,
+      var(--glass-sheen) 100%
+    ),
+    linear-gradient(var(--glass-bg-subtle), var(--glass-bg-subtle));
+  backdrop-filter: var(--glass-filter-subtle);
+  -webkit-backdrop-filter: var(--glass-filter-subtle);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-edge),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Explicit class mappings for legacy and direct utility usage */
+.glass,
+.glass-panel,
+.glass-card {
+  background-color: var(--glass-bg);
+  background-image:
+    radial-gradient(
+      circle 180px at var(--gx, -9999px) var(--gy, -9999px),
+      var(--glass-specular),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--glass-highlight) 0%,
+      transparent 35%,
+      transparent 70%,
+      var(--glass-sheen) 100%
+    ),
+    linear-gradient(var(--glass-bg), var(--glass-bg));
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-edge),
+    inset 0 0 20px rgba(255, 255, 255, 0.04),
+    var(--glass-shadow);
+}
+
+.glass-strong,
+.glass-modal,
+.glass-dropdown,
+.glass-panel-elevated {
+  background-color: var(--glass-bg-strong);
+  background-image:
+    radial-gradient(
+      circle 180px at var(--gx, -9999px) var(--gy, -9999px),
+      var(--glass-specular),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--glass-highlight) 0%,
+      transparent 35%,
+      transparent 70%,
+      var(--glass-sheen) 100%
+    ),
+    linear-gradient(var(--glass-bg-strong), var(--glass-bg-strong));
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-edge),
+    inset 0 0 20px rgba(255, 255, 255, 0.06),
+    var(--glass-shadow);
+}
+
+.glass-subtle,
+.glass-panel-subtle {
+  background-color: var(--glass-bg-subtle);
+  background-image:
+    radial-gradient(
+      circle 180px at var(--gx, -9999px) var(--gy, -9999px),
+      var(--glass-specular),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--glass-highlight) 0%,
+      transparent 35%,
+      transparent 70%,
+      var(--glass-sheen) 100%
+    ),
+    linear-gradient(var(--glass-bg-subtle), var(--glass-bg-subtle));
+  backdrop-filter: var(--glass-filter-subtle);
+  -webkit-backdrop-filter: var(--glass-filter-subtle);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-edge),
+    0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 /* Liquid interactive micro-lift and spring feedback */
@@ -473,15 +525,7 @@
 .glass-strong .glass-subtle {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  background: var(--glass-bg-subtle);
-}
-
-/* Optional real refraction filter for Chromium progressive enhancement */
-@supports (backdrop-filter: url(#liquid-distort) blur(16px)) {
-  .glass-liquid-refract {
-    backdrop-filter: url(#liquid-distort) blur(16px) saturate(160%);
-    -webkit-backdrop-filter: url(#liquid-distort) blur(16px) saturate(160%);
-  }
+  background-color: var(--glass-bg-subtle);
 }
 
 /* Accessibility: prefers-reduced-transparency fallback */
@@ -492,22 +536,13 @@
   .glass-panel,
   .glass-card,
   .glass-modal,
-  .glass-dropdown,
-  .glass-liquid-refract {
+  .glass-dropdown {
     background: var(--surface) !important;
+    background-image: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     border: 1px solid var(--border) !important;
     box-shadow: var(--glass-shadow) !important;
-  }
-  .glass::before,
-  .glass-strong::before,
-  .glass-subtle::before,
-  .glass-panel::before,
-  .glass-card::before,
-  .glass-modal::before,
-  .glass-dropdown::before {
-    display: none !important;
   }
 }
 
@@ -537,13 +572,13 @@
   .glass-card-hover:active {
     transform: none !important;
   }
-  .glass::before,
-  .glass-strong::before,
-  .glass-subtle::before,
-  .glass-panel::before,
-  .glass-card::before,
-  .glass-modal::before,
-  .glass-dropdown::before {
+  .glass,
+  .glass-strong,
+  .glass-subtle,
+  .glass-panel,
+  .glass-card,
+  .glass-modal,
+  .glass-dropdown {
     background-image: linear-gradient(
       135deg,
       var(--glass-highlight) 0%,
@@ -569,3 +604,115 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* ==========================================================================
+   High-Contrast Light Mode Typography & Color Enforcements
+   ========================================================================== */
+
+/* Light mode text must be black or dark muted (WCAG AA 7:1+ contrast) */
+html:not(.dark),
+[data-resolved-theme="light"],
+[data-theme="light"] {
+  color: var(--text);
+}
+
+/* In light mode, placeholders must be readable and never faint gray */
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder,
+html:not(.dark) [class*="placeholder:text-"]::placeholder,
+[data-resolved-theme="light"] input::placeholder,
+[data-resolved-theme="light"] textarea::placeholder,
+[data-resolved-theme="light"] [class*="placeholder:text-"]::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1 !important;
+}
+
+/* In light mode, neutralize faint gray utilities to dark WCAG-compliant colors */
+html:not(.dark) .text-stone-200,
+html:not(.dark) .text-stone-300,
+html:not(.dark) .text-stone-400,
+html:not(.dark) .text-stone-500,
+html:not(.dark) .text-slate-200,
+html:not(.dark) .text-slate-300,
+html:not(.dark) .text-slate-400,
+html:not(.dark) .text-slate-500,
+html:not(.dark) .text-zinc-200,
+html:not(.dark) .text-zinc-300,
+html:not(.dark) .text-zinc-400,
+html:not(.dark) .text-zinc-500,
+html:not(.dark) .text-gray-200,
+html:not(.dark) .text-gray-300,
+html:not(.dark) .text-gray-400,
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-neutral-200,
+html:not(.dark) .text-neutral-300,
+html:not(.dark) .text-neutral-400,
+html:not(.dark) .text-neutral-500 {
+  color: var(--text-muted);
+}
+
+/* SVG icons next to text in light mode: text-muted, never lighter */
+html:not(.dark) svg.text-stone-400,
+html:not(.dark) svg.text-stone-500,
+html:not(.dark) svg.text-slate-400,
+html:not(.dark) svg.text-slate-500,
+html:not(.dark) svg.text-zinc-400,
+html:not(.dark) svg.text-zinc-500,
+html:not(.dark) svg.text-gray-400,
+html:not(.dark) svg.text-gray-500,
+html:not(.dark) svg.text-neutral-400,
+html:not(.dark) svg.text-neutral-500 {
+  color: var(--text-muted);
+}
+
+html:not(.dark) .text-stone-600,
+html:not(.dark) .text-stone-700,
+html:not(.dark) .text-stone-800,
+html:not(.dark) .text-stone-900,
+html:not(.dark) .text-slate-600,
+html:not(.dark) .text-slate-700,
+html:not(.dark) .text-slate-800,
+html:not(.dark) .text-slate-900,
+html:not(.dark) .text-zinc-600,
+html:not(.dark) .text-zinc-700,
+html:not(.dark) .text-zinc-800,
+html:not(.dark) .text-zinc-900 {
+  color: var(--text);
+}
+
+/* Ensure text-muted is clearly dark in light mode */
+html:not(.dark) .text-muted {
+  color: var(--text-muted);
+}
+
+/* Eliminate faint text-opacity in light mode */
+html:not(.dark) .text-muted\/60,
+html:not(.dark) .text-muted\/70,
+html:not(.dark) .text-muted\/80 {
+  color: var(--text-muted);
+}
+
+html:not(.dark) .text-fg\/60,
+html:not(.dark) .text-fg\/70 {
+  color: var(--text);
+}
+
+/* In light mode, prevent text opacities from washing out text readability */
+html:not(.dark) span[class*="opacity-40"],
+html:not(.dark) span[class*="opacity-50"],
+html:not(.dark) span[class*="opacity-60"],
+html:not(.dark) span[class*="opacity-70"],
+html:not(.dark) span[class*="opacity-75"],
+html:not(.dark) p[class*="opacity-40"],
+html:not(.dark) p[class*="opacity-50"],
+html:not(.dark) p[class*="opacity-60"],
+html:not(.dark) p[class*="opacity-70"],
+html:not(.dark) p[class*="opacity-75"] {
+  opacity: 0.95;
+}
+
+/* In light mode, disabled states must remain comfortably legible */
+html:not(.dark) [class*="disabled:opacity-"]:disabled {
+  opacity: 0.65 !important;
+}
+

@@ -259,7 +259,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar Aside */}
       <aside
-        className={`fixed top-0 bottom-0 right-0 z-50 flex flex-col glass-strong glass-liquid-refract border-l border-line/60 transition-all duration-300 ease-in-out shadow-2xl ${
+        className={`fixed inset-y-0 right-0 z-50 flex flex-col glass-strong border-l border-line/60 transition-all duration-300 ease-in-out shadow-2xl ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${isOpenMobile ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}
         dir="rtl"
@@ -328,11 +328,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     type="button"
                     onClick={() => toggleGroupCollapse(group.groupId)}
-                    className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-semibold text-[#74756F] dark:text-[#A0A0A0] hover:text-[#292A27] dark:hover:text-[#E8E8E8] transition-colors cursor-pointer group"
+                    className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold text-muted hover:text-fg transition-colors cursor-pointer group"
                   >
                     <span>{group.groupTitle}</span>
                     <ChevronDown
-                      className={`w-3 h-3 text-[#A0A0A0] transition-transform duration-200 ${
+                      className={`w-3 h-3 text-muted transition-transform duration-200 ${
                         isGroupCollapsed ? '-rotate-90' : 'rotate-0'
                       }`}
                     />

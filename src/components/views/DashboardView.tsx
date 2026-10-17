@@ -749,13 +749,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                   <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">
                     کارهای امروز
                   </h2>
-                  <span className="text-xs text-stone-400 dark:text-stone-500 font-mono tabular-nums">
+                  <span className="text-xs text-muted font-mono tabular-nums">
                     ({toPersianDigits(remainingTasksCount)} در انتظار · {toPersianDigits(completedTasksCount)} انجام‌شده)
                   </span>
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex items-center gap-1 bg-stone-100/70 dark:bg-stone-900/80 p-0.5 rounded-xl border border-stone-200/60 dark:border-stone-800/80">
+                <div className="flex items-center gap-1 bg-chip p-0.5 rounded-xl border border-line">
                   {(['all', 'pending', 'completed'] as const).map((filterKey) => (
                     <button
                       key={filterKey}
@@ -763,8 +763,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       onClick={() => setTaskFilter(filterKey)}
                       className={`px-2.5 py-1 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                         taskFilter === filterKey
-                          ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-2xs font-semibold'
-                          : 'text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200'
+                          ? 'bg-surface text-fg shadow-2xs font-semibold border border-line'
+                          : 'text-muted hover:text-fg'
                       }`}
                     >
                       {filterKey === 'all' ? 'همه' : filterKey === 'pending' ? 'در انتظار' : 'انجام‌شده'}
@@ -777,7 +777,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               {showInlineTaskInput && (
                 <form
                   onSubmit={handleAddTodayTask}
-                  className="mb-4 p-3 bg-stone-50/80 dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 rounded-xl space-y-2 animate-in fade-in duration-150"
+                  className="mb-4 p-3 bg-surface border border-line rounded-xl space-y-2 animate-in fade-in duration-150"
                 >
                   <input
                     type="text"
@@ -786,7 +786,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                     placeholder="عنوان کار جدید برای امروز..."
                     autoFocus
                     required
-                    className="w-full px-3 py-2 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-[var(--accent-primary)]"
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-line bg-surface text-fg placeholder:text-muted focus:outline-none focus:border-fg"
                   />
 
                   <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -795,14 +795,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                         type="time"
                         value={quickTaskTime}
                         onChange={(e) => setQuickTaskTime(e.target.value)}
-                        className="px-2 py-1 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 font-mono"
+                        className="px-2 py-1 text-xs rounded-lg border border-line bg-surface text-fg font-mono"
                         title="ساعت انجام"
                       />
 
                       <select
                         value={quickTaskPriority}
                         onChange={(e) => setQuickTaskPriority(e.target.value as Priority)}
-                        className="px-2 py-1 text-xs rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200"
+                        className="px-2 py-1 text-xs rounded-lg border border-line bg-surface text-fg"
                       >
                         <option value="high">اولویت بالا</option>
                         <option value="medium">اولویت متوسط</option>
@@ -814,13 +814,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       <button
                         type="button"
                         onClick={() => setShowInlineTaskInput(false)}
-                        className="px-2.5 py-1 text-xs text-stone-500 hover:text-stone-800 dark:text-stone-400 cursor-pointer"
+                        className="px-2.5 py-1 text-xs text-muted hover:text-fg cursor-pointer"
                       >
                         انصراف
                       </button>
                       <button
                         type="submit"
-                        className="px-3 py-1 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-semibold rounded-lg cursor-pointer"
+                        className="px-3 py-1 bg-fg hover:opacity-90 text-bg text-xs font-semibold rounded-lg cursor-pointer"
                       >
                         افزودن
                       </button>
@@ -831,15 +831,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
               {/* HIGHLIGHTED: Most Important Task (MIT) */}
               {mostImportantTask && taskFilter !== 'completed' && !mostImportantTask.completed && (
-                <div className="mb-4 p-3.5 rounded-xl border border-stone-200/90 dark:border-stone-800 bg-stone-50/60 dark:bg-stone-900/40 flex items-start justify-between gap-3 transition-all">
+                <div className="mb-4 p-3.5 rounded-xl border border-line bg-chip/50 flex items-start justify-between gap-3 transition-all">
                   <div className="flex items-start gap-3 min-w-0">
                     <button
                       type="button"
                       onClick={() => handleToggleTask(mostImportantTask)}
                       className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 mt-0.5 cursor-pointer ${
                         mostImportantTask.completed
-                          ? 'bg-[var(--accent-primary)] text-white'
-                          : 'border border-stone-400 dark:border-stone-600 hover:border-stone-800 dark:hover:border-stone-300'
+                          ? 'bg-fg text-bg'
+                          : 'border border-line hover:border-fg'
                       }`}
                       title="علامت به عنوان انجام‌شده"
                     >
@@ -848,28 +848,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--accent-primary)]">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-fg">
                           <Star className="w-3.5 h-3.5 fill-current" />
                           <span>تمرکز اصلی امروز</span>
                         </span>
                         {mostImportantTask.time && (
-                          <span className="text-[11px] font-mono tabular-nums text-stone-500 dark:text-stone-400">
+                          <span className="text-[11px] font-mono tabular-nums text-muted">
                             · {toPersianDigits(mostImportantTask.time)}
                           </span>
                         )}
                       </div>
 
-                      <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
+                      <p className="text-sm font-semibold text-fg">
                         {mostImportantTask.title}
                       </p>
 
-                      <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
+                      <p className="text-[11px] text-muted mt-0.5">
                         {mostImportantTask.source}
                       </p>
                     </div>
                   </div>
 
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400 px-2 py-0.5 rounded bg-stone-200/50 dark:bg-stone-800/50 shrink-0">
+                  <span className="text-[10px] text-muted px-2 py-0.5 rounded bg-chip shrink-0">
                     اولویت اصلی
                   </span>
                 </div>
@@ -879,16 +879,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
               <div className="space-y-2">
                 {filteredTasks.length === 0 ? (
                   /* Calm, Graceful Empty State */
-                  <div className="py-8 text-center px-4 rounded-xl border border-dashed border-stone-200/80 dark:border-stone-800 bg-stone-50/40 dark:bg-stone-900/30">
-                    <CheckCircle2 className="w-7 h-7 text-stone-400 dark:text-stone-500 mx-auto mb-2 opacity-60" />
-                    <p className="text-xs font-semibold text-stone-800 dark:text-stone-200">
+                  <div className="py-8 text-center px-4 rounded-xl border border-dashed border-line bg-chip/30">
+                    <CheckCircle2 className="w-7 h-7 text-muted mx-auto mb-2 opacity-80" />
+                    <p className="text-xs font-semibold text-fg">
                       {taskFilter === 'completed'
                         ? 'هنوز کاری تکمیل نشده است.'
                         : taskFilter === 'pending'
                         ? 'کاری در صف انتظار وجود ندارد.'
                         : 'امروز هیچ کاری ثبت نشده است.'}
                     </p>
-                    <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 max-w-sm mx-auto">
+                    <p className="text-[11px] text-muted mt-1 max-w-sm mx-auto">
                       {taskFilter === 'all'
                         ? 'می‌توانی روز را با افزودن یک کار کوچک یا ثبت یادداشت روزانه آغاز کنی.'
                         : 'از تب‌های بالا برای بررسی سایر وضعیت‌ها استفاده کن.'}
@@ -897,7 +897,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate, onOpen
                       <button
                         type="button"
                         onClick={() => setShowInlineTaskInput(true)}
-                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-50 transition-colors cursor-pointer"
+                        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface border border-line text-fg hover:bg-chip transition-colors cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>افزودن اولین کار امروز</span>

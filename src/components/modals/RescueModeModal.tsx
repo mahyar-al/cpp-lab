@@ -50,23 +50,23 @@ export const RescueModeModal: React.FC = () => {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-fg opacity-5 rounded-full blur-3xl pointer-events-none" />
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-line/60 relative z-10 bg-stone-500/[0.04] dark:bg-white/[0.03]">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-line relative z-10 bg-chip/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-chip border border-line flex items-center justify-center text-fg shadow-xs">
               <LifeBuoy className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-lg font-bold text-fg">
                 حالت نجات روز
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-muted mt-0.5">
                 سازماندهی اولویت‌ها و جبران عقب‌افتادگی روزانه
               </p>
             </div>
           </div>
           <button
             onClick={() => setIsRescueModalOpen(false)}
-            className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-2 text-muted hover:text-fg rounded-lg hover:bg-chip transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -75,14 +75,14 @@ export const RescueModeModal: React.FC = () => {
         {/* Modal Body */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-6 relative z-10 flex-1">
           {/* Supportive Guidance Hint */}
-          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-slate-700 dark:text-slate-300 leading-relaxed flex items-center gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
+          <div className="p-3.5 rounded-xl bg-chip border border-line text-xs text-fg leading-relaxed flex items-center gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-fg shrink-0" />
             <span>اولویت‌های ضروری امروز را مشخص کنید تا کارهای غیرفوری به روزهای بعد موکول شوند.</span>
           </div>
 
           {/* Mode Selector */}
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-2.5">
+            <label className="text-xs font-semibold text-fg block mb-2.5">
               چقدر توان یا زمان برای امروز دارید؟
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -92,16 +92,16 @@ export const RescueModeModal: React.FC = () => {
                 disabled={loading}
                 className={`p-3 rounded-xl border text-right transition-all flex flex-col justify-between cursor-pointer ${
                   selectedMode === '15_min'
-                    ? 'border-cyan-500 bg-cyan-500/15 text-slate-900 dark:text-white shadow-lg shadow-cyan-500/10 ring-2 ring-cyan-500/20'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    ? 'border-fg bg-chip text-fg ring-1 ring-fg/20'
+                    : 'border-line bg-surface text-muted hover:border-line hover:text-fg hover:bg-chip'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">میکرو اسپرینت</span>
-                  <Clock className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                  <span className="text-xs font-bold text-fg">میکرو اسپرینت</span>
+                  <Clock className="w-4 h-4 text-fg" />
                 </div>
-                <div className="font-semibold text-sm">فقط ۱۵ دقیقه وقت دارم</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">یک اقدام فوق‌العاده کوتاه و بستن روز با حس موفقیت</div>
+                <div className="font-semibold text-sm text-fg">فقط ۱۵ دقیقه وقت دارم</div>
+                <div className="text-[11px] text-muted mt-1">یک اقدام فوق‌العاده کوتاه و بستن روز با حس موفقیت</div>
               </button>
 
               <button
@@ -110,16 +110,16 @@ export const RescueModeModal: React.FC = () => {
                 disabled={loading}
                 className={`p-3 rounded-xl border text-right transition-all flex flex-col justify-between cursor-pointer ${
                   selectedMode === '1_hour'
-                    ? 'border-amber-500 bg-amber-500/15 text-slate-900 dark:text-white shadow-lg shadow-amber-500/10 ring-2 ring-amber-500/20'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    ? 'border-fg bg-chip text-fg ring-1 ring-fg/20'
+                    : 'border-line bg-surface text-muted hover:border-line hover:text-fg hover:bg-chip'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400">بلوک قدرت</span>
-                  <Flame className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span className="text-xs font-bold text-fg">بلوک قدرت</span>
+                  <Flame className="w-4 h-4 text-fg" />
                 </div>
-                <div className="font-semibold text-sm">یک ساعت وقت دارم</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">۲ بازه ۲۵ دقیقه‌ای پومودورو با استراحت کوتاه</div>
+                <div className="font-semibold text-sm text-fg">یک ساعت وقت دارم</div>
+                <div className="text-[11px] text-muted mt-1">۲ بازه ۲۵ دقیقه‌ای پومودورو با استراحت کوتاه</div>
               </button>
 
               <button
@@ -128,16 +128,16 @@ export const RescueModeModal: React.FC = () => {
                 disabled={loading}
                 className={`p-3 rounded-xl border text-right transition-all flex flex-col justify-between cursor-pointer ${
                   selectedMode === 'rebuild_day'
-                    ? 'border-purple-500 bg-purple-500/15 text-slate-900 dark:text-white shadow-lg shadow-purple-500/10 ring-2 ring-purple-500/20'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    ? 'border-fg bg-chip text-fg ring-1 ring-fg/20'
+                    : 'border-line bg-surface text-muted hover:border-line hover:text-fg hover:bg-chip'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400">بازسازی واقع‌بینانه</span>
-                  <RotateCcw className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span className="text-xs font-bold text-fg">بازسازی واقع‌بینانه</span>
+                  <RotateCcw className="w-4 h-4 text-fg" />
                 </div>
-                <div className="font-semibold text-sm">بازسازی باقی روز</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">انتخاب ۳ کار حیاتی و انتقال بقیه بدون عذاب وجدان</div>
+                <div className="font-semibold text-sm text-fg">بازسازی باقی روز</div>
+                <div className="text-[11px] text-muted mt-1">انتخاب ۳ کار حیاتی و انتقال بقیه بدون عذاب وجدان</div>
               </button>
             </div>
           </div>
@@ -145,8 +145,8 @@ export const RescueModeModal: React.FC = () => {
           {/* Loading Indicator */}
           {loading && (
             <div className="py-10 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs text-amber-600 dark:text-amber-300">در حال ارزیابی وظایف و ساخت برنامه نجات...</p>
+              <div className="w-8 h-8 border-2 border-fg border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs text-muted">در حال ارزیابی وظایف و ساخت برنامه نجات...</p>
             </div>
           )}
 
@@ -154,28 +154,28 @@ export const RescueModeModal: React.FC = () => {
           {!loading && rescuePlan && (
             <div className="space-y-4 animate-fade-in">
               {/* Smallest Step Highlight */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 dark:from-cyan-950/40 to-slate-100 dark:to-slate-800/70 border border-cyan-500/30">
-                <div className="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 text-xs font-bold mb-1.5">
+              <div className="p-4 rounded-xl bg-chip border border-line">
+                <div className="flex items-center gap-2 text-fg text-xs font-bold mb-1.5">
                   <Sparkles className="w-4 h-4" />
                   کوچک‌ترین قدم مفید برای شروع همین الان:
                 </div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white leading-relaxed">
+                <p className="text-sm font-semibold text-fg leading-relaxed">
                   {rescuePlan.smallestStep}
                 </p>
               </div>
 
               {/* Message from Coach */}
               {rescuePlan.message && (
-                <div className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100/70 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                <div className="text-xs text-fg bg-chip p-3 rounded-xl border border-line">
                   {rescuePlan.message}
                 </div>
               )}
 
               {/* Suggested Steps */}
               <div>
-                <h3 className="text-xs font-bold text-slate-600 dark:text-slate-400 mb-2 flex items-center justify-between">
+                <h3 className="text-xs font-bold text-fg mb-2 flex items-center justify-between">
                   <span>برنامه پیشنهادی متناسب با زمان شما:</span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[11px] text-muted">
                     {toPersianDigits(rescuePlan.suggestedSchedule.length)} گام
                   </span>
                 </h3>
@@ -185,29 +185,23 @@ export const RescueModeModal: React.FC = () => {
                       key={step.id || idx}
                       className={`p-3 rounded-xl border flex items-center justify-between gap-3 ${
                         step.isBreak
-                          ? 'bg-slate-50 dark:bg-slate-800/30 border-dashed border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
-                          : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white shadow-xs'
+                          ? 'bg-chip/50 border-dashed border-line text-muted'
+                          : 'bg-surface border-line text-fg shadow-xs'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
-                            step.isBreak
-                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                          }`}
-                        >
+                        <div className="w-7 h-7 rounded-lg bg-chip border border-line flex items-center justify-center text-xs font-bold text-fg">
                           {step.isBreak ? <Coffee className="w-3.5 h-3.5" /> : toPersianDigits(idx + 1)}
                         </div>
                         <div>
                           <div className="text-xs sm:text-sm font-medium">{step.title}</div>
                           {step.note && (
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{step.note}</div>
+                            <div className="text-[11px] text-muted mt-0.5">{step.note}</div>
                           )}
                         </div>
                       </div>
                       <div className="text-left shrink-0">
-                        <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-200 dark:border-cyan-800/40 font-bold">
+                        <span className="text-xs font-mono text-fg bg-chip px-2 py-0.5 rounded border border-line font-bold">
                           {toPersianDigits(step.timeSlot)}
                         </span>
                       </div>
@@ -218,8 +212,8 @@ export const RescueModeModal: React.FC = () => {
 
               {/* Deferred vs Critical Tasks Notes */}
               {rescuePlan.deferredTaskIds?.length > 0 && (
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/40 text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-slate-500 shrink-0" />
+                <div className="p-3 rounded-xl bg-chip border border-line text-xs text-muted flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-muted shrink-0" />
                   <span>
                     {toPersianDigits(rescuePlan.deferredTaskIds.length)} وظیفه غیرفوری شناسایی و به فردا موکول شدند تا ذهن شما آسوده باشد.
                   </span>
@@ -230,12 +224,12 @@ export const RescueModeModal: React.FC = () => {
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 flex flex-wrap items-center justify-between gap-3 relative z-10">
+        <div className="p-4 sm:p-5 border-t border-line bg-surface/90 flex flex-wrap items-center justify-between gap-3 relative z-10">
           <button
             type="button"
             onClick={() => handleGenerate(selectedMode)}
             disabled={loading}
-            className="px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 text-xs font-medium text-fg bg-chip hover:bg-chip/80 border border-line rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             تحلیل مجدد
@@ -245,7 +239,7 @@ export const RescueModeModal: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsRescueModalOpen(false)}
-              className="px-4 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-xl transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs font-medium text-muted hover:text-fg rounded-xl transition-colors cursor-pointer"
             >
               انصراف
             </button>
@@ -253,7 +247,7 @@ export const RescueModeModal: React.FC = () => {
               <button
                 type="button"
                 onClick={() => applyRescuePlan(rescuePlan)}
-                className="px-5 py-2.5 text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 text-xs font-bold text-bg bg-fg hover:opacity-90 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 تأیید و اعمال در برنامه امروز

@@ -620,12 +620,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (isDark) {
       document.documentElement.classList.add('dark');
-      document.documentElement.style.backgroundColor = '#000000';
-      document.documentElement.style.color = '#ECEAE6';
+      document.documentElement.style.backgroundColor = 'var(--bg)';
+      document.documentElement.style.color = 'var(--text)';
     } else {
       document.documentElement.classList.remove('dark');
-      document.documentElement.style.backgroundColor = '#F5F4F1';
-      document.documentElement.style.color = '#23211E';
+      document.documentElement.style.backgroundColor = 'var(--bg)';
+      document.documentElement.style.color = 'var(--text)';
     }
 
     document.documentElement.setAttribute('data-theme', currentThemeMode);

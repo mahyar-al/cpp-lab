@@ -190,9 +190,9 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
     case 'table':
       if (!block.tableData) return null;
       return (
-        <div key={index} className="overflow-x-auto my-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 shadow-xs">
+        <div key={index} className="overflow-x-auto my-3 rounded-xl border border-line bg-surface/70 shadow-xs">
           <table className="w-full text-right text-xs sm:text-sm border-collapse" dir="rtl">
-            <thead className="bg-slate-100/90 dark:bg-slate-800/90 text-slate-800 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-chip text-fg font-bold border-b border-line">
               <tr>
                 {block.tableData.headers.map((h, hi) => (
                   <th key={hi} className="px-3.5 py-2.5">
@@ -201,11 +201,11 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800/80">
+            <tbody className="divide-y divide-line">
               {block.tableData.rows.map((row, ri) => (
-                <tr key={ri} className="hover:bg-cyan-500/5 dark:hover:bg-cyan-500/10 transition-colors">
+                <tr key={ri} className="hover:bg-chip transition-colors">
                   {row.map((cell, ci) => (
-                    <td key={ci} className="px-3.5 py-2 text-slate-700 dark:text-slate-300">
+                    <td key={ci} className="px-3.5 py-2 text-fg">
                       {renderInline(cell)}
                     </td>
                   ))}
@@ -220,10 +220,10 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
       const level = block.level || 2;
       const headingStyles =
         level === 1
-          ? 'text-lg sm:text-xl font-black text-slate-950 dark:text-white mt-4 mb-2 pb-1.5 border-b border-cyan-500/20'
+          ? 'text-lg sm:text-xl font-black text-fg mt-4 mb-2 pb-1.5 border-b border-line'
           : level === 2
-          ? 'text-base sm:text-lg font-bold text-slate-900 dark:text-cyan-400 mt-3 mb-1.5'
-          : 'text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200 mt-2 mb-1';
+          ? 'text-base sm:text-lg font-bold text-fg mt-3 mb-1.5'
+          : 'text-sm sm:text-base font-bold text-fg mt-2 mb-1';
       return (
         <div key={index} className={headingStyles}>
           {renderInline(block.content)}
@@ -233,7 +233,7 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
 
     case 'list': {
       return block.ordered ? (
-        <ol key={index} className="list-decimal list-inside space-y-1 my-2 text-slate-800 dark:text-slate-200 pr-1">
+        <ol key={index} className="list-decimal list-inside space-y-1 my-2 text-fg pr-1">
           {block.items?.map((item, ii) => (
             <li key={ii} className="leading-relaxed">
               <span className="inline-block mr-1">{renderInline(item)}</span>
@@ -241,10 +241,10 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
           ))}
         </ol>
       ) : (
-        <ul key={index} className="space-y-1.5 my-2 text-slate-800 dark:text-slate-200">
+        <ul key={index} className="space-y-1.5 my-2 text-fg">
           {block.items?.map((item, ii) => (
             <li key={ii} className="flex items-start gap-2 leading-relaxed">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-2 shrink-0 shadow-sm shadow-cyan-500/50" />
+              <span className="w-1.5 h-1.5 rounded-full bg-fg mt-2 shrink-0" />
               <div className="flex-1">{renderInline(item)}</div>
             </li>
           ))}
@@ -256,7 +256,7 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
       return (
         <blockquote
           key={index}
-          className="pr-3.5 py-1.5 my-2 border-r-4 border-cyan-500 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-l-lg text-slate-700 dark:text-slate-300 italic text-xs sm:text-sm"
+          className="pr-3.5 py-1.5 my-2 border-r-4 border-fg bg-chip rounded-l-lg text-fg italic text-xs sm:text-sm"
         >
           {renderInline(block.content)}
         </blockquote>
@@ -265,10 +265,10 @@ function renderBlock(block: Block, index: number, isLastStreamingBlock: boolean)
     case 'paragraph':
     default:
       return (
-        <p key={index} className="leading-relaxed my-1.5 text-slate-800 dark:text-slate-200">
+        <p key={index} className="leading-relaxed my-1.5 text-fg">
           {renderInline(block.content)}
           {isLastStreamingBlock && (
-            <span className="inline-block w-1.5 h-4 ml-1 bg-cyan-500 animate-pulse align-middle rounded-sm shadow-sm shadow-cyan-500/80" />
+            <span className="inline-block w-1.5 h-4 ml-1 bg-fg animate-pulse align-middle rounded-sm" />
           )}
         </p>
       );
@@ -292,7 +292,7 @@ function renderInline(text: string): React.ReactNode {
         <code
           key={key++}
           dir="ltr"
-          className="px-1.5 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-mono text-[11px] sm:text-xs border border-slate-300 dark:border-slate-700 mx-0.5 font-semibold"
+          className="px-1.5 py-0.5 rounded-md bg-chip text-fg font-mono text-[11px] sm:text-xs border border-line mx-0.5 font-semibold"
         >
           {codeMatch[1]}
         </code>
@@ -305,7 +305,7 @@ function renderInline(text: string): React.ReactNode {
     const boldMatch = remaining.match(/^\*\*([^*]+)\*\*/);
     if (boldMatch) {
       parts.push(
-        <strong key={key++} className="font-bold text-slate-950 dark:text-white">
+        <strong key={key++} className="font-bold text-fg">
           {boldMatch[1]}
         </strong>
       );
@@ -317,7 +317,7 @@ function renderInline(text: string): React.ReactNode {
     const italicMatch = remaining.match(/^\*([^*]+)\*/);
     if (italicMatch) {
       parts.push(
-        <em key={key++} className="italic text-slate-700 dark:text-slate-300">
+        <em key={key++} className="italic text-muted">
           {italicMatch[1]}
         </em>
       );
@@ -334,7 +334,7 @@ function renderInline(text: string): React.ReactNode {
           href={linkMatch[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-cyan-600 dark:text-cyan-400 underline underline-offset-2 hover:text-cyan-700 dark:hover:text-cyan-300 inline-flex items-center gap-0.5"
+          className="text-fg underline underline-offset-2 hover:opacity-80 inline-flex items-center gap-0.5"
         >
           {linkMatch[1]}
           <ExternalLink className="w-3 h-3 inline-block" />
@@ -372,21 +372,21 @@ const CodeBlock: React.FC<{ code: string; lang?: string }> = ({ code, lang }) =>
   };
 
   return (
-    <div className="my-3 rounded-xl overflow-hidden border border-slate-700/80 bg-slate-950 shadow-lg text-slate-100" dir="ltr">
+    <div className="my-3 rounded-xl overflow-hidden border border-line bg-surface shadow-xs text-fg" dir="ltr">
       {/* Code Header Bar */}
-      <div className="flex items-center justify-between px-3.5 py-1.5 bg-slate-900 border-b border-slate-800 text-[11px] text-slate-400">
+      <div className="flex items-center justify-between px-3.5 py-1.5 bg-chip border-b border-line text-[11px] text-muted">
         <div className="flex items-center gap-1.5 font-mono">
-          <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-          <span className="uppercase tracking-wider font-semibold text-slate-300">{lang || 'CODE'}</span>
+          <Terminal className="w-3.5 h-3.5 text-fg" />
+          <span className="uppercase tracking-wider font-semibold text-fg">{lang || 'CODE'}</span>
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 px-2 py-0.5 rounded hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs"
+          className="flex items-center gap-1 px-2 py-0.5 rounded hover:bg-surface text-muted hover:text-fg transition-colors cursor-pointer text-xs"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-emerald-400">کپی شد!</span>
+              <Check className="w-3.5 h-3.5 text-fg" />
+              <span className="text-fg">کپی شد!</span>
             </>
           ) : (
             <>
@@ -398,7 +398,7 @@ const CodeBlock: React.FC<{ code: string; lang?: string }> = ({ code, lang }) =>
       </div>
 
       {/* Code Body */}
-      <pre className="p-3.5 overflow-x-auto font-mono text-xs leading-relaxed text-slate-200 selection:bg-cyan-500 selection:text-slate-950">
+      <pre className="p-3.5 overflow-x-auto font-mono text-xs leading-relaxed text-fg selection:bg-fg selection:text-bg">
         <code>{code}</code>
       </pre>
     </div>

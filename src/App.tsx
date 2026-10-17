@@ -163,7 +163,7 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div data-app-canvas="true" className="min-h-[100dvh] w-full bg-transparent text-fg flex flex-col md:flex-row transition-colors duration-200 relative isolate overflow-x-hidden selection:bg-fg selection:text-bg font-sans" dir="rtl">
+    <div data-app-canvas="true" className="min-h-[100dvh] w-full bg-transparent text-fg transition-colors duration-200 relative selection:bg-fg selection:text-bg font-sans" dir="rtl">
 
       {/* Floating Animated Decorative Background */}
       <FloatingBackground />
@@ -182,7 +182,7 @@ const MainContent: React.FC = () => {
       />
 
       {/* Main App Container */}
-      <div className={`flex-1 flex flex-col min-w-0 min-h-[100dvh] transition-all duration-300 ease-in-out relative z-10 ${
+      <div className={`flex flex-col min-w-0 min-h-[100dvh] transition-all duration-300 ease-in-out relative z-10 ${
         isCollapsed ? 'lg:mr-20' : 'lg:mr-64'
       }`}>
         <Header

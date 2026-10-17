@@ -135,7 +135,7 @@ export const DailyPlannerView: React.FC = () => {
       period,
       bellTime: bellTime || { startTime: '08:00', endTime: '09:00', title: `زنگ ${period}` },
       subjectName: cell?.customSubjectName || sub?.name,
-      color: cell?.color || sub?.color || '#3B82F6',
+      color: cell?.color || sub?.color || 'var(--text)',
     };
   }).filter((b) => !!b.subjectName);
 
@@ -347,7 +347,7 @@ export const DailyPlannerView: React.FC = () => {
 
       {/* Warnings & Suggestions */}
       {conflicts.length > 0 && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-chip border border-line text-fg text-xs flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 shrink-0" />
           <div className="flex-1">
             <span className="font-bold block mb-0.5">هشدار تداخل زمانی در برنامه:</span>
@@ -359,7 +359,7 @@ export const DailyPlannerView: React.FC = () => {
       )}
 
       {isOvercrowded && (
-        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-chip border border-line text-fg text-xs flex items-center gap-3">
           <Info className="w-5 h-5 shrink-0" />
           <div className="flex-1">
             <span className="font-bold block mb-0.5">برنامه بیش از حد فشرده است:</span>
@@ -382,7 +382,7 @@ export const DailyPlannerView: React.FC = () => {
           </div>
 
           {dayBells.length === 0 ? (
-            <div className="py-8 text-center text-xs text-slate-400">
+            <div className="py-8 text-center text-xs text-muted">
               درسی برای این روز در برنامه هفتگی ثبت نشده است.
             </div>
           ) : (
@@ -390,23 +390,20 @@ export const DailyPlannerView: React.FC = () => {
               {dayBells.map((bell) => (
                 <div
                   key={bell.period}
-                  className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] flex items-center justify-between text-xs"
+                  className="p-2.5 rounded-xl bg-surface border border-line flex items-center justify-between text-xs"
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: bell.color }}
-                    />
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-fg" />
                     <div className="flex flex-col min-w-0">
-                      <span className="font-bold text-slate-800 dark:text-slate-200 truncate">
+                      <span className="font-bold text-fg truncate">
                         {bell.subjectName}
                       </span>
-                      <span className="text-[10px] text-slate-400">
+                      <span className="text-[10px] text-muted">
                         {bell.bellTime.title}
                       </span>
                     </div>
                   </div>
-                  <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400 shrink-0">
+                  <span className="font-mono text-[11px] text-muted shrink-0">
                     {bell.bellTime.startTime} - {bell.bellTime.endTime}
                   </span>
                 </div>
@@ -415,12 +412,12 @@ export const DailyPlannerView: React.FC = () => {
           )}
 
           {/* Buffer / Break Advice */}
-          <div className="mt-4 p-3 rounded-xl bg-cyan-500/5 dark:bg-[#172033] border border-cyan-500/20 text-xs space-y-1">
-            <span className="font-bold text-cyan-600 dark:text-cyan-400 flex items-center gap-1 text-[11px]">
-              <Coffee className="w-3.5 h-3.5" />
+          <div className="mt-4 p-3 rounded-xl bg-chip border border-line text-xs space-y-1">
+            <span className="font-bold text-fg flex items-center gap-1 text-[11px]">
+              <Coffee className="w-3.5 h-3.5 text-muted" />
               پیشنهاد استراحت هوشمند:
             </span>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-[11px] text-muted leading-relaxed">
               پس از پایان مدرسه، اختصاص حداقل ۴۵ دقیقه برای ناهار و استراحت پیش از شروع اولین فعالیت بعدازظهر توصیه می‌شود.
             </p>
           </div>
@@ -434,17 +431,17 @@ export const DailyPlannerView: React.FC = () => {
                 <ListTodo className="w-4 h-4 text-muted" />
                 وظایف و فعالیت‌های زمان‌بندی‌شده
               </h2>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-muted">
                 {toPersianDigits(completedCount)}/{toPersianDigits(tasks.length)} انجام‌شده
               </span>
             </div>
 
             {tasks.length === 0 ? (
-              <div className="py-12 text-center text-xs text-slate-400 space-y-3">
+              <div className="py-12 text-center text-xs text-muted space-y-3">
                 <p>هیچ فعالیتی برای بعدازظهر این روز ثبت نشده است.</p>
                 <button
                   onClick={() => setIsAddModalOpen(true)}
-                  className="px-4 py-2 bg-cyan-500/10 text-cyan-500 border border-cyan-500/30 rounded-xl font-bold hover:bg-cyan-500/20 transition-all cursor-pointer"
+                  className="px-4 py-2 bg-chip text-fg border border-line rounded-xl font-bold hover:bg-surface transition-all cursor-pointer"
                 >
                   + افزودن اولین فعالیت
                 </button>
@@ -461,8 +458,8 @@ export const DailyPlannerView: React.FC = () => {
                       key={task.id}
                       className={`p-4 rounded-xl border transition-all text-right ${
                         task.completed
-                          ? 'bg-slate-50/60 dark:bg-[#0D1220]/60 border-slate-200/60 dark:border-[#263247] opacity-80'
-                          : 'bg-white dark:bg-[#0D1220] border-slate-200 dark:border-[#263247] hover:border-cyan-500/40 shadow-xs'
+                          ? 'bg-chip/50 border-line opacity-80'
+                          : 'bg-surface border border-line hover:border-fg/40 shadow-xs'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -473,12 +470,12 @@ export const DailyPlannerView: React.FC = () => {
                                 completed: !task.completed,
                               })
                             }
-                            className="mt-0.5 text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
+                            className="mt-0.5 text-muted hover:text-fg transition-colors cursor-pointer"
                           >
                             {task.completed ? (
-                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                              <CheckCircle2 className="w-5 h-5 text-fg" />
                             ) : (
-                              <Circle className="w-5 h-5" />
+                              <Circle className="w-5 h-5 text-muted" />
                             )}
                           </button>
 
@@ -487,63 +484,53 @@ export const DailyPlannerView: React.FC = () => {
                               <span
                                 className={`text-sm font-bold ${
                                   task.completed
-                                    ? 'line-through text-slate-400'
-                                    : 'text-slate-900 dark:text-white'
+                                    ? 'line-through text-muted'
+                                    : 'text-fg'
                                 }`}
                               >
                                 {task.title}
                               </span>
                               {task.isRollover && (
-                                <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-md">
+                                <span className="text-[10px] px-1.5 py-0.5 bg-chip text-fg border border-line rounded-md">
                                   منتقل‌شده
                                 </span>
                               )}
                               <span
-                                className={`text-[10px] px-1.5 py-0.5 rounded-md font-semibold ${
-                                  task.priority === 'high'
-                                    ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
-                                    : task.priority === 'medium'
-                                    ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                                    : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
-                                }`}
+                                className="text-[10px] px-1.5 py-0.5 rounded-md font-semibold bg-chip text-fg border border-line"
                               >
                                 {task.priority === 'high' ? 'ضروری' : task.priority === 'medium' ? 'متوسط' : 'عادی'}
                               </span>
 
                               {task.importance && task.importance !== 'medium' && (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-medium ${
-                                  task.importance === 'critical'
-                                    ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                                    : 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
-                                }`}>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md font-medium bg-chip text-fg border border-line">
                                   {task.importance === 'critical' ? '🔥 بحرانی' : '★ بااهمیت'}
                                 </span>
                               )}
 
                               {task.energyLevel && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-chip text-fg border border-line font-mono">
                                   ⚡ {task.energyLevel === 'high' ? 'انرژی بالا' : task.energyLevel === 'low' ? 'انرژی کم' : 'انرژی متوسط'}
                                 </span>
                               )}
 
                               {task.isFixedTime && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-700/40 text-slate-300 border border-slate-600/40">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-chip text-fg border border-line">
                                   🔒 ساعت ثابت
                                 </span>
                               )}
 
                               {task.dependsOnTaskId && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 truncate max-w-[120px]" title="وابسته به انجام تسک قبلی">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-chip text-fg border border-line truncate max-w-[120px]" title="وابسته به انجام تسک قبلی">
                                   🔗 وابسته
                                 </span>
                               )}
                             </div>
 
                             {/* Time & Duration comparison */}
-                            <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-400 mt-1.5 flex-wrap">
+                            <div className="flex items-center gap-3 text-xs text-muted mt-1.5 flex-wrap">
                               {task.startTime && task.endTime && (
                                 <span className="flex items-center gap-1 font-mono">
-                                  <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                                  <Clock className="w-3.5 h-3.5 text-muted" />
                                   {task.startTime} تا {task.endTime}
                                 </span>
                               )}
@@ -560,17 +547,17 @@ export const DailyPlannerView: React.FC = () => {
                                     min="0"
                                     value={actualMinutesInput}
                                     onChange={(e) => setActualMinutesInput(Number(e.target.value))}
-                                    className="w-16 px-1.5 py-0.5 bg-slate-100 dark:bg-[#172033] border border-cyan-400 rounded text-xs font-mono"
+                                    className="w-16 px-1.5 py-0.5 bg-surface border border-line text-fg rounded text-xs font-mono"
                                   />
                                   <button
                                     onClick={() => handleSaveActualMinutes(task.id)}
-                                    className="p-1 text-emerald-400 hover:text-emerald-300"
+                                    className="p-1 text-fg hover:text-muted"
                                   >
                                     <Check className="w-3.5 h-3.5" />
                                   </button>
                                   <button
                                     onClick={() => setEditingActualTaskId(null)}
-                                    className="p-1 text-rose-400"
+                                    className="p-1 text-muted hover:text-fg"
                                   >
                                     <X className="w-3.5 h-3.5" />
                                   </button>
@@ -583,8 +570,8 @@ export const DailyPlannerView: React.FC = () => {
                                   }}
                                   className={`flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded cursor-pointer ${
                                     isOver
-                                      ? 'text-rose-400 bg-rose-500/10 border border-rose-500/30'
-                                      : 'text-slate-500 dark:text-slate-300 hover:text-cyan-400'
+                                      ? 'text-fg bg-chip border border-line'
+                                      : 'text-muted hover:text-fg'
                                   }`}
                                   title="کلیک برای ثبت زمان واقعی انجام"
                                 >
@@ -595,7 +582,7 @@ export const DailyPlannerView: React.FC = () => {
                             </div>
 
                             {task.notes && (
-                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              <p className="text-xs text-muted mt-1">
                                 {task.notes}
                               </p>
                             )}
@@ -614,36 +601,36 @@ export const DailyPlannerView: React.FC = () => {
                                 mode: 'work',
                               });
                             }}
-                            className="p-1.5 text-slate-400 hover:text-emerald-400 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033] transition-colors cursor-pointer"
+                            className="p-1.5 text-muted hover:text-fg rounded-lg hover:bg-chip transition-colors cursor-pointer"
                             title="ورود به حالت تمرکز عمیق روی این فعالیت"
                           >
-                            <Play className="w-4 h-4 text-emerald-400" />
+                            <Play className="w-4 h-4 text-fg" />
                           </button>
                           <button
                             onClick={() => {
                               setRescheduleTaskId(task.id);
                               setRescheduleTargetDay((selectedDayIdx + 1) % 5);
                             }}
-                            className="p-1.5 text-slate-400 hover:text-cyan-400 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033] transition-colors cursor-pointer"
+                            className="p-1.5 text-muted hover:text-fg rounded-lg hover:bg-chip transition-colors cursor-pointer"
                             title="انتقال / زمان‌بندی مجدد"
                           >
-                            <ArrowRightLeft className="w-4 h-4" />
+                            <ArrowRightLeft className="w-4 h-4 text-muted" />
                           </button>
                           <button
                             onClick={() => deletePlannedTask(task.id, selectedDayIdx)}
-                            className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-100 dark:hover:bg-[#172033] transition-colors cursor-pointer"
+                            className="p-1.5 text-muted hover:text-fg rounded-lg hover:bg-chip transition-colors cursor-pointer"
                             title="حذف فعالیت"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4 text-muted" />
                           </button>
                         </div>
                       </div>
 
                       {/* Subtasks breakdown */}
-                      <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-[#263247]/60">
-                        <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
+                      <div className="mt-3 pt-2.5 border-t border-line">
+                        <div className="flex items-center justify-between text-[11px] text-muted mb-1.5">
                           <span className="flex items-center gap-1 font-semibold">
-                            <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                            <Layers className="w-3.5 h-3.5 text-muted" />
                             زیر‌کارهای خردشده ({toPersianDigits(subDone)}/{toPersianDigits(subtasks.length)})
                           </span>
                           {activeSubtaskTaskId !== task.id && (
@@ -652,7 +639,7 @@ export const DailyPlannerView: React.FC = () => {
                                 setActiveSubtaskTaskId(task.id);
                                 setNewSubtaskTitle('');
                               }}
-                              className="text-cyan-500 hover:underline cursor-pointer"
+                              className="text-fg hover:underline cursor-pointer font-medium"
                             >
                               + گام خرد جدید
                             </button>
@@ -665,16 +652,16 @@ export const DailyPlannerView: React.FC = () => {
                               <div
                                 key={st.id}
                                 onClick={() => toggleTaskSubtask(selectedDayIdx, task.id, st.id)}
-                                className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 cursor-pointer hover:text-cyan-400"
+                                className="flex items-center gap-2 text-xs text-muted cursor-pointer hover:text-fg"
                               >
                                 <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center text-[10px] ${
                                   st.completed
-                                    ? 'bg-cyan-500 border-cyan-400 text-slate-950 font-bold'
-                                    : 'border-slate-400'
+                                    ? 'bg-fg border-fg text-bg font-bold'
+                                    : 'border-line'
                                 }`}>
                                   {st.completed ? '✓' : ''}
                                 </span>
-                                <span className={st.completed ? 'line-through text-slate-400' : ''}>
+                                <span className={st.completed ? 'line-through text-muted' : 'text-fg'}>
                                   {st.title}
                                 </span>
                               </div>
@@ -695,17 +682,17 @@ export const DailyPlannerView: React.FC = () => {
                                   handleAddSubtaskSubmit(task.id);
                                 }
                               }}
-                              className="flex-1 px-2.5 py-1 bg-slate-100 dark:bg-[#172033] border border-slate-200 dark:border-[#263247] rounded-lg text-xs"
+                              className="flex-1 px-2.5 py-1 bg-surface border border-line rounded-lg text-xs text-fg placeholder:text-muted"
                             />
                             <button
                               onClick={() => handleAddSubtaskSubmit(task.id)}
-                              className="px-2.5 py-1 bg-cyan-500 text-slate-950 rounded-lg text-xs font-bold"
+                              className="px-2.5 py-1 bg-fg text-bg rounded-lg text-xs font-bold hover:opacity-90"
                             >
                               افزودن
                             </button>
                             <button
                               onClick={() => setActiveSubtaskTaskId(null)}
-                              className="p-1 text-slate-400 hover:text-slate-200"
+                              className="p-1 text-muted hover:text-fg"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -723,16 +710,16 @@ export const DailyPlannerView: React.FC = () => {
 
       {/* Add Task Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 dark:bg-black/80 backdrop-blur-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xl">
           <div className="glass-strong w-full max-w-md rounded-[24px] p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263247] mb-4">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-cyan-400" />
+            <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
+              <h3 className="text-sm font-bold text-fg flex items-center gap-2">
+                <Plus className="w-4 h-4 text-fg" />
                 ثبت فعالیت جدید در برنامه ({getIranianDayName(selectedDayIdx)})
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-200 rounded"
+                className="p-1 text-muted hover:text-fg rounded"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -749,19 +736,19 @@ export const DailyPlannerView: React.FC = () => {
                   value={taskTitle}
                   onChange={(e) => setTaskTitle(e.target.value)}
                   placeholder="مثلاً: تمرین مبحث مثلثات ریاضی"
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg placeholder:text-muted"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     بخش مرتبط:
                   </label>
                   <select
                     value={taskSection}
                     onChange={(e) => setTaskSection(e.target.value as SectionType)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg"
                   >
                     <option value="school">مدرسه و درس‌ها</option>
                     <option value="skill">توسعه مهارت‌ها</option>
@@ -772,13 +759,13 @@ export const DailyPlannerView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     سطح اولویت:
                   </label>
                   <select
                     value={taskPriority}
                     onChange={(e) => setTaskPriority(e.target.value as Priority)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg"
                   >
                     <option value="high">فوری و ضروری</option>
                     <option value="medium">متوسط</option>
@@ -789,29 +776,29 @@ export const DailyPlannerView: React.FC = () => {
 
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     ساعت شروع:
                   </label>
                   <input
                     type="time"
                     value={taskStartTime}
                     onChange={(e) => setTaskStartTime(e.target.value)}
-                    className="w-full px-2 py-1.5 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs font-mono"
+                    className="w-full px-2 py-1.5 bg-surface border border-line rounded-xl text-xs font-mono text-fg"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     ساعت پایان:
                   </label>
                   <input
                     type="time"
                     value={taskEndTime}
                     onChange={(e) => setTaskEndTime(e.target.value)}
-                    className="w-full px-2 py-1.5 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs font-mono"
+                    className="w-full px-2 py-1.5 bg-surface border border-line rounded-xl text-xs font-mono text-fg"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     تخمین (دقیقه):
                   </label>
                   <input
@@ -820,20 +807,20 @@ export const DailyPlannerView: React.FC = () => {
                     step="5"
                     value={taskEstMinutes}
                     onChange={(e) => setTaskEstMinutes(Number(e.target.value))}
-                    className="w-full px-2 py-1.5 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs font-mono"
+                    className="w-full px-2 py-1.5 bg-surface border border-line rounded-xl text-xs font-mono text-fg"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     سطح انرژی موردنیاز:
                   </label>
                   <select
                     value={taskEnergy}
                     onChange={(e) => setTaskEnergy(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg"
                   >
                     <option value="high">⚡ انرژی بالا و تمرکز عمیق</option>
                     <option value="medium">⚡ انرژی متوسط</option>
@@ -842,13 +829,13 @@ export const DailyPlannerView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     اهمیت استراتژیک:
                   </label>
                   <select
                     value={taskImportance}
                     onChange={(e) => setTaskImportance(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg"
                   >
                     <option value="critical">🔥 بحرانی (عدم انجام پیامد فوری دارد)</option>
                     <option value="high">★ بااهمیت بالا</option>
@@ -859,13 +846,13 @@ export const DailyPlannerView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-semibold text-fg mb-1">
                   وابستگی به فعالیت دیگر (اختیاری):
                 </label>
                 <select
                   value={taskDependsOn}
                   onChange={(e) => setTaskDependsOn(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg"
                 >
                   <option value="">-- بدون وابستگی مستقیم --</option>
                   {tasks.map((t) => (
@@ -876,21 +863,21 @@ export const DailyPlannerView: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247]">
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-chip border border-line">
                 <input
                   type="checkbox"
                   id="task-is-fixed"
                   checked={taskIsFixed}
                   onChange={(e) => setTaskIsFixed(e.target.checked)}
-                  className="w-4 h-4 rounded text-cyan-500 focus:ring-cyan-400 bg-transparent border-slate-300 dark:border-slate-600"
+                  className="w-4 h-4 rounded text-fg focus:ring-fg/20 bg-surface border-line"
                 />
-                <label htmlFor="task-is-fixed" className="text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                <label htmlFor="task-is-fixed" className="text-xs text-fg cursor-pointer select-none">
                   این فعالیت دارای زمان ثابت است (تعهد غیرقابل جابجایی توسط هوش مصنوعی)
                 </label>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-semibold text-fg mb-1">
                   یادداشت یا دستور کار:
                 </label>
                 <textarea
@@ -898,21 +885,21 @@ export const DailyPlannerView: React.FC = () => {
                   value={taskNotes}
                   onChange={(e) => setTaskNotes(e.target.value)}
                   placeholder="نکات مهم یا شماره صفحات مورد مطالعه..."
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-[#0D1220] border border-slate-200 dark:border-[#263247] rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg placeholder:text-muted"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-[#263247]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-line">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 text-slate-400 hover:text-slate-200 text-xs font-bold"
+                  className="px-4 py-2 text-muted hover:text-fg text-xs font-bold"
                 >
                   انصراف
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
+                  className="px-4 py-2 bg-fg text-bg hover:opacity-90 font-semibold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
                 >
                   ثبت در جدول برنامه
                 </button>
@@ -924,13 +911,13 @@ export const DailyPlannerView: React.FC = () => {
 
       {/* Reschedule Modal */}
       {rescheduleTaskId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#111827] w-full max-w-sm rounded-2xl border border-slate-200 dark:border-[#263247] p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <ArrowRightLeft className="w-4 h-4 text-cyan-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+          <div className="bg-surface w-full max-w-sm rounded-2xl border border-line p-5 shadow-2xl text-right animate-in fade-in zoom-in-95 duration-150">
+            <h3 className="text-sm font-bold text-fg mb-2 flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 text-fg" />
               انتقال و زمان‌بندی مجدد
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            <p className="text-xs text-muted mb-4">
               روز مقصد را برای انتقال این فعالیت انتخاب نمایید:
             </p>
 
@@ -941,12 +928,12 @@ export const DailyPlannerView: React.FC = () => {
                   onClick={() => setRescheduleTargetDay(dIdx)}
                   className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs font-semibold cursor-pointer ${
                     rescheduleTargetDay === dIdx
-                      ? 'border-cyan-400 bg-cyan-500/10 text-cyan-400 font-bold'
-                      : 'border-slate-200 dark:border-[#263247] hover:bg-slate-50 dark:hover:bg-[#172033]'
+                      ? 'border-line bg-chip text-fg font-bold'
+                      : 'border-line hover:bg-chip text-muted hover:text-fg'
                   }`}
                 >
                   <span>{getIranianDayName(dIdx)}</span>
-                  {selectedDayIdx === dIdx && <span className="text-[10px] text-slate-400">(روز فعلی)</span>}
+                  {selectedDayIdx === dIdx && <span className="text-[10px] text-muted">(روز فعلی)</span>}
                 </button>
               ))}
             </div>
@@ -954,13 +941,13 @@ export const DailyPlannerView: React.FC = () => {
             <div className="flex items-center justify-end gap-2">
               <button
                 onClick={() => setRescheduleTaskId(null)}
-                className="px-3 py-1.5 text-slate-400 text-xs font-bold"
+                className="px-3 py-1.5 text-muted hover:text-fg text-xs font-bold"
               >
                 انصراف
               </button>
               <button
                 onClick={handleExecuteReschedule}
-                className="px-4 py-1.5 bg-cyan-500 text-slate-950 rounded-xl text-xs font-bold"
+                className="px-4 py-1.5 bg-fg text-bg rounded-xl text-xs font-bold hover:opacity-90"
               >
                 تایید و انتقال
               </button>
@@ -968,42 +955,43 @@ export const DailyPlannerView: React.FC = () => {
           </div>
         </div>
       )}
+
       {/* Smart Planner & AI Schedule Modal */}
       {isSmartPlannerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 dark:bg-slate-950/80 backdrop-blur-md animate-fade-in" dir="rtl">
-          <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-cyan-500/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in" dir="rtl">
+          <div className="relative w-full max-w-xl bg-surface border border-line rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/90 relative z-10">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-line bg-surface relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shadow-lg shadow-purple-500/10">
-                  <Sparkles className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-chip border border-line flex items-center justify-center text-fg">
+                  <Sparkles className="w-5 h-5 text-fg" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <h3 className="text-base font-bold text-fg flex items-center gap-2">
                     برنامه‌ریزی خودکار و بهینه‌ساز روز
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 font-medium">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-chip text-fg border border-line font-medium">
                       AI Schedule
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-muted mt-0.5">
                     چینش بهینه وظایف بر اساس فوریت، انرژی، تعهدات ثابت و زمان‌های استراحت
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsSmartPlannerModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-1.5 text-muted hover:text-fg rounded-lg hover:bg-chip transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-slate-700 dark:text-slate-300 flex-1">
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-fg flex-1">
               {/* Parameters Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-950/40 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-chip p-3.5 rounded-xl border border-line">
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     زمان مفید در دسترس امروز (دقیقه):
                   </label>
                   <input
@@ -1012,7 +1000,7 @@ export const DailyPlannerView: React.FC = () => {
                     step="15"
                     value={smartAvailMinutes}
                     onChange={(e) => setSmartAvailMinutes(Number(e.target.value) || 180)}
-                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-cyan-600 dark:text-cyan-400 font-bold focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs font-mono text-fg font-bold focus:outline-none focus:border-fg"
                   />
                   <div className="flex gap-1.5 mt-1.5">
                     {[120, 180, 240, 300].map((m) => (
@@ -1022,8 +1010,8 @@ export const DailyPlannerView: React.FC = () => {
                         onClick={() => setSmartAvailMinutes(m)}
                         className={`text-[10px] px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                           smartAvailMinutes === m
-                            ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-700 dark:text-cyan-300 font-bold'
-                            : 'border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white dark:hover:bg-slate-900'
+                            ? 'bg-fg text-bg font-bold border-fg'
+                            : 'border-line text-muted hover:text-fg hover:bg-surface'
                         }`}
                       >
                         {toPersianDigits(m / 60)} ساعت
@@ -1033,22 +1021,22 @@ export const DailyPlannerView: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     ساعت شروع فعالیت‌ها:
                   </label>
                   <input
                     type="time"
                     value={smartStartTime}
                     onChange={(e) => setSmartStartTime(e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs font-mono text-fg focus:outline-none focus:border-fg"
                   />
-                  <span className="text-[10px] text-slate-500 mt-1 block">
+                  <span className="text-[10px] text-muted mt-1 block">
                     پس از بازگشت از مدرسه و استراحت اولیه
                   </span>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-semibold text-fg mb-1">
                     تمرکز ویژه امروز (اختیاری):
                   </label>
                   <input
@@ -1056,7 +1044,7 @@ export const DailyPlannerView: React.FC = () => {
                     value={smartFocusGoal}
                     onChange={(e) => setSmartFocusGoal(e.target.value)}
                     placeholder="مثلاً: جمع‌بندی مبحث فیزیک، تمرین کدنویسی C++"
-                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-fg placeholder:text-muted focus:outline-none focus:border-fg"
                   />
                 </div>
               </div>
@@ -1065,24 +1053,18 @@ export const DailyPlannerView: React.FC = () => {
               {(() => {
                 const sim = simulateSchedule(tasks, smartAvailMinutes);
                 return (
-                  <div className={`p-3.5 rounded-xl border flex flex-col gap-2 ${
-                    sim.feasibilityStatus === 'comfortable'
-                      ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-700 dark:text-emerald-300'
-                      : sim.feasibilityStatus === 'tight'
-                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-700 dark:text-amber-300'
-                      : 'bg-rose-500/10 border-rose-500/25 text-rose-700 dark:text-rose-300'
-                  }`}>
+                  <div className="p-3.5 rounded-xl border border-line bg-chip text-fg flex flex-col gap-2">
                     <div className="flex items-center justify-between font-bold">
                       <span className="flex items-center gap-1.5">
-                        <BrainCircuit className="w-4 h-4" />
+                        <BrainCircuit className="w-4 h-4 text-muted" />
                         سنجش امکان‌پذیری و ظرفیت (Feasibility Score): {toPersianDigits(sim.score)}٪
                       </span>
-                      <span className="text-[11px] font-mono">
+                      <span className="text-[11px] font-mono text-muted">
                         {toPersianDigits(sim.totalRequiredMinutes)} از {toPersianDigits(sim.availableMinutes)} دقیقه
                       </span>
                     </div>
                     {sim.suggestions.map((s, idx) => (
-                      <p key={idx} className="text-[11px] opacity-90 leading-relaxed">
+                      <p key={idx} className="text-[11px] text-muted leading-relaxed">
                         • {s}
                       </p>
                     ))}
@@ -1106,16 +1088,16 @@ export const DailyPlannerView: React.FC = () => {
                     setIsSmartPlanLoading(false);
                   }
                 }}
-                className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold rounded-lg text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 px-4 bg-fg hover:opacity-90 text-bg font-semibold rounded-lg text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
               >
                 {isSmartPlanLoading ? (
                   <>
-                    <Sparkles className="w-4 h-4 animate-spin text-white dark:text-slate-900" />
+                    <Sparkles className="w-4 h-4 animate-spin text-bg" />
                     <span>در حال چینش و بهینه‌سازی الگوریتمی برنامه...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 text-white dark:text-slate-900" />
+                    <Sparkles className="w-4 h-4 text-bg" />
                     <span>تولید پیشنهاد زمان‌بندی بهینه</span>
                   </>
                 )}
@@ -1123,19 +1105,19 @@ export const DailyPlannerView: React.FC = () => {
 
               {/* Proposed Schedule Preview */}
               {proposedSchedule && proposedSchedule.length > 0 && (
-                <div className="space-y-3 pt-3 border-t border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white">
-                    <span className="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
+                <div className="space-y-3 pt-3 border-t border-line">
+                  <div className="flex items-center justify-between font-bold text-fg">
+                    <span className="flex items-center gap-1.5 text-fg">
                       <CheckCircle2 className="w-4 h-4" />
                       برنامه پیشنهادی برای بررسی و تایید:
                     </span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                    <span className="text-[10px] text-muted">
                       {toPersianDigits(proposedSchedule.length)} آیتم
                     </span>
                   </div>
 
                   {proposedAdvice && (
-                    <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-[11px] text-purple-700 dark:text-purple-200 leading-relaxed">
+                    <div className="p-3 bg-chip border border-line rounded-xl text-[11px] text-fg leading-relaxed">
                       💡 {proposedAdvice}
                     </div>
                   )}
@@ -1146,24 +1128,24 @@ export const DailyPlannerView: React.FC = () => {
                         key={idx}
                         className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
                           item.isBreak
-                            ? 'bg-amber-500/5 border-amber-500/20 text-amber-700 dark:text-amber-300'
-                            : 'bg-slate-50 dark:bg-slate-950/70 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200'
+                            ? 'bg-chip border-line text-fg'
+                            : 'bg-surface border-line text-fg'
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800 text-cyan-700 dark:text-cyan-400 flex items-center justify-center text-[10px] font-mono">
+                          <span className="w-5 h-5 rounded-md bg-chip text-fg flex items-center justify-center text-[10px] font-mono border border-line">
                             {toPersianDigits(idx + 1)}
                           </span>
                           <div>
                             <span className="font-semibold block">{item.title}</span>
                             {item.reason && (
-                              <span className="text-[10px] text-slate-500 dark:text-slate-400">{item.reason}</span>
+                              <span className="text-[10px] text-muted">{item.reason}</span>
                             )}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-cyan-700 dark:text-cyan-400 text-[11px]">
+                          <span className="px-2 py-0.5 rounded bg-chip border border-line font-mono text-fg text-[11px]">
                             {item.timeSlot}
                           </span>
                         </div>
@@ -1179,7 +1161,7 @@ export const DailyPlannerView: React.FC = () => {
                         applyProposedSchedule(proposedSchedule);
                         setIsSmartPlannerModalOpen(false);
                       }}
-                      className="flex-1 py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                      className="flex-1 py-2.5 px-4 bg-fg hover:opacity-90 text-bg font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
                     >
                       <Check className="w-4 h-4 stroke-[2.5]" />
                       <span>تأیید و اعمال این زمان‌بندی در جدول امروز</span>
@@ -1187,7 +1169,7 @@ export const DailyPlannerView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setProposedSchedule(null)}
-                      className="px-3 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold cursor-pointer"
+                      className="px-3 py-2.5 border border-line hover:bg-chip text-fg rounded-xl text-xs font-semibold cursor-pointer"
                     >
                       تنظیم مجدد
                     </button>

@@ -62,15 +62,15 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-900 dark:text-white">
+              <span className="text-xs font-bold text-fg">
                 سطح {toPersianDigits(level)}
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">·</span>
-              <span className="text-xs text-slate-600 dark:text-slate-300">
+              <span className="text-xs text-muted">·</span>
+              <span className="text-xs text-muted">
                 {rpg.title || 'نوآموز مسیر'}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+            <div className="flex items-center gap-2 text-xs text-muted mt-0.5">
               <span className="font-mono tabular-nums">{toPersianDigits(xp)} XP کل</span>
               <span>·</span>
               <span className="font-mono tabular-nums">
@@ -79,20 +79,20 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full sm:w-60 h-1.5 bg-slate-100 dark:bg-[#1C1C1C] rounded-full overflow-hidden mt-2">
+            <div className="w-full sm:w-60 h-1.5 bg-chip rounded-full overflow-hidden mt-2">
               <div
-                className="h-full rounded-full transition-all duration-300"
-                style={{ width: `${progressInLevel}%`, backgroundColor: 'var(--accent-primary)' }}
+                className="h-full rounded-full transition-all duration-300 bg-fg"
+                style={{ width: `${progressInLevel}%` }}
               />
             </div>
           </div>
         </div>
 
         {/* Daily Quests */}
-        <div className="flex-1 md:max-w-md bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 rounded-lg p-2.5">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
+        <div className="flex-1 md:max-w-md bg-chip border border-line rounded-lg p-2.5">
+          <div className="flex items-center justify-between text-xs font-semibold text-fg mb-2">
             <span>مأموریت‌های روزانه</span>
-            <span className="text-[11px] font-mono tabular-nums text-slate-500">
+            <span className="text-[11px] font-mono tabular-nums text-muted">
               +{toPersianDigits((rpg.dailyQuests || []).reduce((acc, q) => acc + q.xpReward, 0))} XP
             </span>
           </div>
@@ -101,14 +101,14 @@ export const RPGBanner: React.FC<{ compact?: boolean }> = ({ compact = false }) 
             {(rpg.dailyQuests || []).slice(0, 3).map((quest) => (
               <div
                 key={quest.id}
-                className="p-1.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px]"
+                className="p-1.5 rounded-md bg-surface border border-line text-[11px]"
               >
-                <div className="text-slate-800 dark:text-slate-200 truncate font-medium">
+                <div className="text-fg truncate font-medium">
                   {quest.title}
                 </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+                <div className="flex items-center justify-between text-[10px] text-muted mt-1">
                   <span>{quest.completed ? 'تکمیل شده' : 'در جریان'}</span>
-                  <span className={quest.completed ? 'text-emerald-600 dark:text-emerald-400 font-bold' : ''}>
+                  <span className={quest.completed ? 'text-fg font-bold' : ''}>
                     {quest.completed ? '✓' : `${toPersianDigits(quest.currentValue)}/${toPersianDigits(quest.targetValue)}`}
                   </span>
                 </div>

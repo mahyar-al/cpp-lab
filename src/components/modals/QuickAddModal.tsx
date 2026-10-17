@@ -178,7 +178,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                   value={taskTitle}
                   onChange={(e) => setTaskTitle(e.target.value)}
                   placeholder="مثال: حل مسائل صفحه ۴۰ کتاب حسابان"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fg/20"
                   autoFocus
                 />
               </div>
@@ -247,7 +247,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                   value={eventTitle}
                   onChange={(e) => setEventTitle(e.target.value)}
                   placeholder="مثال: جلسه آزمایشگاه فیزیک یا وبینار المپیاد"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fg/20"
                   autoFocus
                 />
               </div>
@@ -325,7 +325,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                   value={studyTopic}
                   onChange={(e) => setStudyTopic(e.target.value)}
                   placeholder="مثال: پیاده‌سازی صف اولویت‌دار و الگوریتم دایکسترا"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fg/20"
                   autoFocus
                 />
               </div>
@@ -370,8 +370,8 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                       onClick={() => setStudyFocus(score)}
                       className={`flex-1 py-1.5 text-xs font-bold rounded-lg border transition-all ${
                         studyFocus === score
-                          ? 'bg-indigo-600 text-white border-indigo-600'
-                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                          ? 'bg-fg text-bg border-fg'
+                          : 'bg-chip border-line text-muted hover:text-fg'
                       }`}
                     >
                       {score}
@@ -394,7 +394,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                   value={noteTitle}
                   onChange={(e) => setNoteTitle(e.target.value)}
                   placeholder="مثال: نکات طلایی فرمول‌های مثلثاتی"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fg/20"
                   autoFocus
                 />
               </div>
@@ -408,7 +408,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
                   placeholder="محتوا یا فرمول‌های مورد نظر را اینجا بنویسید..."
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fg/20"
                 />
               </div>
 
@@ -458,7 +458,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose })
                   value={goalTitle}
                   onChange={(e) => setGoalTitle(e.target.value)}
                   placeholder="مثال: حل ۱۰۰ تست فیزیک دینامیک تا آخر هفته"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fg/20"
                   autoFocus
                 />
               </div>

@@ -150,24 +150,24 @@ export const SkillsView: React.FC = () => {
   const getCategoryBadge = (cat: Skill['category']) => {
     switch (cat) {
       case 'programming':
-        return { label: 'برنامه‌نویسی', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' };
+        return { label: 'برنامه‌نویسی', color: 'bg-chip text-fg border border-line' };
       case 'ai':
-        return { label: 'هوش مصنوعی', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' };
+        return { label: 'هوش مصنوعی', color: 'bg-chip text-fg border border-line' };
       case 'language':
-        return { label: 'زبان خارجه', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' };
+        return { label: 'زبان خارجه', color: 'bg-chip text-fg border border-line' };
       case 'security':
-        return { label: 'امنیت سایبری', color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' };
+        return { label: 'امنیت سایبری', color: 'bg-chip text-fg border border-line' };
       case 'tools':
-        return { label: 'ابزارها', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' };
+        return { label: 'ابزارها', color: 'bg-chip text-fg border border-line' };
       default:
-        return { label: 'سایر', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' };
+        return { label: 'سایر', color: 'bg-chip text-fg border border-line' };
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs relative">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-5 sm:p-6 rounded-xl border border-line shadow-xs relative">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
             <span className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
@@ -219,8 +219,8 @@ export const SkillsView: React.FC = () => {
                     onClick={() => setSelectedSkillId(skill.id)}
                     className={`p-4 rounded-xl border cursor-pointer transition-colors ${
                       isSelected
-                        ? 'bg-slate-50 dark:bg-slate-800/60 border-slate-900 dark:border-slate-100 shadow-xs'
-                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                        ? 'bg-chip border-fg shadow-xs'
+                        : 'bg-surface border-line hover:border-line'
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -230,35 +230,35 @@ export const SkillsView: React.FC = () => {
                             {categoryBadge.label}
                           </span>
                           {skill.status === 'paused' && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-chip text-muted border border-line">
                               متوقف‌شده
                             </span>
                           )}
                         </div>
-                        <h3 className="font-bold text-sm text-slate-900 dark:text-white mt-1.5">
+                        <h3 className="font-bold text-sm text-fg mt-1.5">
                           {skill.name}
                         </h3>
                       </div>
-                      <div className="flex items-center gap-1 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-md text-xs font-medium border border-amber-200 dark:border-amber-800/50">
-                        <Flame className="w-3.5 h-3.5 text-amber-500" />
+                      <div className="flex items-center gap-1 text-fg bg-chip px-2.5 py-1 rounded-md text-xs font-medium border border-line">
+                        <Flame className="w-3.5 h-3.5 text-fg" />
                         <span>{toPersianDigits(skill.streak)} روز</span>
                       </div>
                     </div>
 
                     <div className="mt-3">
-                      <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+                      <div className="flex justify-between text-xs text-muted mb-1">
                         <span>میزان تسلط نقشه راه</span>
-                        <span className="font-mono tabular-nums font-semibold text-slate-700 dark:text-slate-300">{toPersianDigits(mastery)}٪</span>
+                        <span className="font-mono tabular-nums font-semibold text-fg">{toPersianDigits(mastery)}٪</span>
                       </div>
-                      <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="w-full h-1.5 bg-chip rounded-full overflow-hidden">
                         <div
-                          className="bg-slate-700 dark:bg-slate-300 h-full rounded-full transition-all"
+                          className="bg-fg h-full rounded-full transition-all"
                           style={{ width: `${mastery}%` }}
                         />
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                    <div className="mt-3 pt-2.5 border-t border-line flex items-center justify-between text-xs text-muted">
                       <span>سطح: {skill.currentLevel} ← {skill.targetLevel}</span>
                       <span>{toPersianDigits(totalPracticeHours(skill))} ساعت تمرین</span>
                     </div>
@@ -272,18 +272,18 @@ export const SkillsView: React.FC = () => {
           {activeSkill && (
             <div className="lg:col-span-8 xl:col-span-9 2xl:col-span-9 space-y-6 min-w-0">
               {/* Skill Main Card */}
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+              <div className="bg-surface p-6 rounded-2xl border border-line shadow-xs space-y-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${getCategoryBadge(activeSkill.category).color}`}>
                         {getCategoryBadge(activeSkill.category).label}
                       </span>
-                      <span className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      <span className="text-xs px-2.5 py-1 rounded-lg bg-chip text-muted border border-line">
                         مهلت هدف: {formatJalaliShort(activeSkill.targetDate)}
                       </span>
                     </div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white mt-2">
+                    <h2 className="text-2xl font-black text-fg mt-2">
                       {activeSkill.name}
                     </h2>
                   </div>
@@ -295,17 +295,17 @@ export const SkillsView: React.FC = () => {
                           status: activeSkill.status === 'active' ? 'paused' : 'active',
                         })
                       }
-                      className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs flex items-center gap-1.5 transition-colors"
+                      className="p-2 rounded-xl border border-line hover:bg-chip text-fg text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                       title={activeSkill.status === 'active' ? 'توقف موقت یادگیری' : 'شروع مجدد'}
                     >
                       {activeSkill.status === 'active' ? (
                         <>
-                          <Pause className="w-4 h-4 text-amber-500" />
+                          <Pause className="w-4 h-4 text-fg" />
                           <span>توقف موقت</span>
                         </>
                       ) : (
                         <>
-                          <Play className="w-4 h-4 text-emerald-500" />
+                          <Play className="w-4 h-4 text-fg" />
                           <span>فعال‌سازی</span>
                         </>
                       )}
@@ -316,7 +316,7 @@ export const SkillsView: React.FC = () => {
                           deleteSkill(activeSkill.id);
                         }
                       }}
-                      className="p-2 rounded-xl border border-red-200 dark:border-red-900/40 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                      className="p-2 rounded-xl border border-line text-muted hover:text-fg hover:bg-chip transition-colors cursor-pointer"
                       title="حذف مهارت"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -326,21 +326,21 @@ export const SkillsView: React.FC = () => {
 
                 {/* Status Badges & Quick Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">تسلط کنونی</span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{activeSkill.currentLevel}</span>
+                  <div className="p-3 rounded-xl bg-chip border border-line">
+                    <span className="text-xs text-muted block mb-1">تسلط کنونی</span>
+                    <span className="font-bold text-fg text-sm">{activeSkill.currentLevel}</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">سطح هدف</span>
-                    <span className="font-bold text-purple-600 dark:text-purple-400 text-sm">{activeSkill.targetLevel}</span>
+                  <div className="p-3 rounded-xl bg-chip border border-line">
+                    <span className="text-xs text-muted block mb-1">سطح هدف</span>
+                    <span className="font-bold text-fg text-sm">{activeSkill.targetLevel}</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">هدف روزانه</span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{toPersianDigits(activeSkill.dailyTargetMin)} دقیقه</span>
+                  <div className="p-3 rounded-xl bg-chip border border-line">
+                    <span className="text-xs text-muted block mb-1">هدف روزانه</span>
+                    <span className="font-bold text-fg text-sm">{toPersianDigits(activeSkill.dailyTargetMin)} دقیقه</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">مجموع تمرین</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">{toPersianDigits(totalPracticeHours(activeSkill))} ساعت</span>
+                  <div className="p-3 rounded-xl bg-chip border border-line">
+                    <span className="text-xs text-muted block mb-1">مجموع تمرین</span>
+                    <span className="font-bold text-fg text-sm">{toPersianDigits(totalPracticeHours(activeSkill))} ساعت</span>
                   </div>
                 </div>
 
@@ -369,7 +369,7 @@ export const SkillsView: React.FC = () => {
                 )}
 
                 {/* Workspace Tabs */}
-                <div className="border-b border-slate-200 dark:border-slate-800 flex gap-2 overflow-x-auto pb-1">
+                <div className="border-b border-line flex gap-2 overflow-x-auto pb-1">
                   {[
                     { id: 'roadmap', label: 'نقشه راه یادگیری', count: activeSkill.roadmap.length },
                     { id: 'practice', label: 'ثبت تمرین و استمرار', count: activeSkill.practiceLogs.length },
@@ -380,15 +380,15 @@ export const SkillsView: React.FC = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                      className={`px-3 py-2 text-xs font-medium rounded-xl whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+                      className={`px-3 py-2 text-xs font-medium rounded-xl whitespace-nowrap transition-colors flex items-center gap-1.5 cursor-pointer ${
                         activeTab === tab.id
-                          ? 'bg-purple-600 text-white font-bold'
-                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'bg-fg text-bg font-bold'
+                          : 'text-muted hover:text-fg hover:bg-chip'
                       }`}
                     >
                       {tab.label}
                       <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                        activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700'
+                        activeTab === tab.id ? 'bg-bg text-fg' : 'bg-chip text-muted'
                       }`}>
                         {toPersianDigits(tab.count)}
                       </span>
@@ -401,8 +401,8 @@ export const SkillsView: React.FC = () => {
                   <div className="space-y-4">
                     {/* Prerequisites Info if any */}
                     {activeSkill.prerequisites && activeSkill.prerequisites.length > 0 && (
-                      <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-xs text-blue-300 flex-wrap">
-                        <span className="font-bold flex items-center gap-1 text-blue-400">
+                      <div className="p-3 rounded-xl bg-chip border border-line flex items-center gap-2 text-xs text-fg flex-wrap">
+                        <span className="font-bold flex items-center gap-1 text-fg">
                           <Layers className="w-3.5 h-3.5" />
                           پیش‌نیازهای این مهارت:
                         </span>
@@ -411,7 +411,7 @@ export const SkillsView: React.FC = () => {
                           return (
                             <span
                               key={pIdx}
-                              className="px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-500/30 text-blue-200 text-[11px]"
+                              className="px-2 py-0.5 rounded-md bg-surface border border-line text-fg text-[11px]"
                             >
                               {prereqSkill ? prereqSkill.name : prereq}
                             </span>
@@ -427,11 +427,11 @@ export const SkillsView: React.FC = () => {
                         value={newStepTitle}
                         onChange={(e) => setNewStepTitle(e.target.value)}
                         placeholder="افزودن مرحله جدید به نقشه راه..."
-                        className="flex-1 px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="flex-1 px-4 py-2 text-sm bg-surface border border-line rounded-xl focus:outline-none focus:ring-1 focus:ring-fg/20 text-fg placeholder:text-muted"
                       />
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-xl flex items-center gap-1.5"
+                        className="px-4 py-2 bg-fg hover:opacity-90 text-bg text-xs font-medium rounded-xl flex items-center gap-1.5 cursor-pointer"
                       >
                         <Plus className="w-4 h-4" />
                         افزودن گام
@@ -445,20 +445,20 @@ export const SkillsView: React.FC = () => {
                           onClick={() => toggleSkillRoadmapStep(activeSkill.id, step.id)}
                           className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                             step.completed
-                              ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40 text-slate-500 dark:text-slate-400 line-through'
-                              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200'
+                              ? 'bg-chip border-line text-muted line-through'
+                              : 'bg-surface border-line text-fg'
                           }`}
                         >
                           <div
                             className={`w-5 h-5 rounded-lg flex items-center justify-center border transition-colors ${
                               step.completed
-                                ? 'bg-emerald-600 border-emerald-600 text-white'
-                                : 'border-slate-300 dark:border-slate-600'
+                                ? 'bg-fg border-fg text-bg'
+                                : 'border-line'
                             }`}
                           >
                             {step.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
                           </div>
-                          <span className="text-xs font-bold text-slate-400">
+                          <span className="text-xs font-bold text-muted">
                             گام {toPersianDigits(idx + 1)}:
                           </span>
                           <span className="text-sm font-medium flex-1">{step.title}</span>
@@ -471,60 +471,60 @@ export const SkillsView: React.FC = () => {
                 {/* Tab 2: Practice Logs & Streak */}
                 {activeTab === 'practice' && (
                   <div className="space-y-6">
-                    <form onSubmit={handleLogPractice} className="p-4 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800/50 space-y-3">
-                      <h4 className="text-xs font-bold text-purple-900 dark:text-purple-300 flex items-center gap-2">
+                    <form onSubmit={handleLogPractice} className="p-4 rounded-xl bg-chip border border-line space-y-3">
+                      <h4 className="text-xs font-bold text-fg flex items-center gap-2">
                         <Clock className="w-4 h-4" />
                         ثبت گزارش تمرین امروز
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="text-xs text-slate-500 mb-1 block">مدت زمان تمرین (دقیقه):</label>
+                          <label className="text-xs text-muted mb-1 block">مدت زمان تمرین (دقیقه):</label>
                           <input
                             type="number"
                             min="5"
                             step="5"
                             value={practiceMinutes}
                             onChange={(e) => setPracticeMinutes(Number(e.target.value))}
-                            className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                            className="w-full px-3 py-2 text-sm bg-surface border border-line rounded-xl text-fg"
                           />
                         </div>
                         <div>
-                          <label className="text-xs text-slate-500 mb-1 block">توضیحات و نکات کلیدی:</label>
+                          <label className="text-xs text-muted mb-1 block">توضیحات و نکات کلیدی:</label>
                           <input
                             type="text"
                             value={practiceNotes}
                             onChange={(e) => setPracticeNotes(e.target.value)}
                             placeholder="مثلاً: حل مسائل دیکشنری و لیست در پایتون"
-                            className="w-full px-3 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                            className="w-full px-3 py-2 text-sm bg-surface border border-line rounded-xl text-fg placeholder:text-muted"
                           />
                         </div>
                       </div>
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-xl"
+                        className="px-4 py-2 bg-fg hover:opacity-90 text-bg text-xs font-medium rounded-xl cursor-pointer"
                       >
                         ثبت در سابقه و افزایش Streak
                       </button>
                     </form>
 
                     <div className="space-y-2">
-                      <h4 className="text-xs font-bold text-slate-500">تاریخچه جلسات تمرین</h4>
+                      <h4 className="text-xs font-bold text-muted">تاریخچه جلسات تمرین</h4>
                       {activeSkill.practiceLogs.length === 0 ? (
-                        <p className="text-xs text-slate-400">هنوز تمرینی برای این مهارت ثبت نشده است.</p>
+                        <p className="text-xs text-muted">هنوز تمرینی برای این مهارت ثبت نشده است.</p>
                       ) : (
                         activeSkill.practiceLogs.map((log) => (
                           <div
                             key={log.id}
-                            className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs"
+                            className="flex items-center justify-between p-3 rounded-xl bg-chip border border-line text-xs"
                           >
                             <div className="flex items-center gap-2">
-                              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                              <span className="font-semibold text-slate-700 dark:text-slate-300">
+                              <Calendar className="w-3.5 h-3.5 text-muted" />
+                              <span className="font-semibold text-fg">
                                 {formatJalaliShort(log.date)}
                               </span>
-                              <span className="text-slate-500">{log.notes}</span>
+                              <span className="text-muted">{log.notes}</span>
                             </div>
-                            <span className="font-bold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/40 px-2 py-0.5 rounded-lg">
+                            <span className="font-bold text-fg bg-surface border border-line px-2 py-0.5 rounded-lg">
                               {toPersianDigits(log.minutes)} دقیقه
                             </span>
                           </div>
@@ -537,20 +537,20 @@ export const SkillsView: React.FC = () => {
                 {/* Tab 3: Resources */}
                 {activeTab === 'resources' && (
                   <div className="space-y-4">
-                    <form onSubmit={handleAddResource} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-3">
-                      <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300">افزودن منبع آموزشی جدید</h4>
+                    <form onSubmit={handleAddResource} className="p-4 rounded-xl bg-chip border border-line space-y-3">
+                      <h4 className="text-xs font-bold text-fg">افزودن منبع آموزشی جدید</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <input
                           type="text"
                           value={newResourceTitle}
                           onChange={(e) => setNewResourceTitle(e.target.value)}
                           placeholder="عنوان دوره یا کتاب..."
-                          className="sm:col-span-1 px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                          className="sm:col-span-1 px-3 py-2 text-xs bg-surface border border-line rounded-xl text-fg placeholder:text-muted"
                         />
                         <select
                           value={newResourceType}
                           onChange={(e) => setNewResourceType(e.target.value as typeof newResourceType)}
-                          className="px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                          className="px-3 py-2 text-xs bg-surface border border-line rounded-xl text-fg"
                         >
                           <option value="course">دوره آموزشی</option>
                           <option value="book">کتاب / PDF</option>
@@ -562,12 +562,12 @@ export const SkillsView: React.FC = () => {
                           value={newResourceUrl}
                           onChange={(e) => setNewResourceUrl(e.target.value)}
                           placeholder="لینک (اختیاری)..."
-                          className="px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"
+                          className="px-3 py-2 text-xs bg-surface border border-line rounded-xl text-fg placeholder:text-muted"
                         />
                       </div>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-xl"
+                        className="px-4 py-1.5 bg-fg hover:opacity-90 text-bg text-xs font-medium rounded-xl cursor-pointer"
                       >
                         افزودن منبع
                       </button>
@@ -577,21 +577,21 @@ export const SkillsView: React.FC = () => {
                       {activeSkill.resources.map((res) => (
                         <div
                           key={res.id}
-                          className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs"
+                          className="flex items-center justify-between p-3 rounded-xl bg-surface border border-line text-xs"
                         >
                           <div
                             onClick={() => toggleSkillResource(activeSkill.id, res.id)}
                             className="flex items-center gap-2 cursor-pointer flex-1"
                           >
                             <div className={`w-4 h-4 rounded border flex items-center justify-center ${
-                              res.completed ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-400'
+                              res.completed ? 'bg-fg border-fg text-bg' : 'border-line'
                             }`}>
                               {res.completed && <CheckCircle2 className="w-3 h-3" />}
                             </div>
-                            <span className={res.completed ? 'line-through text-slate-400' : 'font-medium text-slate-800 dark:text-slate-200'}>
+                            <span className={res.completed ? 'line-through text-muted' : 'font-medium text-fg'}>
                               {res.title}
                             </span>
-                            <span className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                            <span className="text-[10px] text-muted bg-chip border border-line px-2 py-0.5 rounded">
                               {res.type === 'course' ? 'دوره' : res.type === 'book' ? 'کتاب' : 'مقاله'}
                             </span>
                           </div>
@@ -601,7 +601,7 @@ export const SkillsView: React.FC = () => {
                               href={res.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                              className="text-fg hover:opacity-80 underline flex items-center gap-1"
                             >
                               مشاهده <ExternalLink className="w-3.5 h-3.5" />
                             </a>
@@ -621,11 +621,11 @@ export const SkillsView: React.FC = () => {
                         value={newExerciseTitle}
                         onChange={(e) => setNewExerciseTitle(e.target.value)}
                         placeholder="افزودن تمرین یا مینی‌پروژه..."
-                        className="flex-1 px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                        className="flex-1 px-4 py-2 text-sm bg-surface border border-line rounded-xl text-fg placeholder:text-muted"
                       />
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-xl"
+                        className="px-4 py-2 bg-fg hover:opacity-90 text-bg text-xs font-medium rounded-xl cursor-pointer"
                       >
                         ثبت تمرین
                       </button>
@@ -638,12 +638,12 @@ export const SkillsView: React.FC = () => {
                           onClick={() => toggleSkillExercise(activeSkill.id, ex.id)}
                           className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer ${
                             ex.completed
-                              ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40 line-through text-slate-400'
-                              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+                              ? 'bg-chip border-line line-through text-muted'
+                              : 'bg-surface border-line text-fg'
                           }`}
                         >
                           <div className={`w-4 h-4 rounded border flex items-center justify-center ${
-                            ex.completed ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-400'
+                            ex.completed ? 'bg-fg border-fg text-bg' : 'border-line'
                           }`}>
                             {ex.completed && <CheckCircle2 className="w-3 h-3" />}
                           </div>
@@ -663,11 +663,11 @@ export const SkillsView: React.FC = () => {
                         value={newWeaknessText}
                         onChange={(e) => setNewWeaknessText(e.target.value)}
                         placeholder="ثبت نقطه ضعف یا مبحث چالش‌برانگیز برای تمرین بیشتر..."
-                        className="flex-1 px-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                        className="flex-1 px-4 py-2 text-sm bg-surface border border-line rounded-xl text-fg placeholder:text-muted"
                       />
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-xl"
+                        className="px-4 py-2 bg-fg hover:opacity-90 text-bg text-xs font-medium rounded-xl cursor-pointer"
                       >
                         افزودن چالش
                       </button>
@@ -677,15 +677,15 @@ export const SkillsView: React.FC = () => {
                       {activeSkill.weaknesses.map((w, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-xs"
+                          className="flex items-center justify-between p-3 rounded-xl bg-chip border border-line text-xs"
                         >
-                          <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
-                            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                          <div className="flex items-center gap-2 text-fg">
+                            <AlertCircle className="w-4 h-4 text-fg" />
                             <span>{w}</span>
                           </div>
                           <button
                             onClick={() => removeSkillWeakness(activeSkill.id, idx)}
-                            className="text-red-500 hover:text-red-600"
+                            className="text-muted hover:text-fg cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -703,13 +703,13 @@ export const SkillsView: React.FC = () => {
       {/* New Skill Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-purple-600" />
+          <div className="bg-surface w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-line space-y-4">
+            <div className="flex justify-between items-center border-b border-line pb-3">
+              <h3 className="font-bold text-lg text-fg flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-fg" />
                 تعریف مهارت جدید
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowAddModal(false)} className="text-muted hover:text-fg cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>

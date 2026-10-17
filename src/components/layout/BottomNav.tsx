@@ -119,7 +119,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                 )}
               </div>
 
-              <span className="text-[10px] mt-1 truncate">
+              <span className="text-[10px] mt-1 truncate font-medium">
                 {item.label}
               </span>
             </button>
@@ -129,13 +129,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* 5th button: Full Menu */}
         <button
           onClick={onOpenMenu}
-          className="relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center text-muted hover:text-fg transition-colors cursor-pointer select-none"
+          className="relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center text-muted hover:text-fg transition-colors cursor-pointer select-none font-medium"
           aria-label="تمام بخش‌ها و امکانات"
         >
           <div className="relative mt-0.5">
             <Menu className="w-4 h-4" />
           </div>
-          <span className="text-[10px] mt-1">
+          <span className="text-[10px] mt-1 font-medium">
             منو
           </span>
         </button>

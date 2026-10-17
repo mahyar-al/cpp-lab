@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
       case 'competition':
         return 'text-amber-600 dark:text-amber-400';
       default:
-        return 'text-slate-600 dark:text-slate-400';
+        return 'text-muted';
     }
   };
 
@@ -125,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 glass-strong glass-liquid-refract border-b border-line/60 transition-colors w-full shadow-xs">
+    <header className="sticky top-0 z-30 glass-strong border-b border-line/60 transition-colors w-full shadow-xs">
       <div className="flex items-center justify-between px-3.5 sm:px-5 md:px-6 lg:px-8 xl:px-10 2xl:px-12 h-15 gap-4 w-full">
         {/* Right Zone in RTL: Mobile menu trigger & Title / Date */}
         <div className="flex items-center gap-3 min-w-0">
@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
             <h1 className="text-base font-bold text-fg truncate">
               {activeSectionTitle}
             </h1>
-            <span className="hidden sm:inline text-xs text-muted truncate font-normal">
+            <span className="hidden sm:inline text-xs text-muted truncate font-medium">
               {formatJalaliFull()}
             </span>
           </div>
@@ -157,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="جستجو (Ctrl + K)"
           >
             <Search className="w-3.5 h-3.5 text-muted" />
-            <span className="hidden sm:inline font-medium">جستجو</span>
+            <span className="hidden sm:inline font-bold">جستجو</span>
           </button>
 
           {/* Primary Action: Quick Add */}
@@ -216,7 +216,7 @@ export const Header: React.FC<HeaderProps> = ({
 
                 <div className="mt-3 max-h-80 overflow-y-auto space-y-2">
                   {notifications.length === 0 ? (
-                    <div className="py-6 text-center text-xs text-muted">
+                    <div className="py-6 text-center text-xs text-muted font-medium">
                       هیچ اعلانی وجود ندارد.
                     </div>
                   ) : (
@@ -234,7 +234,7 @@ export const Header: React.FC<HeaderProps> = ({
                             <span className={`text-[11px] font-semibold ${getSectionBadgeColor(item.section)}`}>
                               {getSectionName(item.section)}
                             </span>
-                            <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                            <span className="text-xs font-semibold text-fg">
                               {item.title}
                             </span>
                           </div>
@@ -243,7 +243,7 @@ export const Header: React.FC<HeaderProps> = ({
                               <button
                                 onClick={() => markNotificationAsRead(item.id)}
                                 title="علامت به عنوان خوانده‌شده"
-                                className="text-slate-400 hover:text-amber-500 cursor-pointer"
+                                className="text-muted hover:text-amber-500 cursor-pointer"
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                               </button>
@@ -251,13 +251,13 @@ export const Header: React.FC<HeaderProps> = ({
                             <button
                               onClick={() => clearNotification(item.id)}
                               title="حذف"
-                              className="text-slate-400 hover:text-rose-500 cursor-pointer"
+                              className="text-muted hover:text-rose-500 cursor-pointer"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         </div>
-                        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                        <p className="mt-1 text-xs text-muted line-clamp-2">
                           {item.message}
                         </p>
                       </div>
@@ -292,7 +292,7 @@ export const Header: React.FC<HeaderProps> = ({
           {!currentUser && (
             <button
               onClick={() => openAuthModal('login')}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-chip hover:bg-chip/80 text-fg border border-line text-xs font-semibold rounded-lg transition-colors cursor-pointer"
               title="ورود یا ثبت‌نام حساب چندکاربره"
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -307,21 +307,21 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setShowProfileMenu((prev) => !prev)}
-              className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-right cursor-pointer"
+              className="flex items-center gap-2 p-1 sm:px-2 sm:py-1 rounded-lg hover:bg-chip transition-colors text-right cursor-pointer"
               title="پروفایل کاربر"
             >
-              <div className="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center font-semibold text-xs shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-chip text-fg flex items-center justify-center font-semibold text-xs shrink-0">
                 <AvatarIcon className="w-4 h-4" />
               </div>
               <div className="hidden sm:flex flex-col text-right min-w-0">
-                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[110px]">
+                <span className="text-xs font-bold text-fg truncate max-w-[110px]">
                   {currentUser ? currentUser.name : (profile.name || 'کاربر')}
                 </span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate max-w-[110px]">
+                <span className="text-[10px] text-muted truncate max-w-[110px] font-medium">
                   {currentUser ? `@${currentUser.username}` : (profile.gradeOrField || 'دانش‌آموز')}
                 </span>
               </div>
-              <ChevronDown className="hidden sm:block w-3 h-3 text-slate-400 transition-transform" />
+              <ChevronDown className="hidden sm:block w-3 h-3 text-muted transition-transform" />
             </button>
 
             {/* Profile Popover */}
@@ -336,12 +336,12 @@ export const Header: React.FC<HeaderProps> = ({
                     <span className="text-sm font-bold text-fg truncate">
                       {currentUser ? currentUser.name : (profile.name || 'کاربر مهمان')}
                     </span>
-                    <span className="text-xs text-muted truncate">
+                    <span className="text-xs text-muted truncate font-medium">
                       {currentUser ? currentUser.email : (profile.gradeOrField || 'حالت محلی')}
                     </span>
                     <div className="flex items-center gap-1.5 mt-1">
-                      <span className={`w-1.5 h-1.5 rounded-full ${currentUser ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                      <span className="text-[11px] text-slate-500">
+                      <span className={`w-1.5 h-1.5 rounded-full ${currentUser ? 'bg-emerald-500' : 'bg-muted'}`} />
+                      <span className="text-[11px] text-muted font-medium">
                         {currentUser ? 'متصل به حساب ابری' : 'حافظه محلی (آفلاین)'}
                       </span>
                     </div>
@@ -349,19 +349,19 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 {/* Quick Rescue Actions */}
-                <div className="py-2.5 border-b border-slate-100 dark:border-slate-800 space-y-1.5">
+                <div className="py-2.5 border-b border-line space-y-1.5">
                   <button
                     onClick={() => {
                       setShowProfileMenu(false);
                       setIsRescueModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-fg hover:bg-chip transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <LifeBuoy className="w-4 h-4 text-amber-500" />
                       <span>حالت نجات روز</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-normal">جبران عقب‌افتادگی</span>
+                    <span className="text-[10px] text-muted font-normal">جبران عقب‌افتادگی</span>
                   </button>
 
                   {currentUser && (
@@ -369,13 +369,13 @@ export const Header: React.FC<HeaderProps> = ({
                       onClick={() => {
                         syncWithServer();
                       }}
-                      className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      className="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-fg hover:bg-chip transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
-                        <Cloud className={`w-4 h-4 ${syncStatus === 'syncing' ? 'animate-spin text-amber-500' : 'text-slate-500'}`} />
+                        <Cloud className={`w-4 h-4 ${syncStatus === 'syncing' ? 'animate-spin text-amber-500' : 'text-muted'}`} />
                         <span>همگام‌سازی ابری</span>
                       </div>
-                      <span className="text-[10px] text-slate-400">
+                      <span className="text-[10px] text-muted">
                         {syncStatus === 'synced' ? 'به‌روز' : syncStatus === 'syncing' ? 'در حال ارسال' : 'خطا'}
                       </span>
                     </button>
@@ -383,7 +383,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 {/* Account Actions Bar */}
-                <div className="py-2.5 border-b border-slate-100 dark:border-slate-800">
+                <div className="py-2.5 border-b border-line">
                   {currentUser ? (
                     <div className="grid grid-cols-2 gap-2">
                       <button
@@ -391,7 +391,7 @@ export const Header: React.FC<HeaderProps> = ({
                           setShowProfileMenu(false);
                           setIsAuthModalOpen(true);
                         }}
-                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg transition-colors cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-chip hover:bg-chip/80 text-fg text-xs font-medium rounded-lg transition-colors cursor-pointer"
                       >
                         <LogIn className="w-3.5 h-3.5" />
                         <span>تغییر حساب</span>
@@ -413,7 +413,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setShowProfileMenu(false);
                         openAuthModal('login');
                       }}
-                      className="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                      className="w-full py-2 px-3 bg-fg hover:opacity-90 text-bg text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
                     >
                       <LogIn className="w-4 h-4" />
                       <span>ورود / ساخت حساب ابری</span>
@@ -422,8 +422,8 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 {/* Avatar icons selection */}
-                <div className="py-2.5 border-b border-slate-100 dark:border-slate-800">
-                  <span className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-2">
+                <div className="py-2.5 border-b border-line">
+                  <span className="block text-[11px] font-semibold text-muted mb-2">
                     آیکون نمایه:
                   </span>
                   <div className="grid grid-cols-4 gap-1.5">
@@ -439,14 +439,14 @@ export const Header: React.FC<HeaderProps> = ({
                           title={opt.label}
                           className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition-colors cursor-pointer relative ${
                             isSelected
-                              ? 'bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-400 dark:ring-slate-600'
-                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                              ? 'bg-chip ring-1 ring-fg'
+                              : 'hover:bg-chip/60'
                           }`}
                         >
-                          <div className="w-7 h-7 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center">
+                          <div className="w-7 h-7 rounded-md bg-chip text-fg flex items-center justify-center">
                             <Icon className="w-3.5 h-3.5" />
                           </div>
-                          <span className="text-[10px] mt-1 text-slate-600 dark:text-slate-400 truncate max-w-full">
+                          <span className="text-[10px] mt-1 text-muted truncate max-w-full">
                             {opt.label}
                           </span>
                         </button>
@@ -462,9 +462,9 @@ export const Header: React.FC<HeaderProps> = ({
                       setShowProfileMenu(false);
                       if (onSelectTab) onSelectTab('settings');
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-fg bg-chip hover:bg-chip/80 rounded-lg transition-colors cursor-pointer"
                   >
-                    <Settings className="w-3.5 h-3.5 text-slate-400" />
+                    <Settings className="w-3.5 h-3.5 text-muted" />
                     <span>تنظیمات و شخصی‌سازی</span>
                   </button>
                 </div>

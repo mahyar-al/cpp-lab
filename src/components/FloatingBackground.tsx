@@ -345,6 +345,7 @@ export const FloatingBackground: React.FC = () => {
   const iconBases = useRef<{ x: number; y: number }[]>([]);
 
   // DOM node references
+  const containerRef = useRef<HTMLDivElement>(null);
   const particleWrappersRef = useRef<(HTMLDivElement | null)[]>([]);
   const particleInnersRef = useRef<(HTMLDivElement | null)[]>([]);
   const iconWrappersRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -453,7 +454,7 @@ export const FloatingBackground: React.FC = () => {
         if (!active) {
           if (wrap.dataset.active === 'true') {
             wrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
-            wrap.style.color = '';
+            wrap.style.color = 'var(--bg-fx-base)';
             wrap.style.filter = '';
             if (inner) inner.style.opacity = '';
             delete wrap.dataset.active;
@@ -480,10 +481,11 @@ export const FloatingBackground: React.FC = () => {
           wrap.dataset.shiftY = shiftY.toFixed(2);
 
           wrap.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0) scale(${scale.toFixed(2)})`;
-          wrap.style.color = 'var(--text)';
+          wrap.style.color = 'var(--bg-fx-hover)';
           wrap.style.filter = `drop-shadow(0 0 ${Math.round(4 + factor * 6)}px currentColor)`;
           if (inner) {
-            inner.style.opacity = `${(0.7 + factor * 0.3).toFixed(2)}`;
+            // Near the cursor particles go to full black (opacity ~1)
+            inner.style.opacity = `${(0.85 + factor * 0.15).toFixed(2)}`;
           }
 
           nearestParticles.push({
@@ -493,7 +495,7 @@ export const FloatingBackground: React.FC = () => {
           });
         } else if (wrap.dataset.active === 'true') {
           wrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
-          wrap.style.color = '';
+          wrap.style.color = 'var(--bg-fx-base)';
           wrap.style.filter = '';
           if (inner) inner.style.opacity = '';
           delete wrap.dataset.active;
@@ -513,7 +515,8 @@ export const FloatingBackground: React.FC = () => {
           line.setAttribute('y1', `${cy}`);
           line.setAttribute('x2', `${p.x.toFixed(1)}`);
           line.setAttribute('y2', `${p.y.toFixed(1)}`);
-          line.setAttribute('opacity', `${(0.35 * (1 - p.dist / 140)).toFixed(2)}`);
+          line.setAttribute('stroke', 'var(--bg-fx-hover)');
+          line.setAttribute('opacity', `${(0.4 * (1 - p.dist / 140)).toFixed(2)}`);
         } else {
           line.setAttribute('opacity', '0');
         }
@@ -528,8 +531,8 @@ export const FloatingBackground: React.FC = () => {
         if (!active) {
           if (wrap.dataset.active === 'true') {
             wrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
-            wrap.style.color = 'var(--text-muted)';
-            wrap.style.opacity = '0.2';
+            wrap.style.color = 'var(--bg-fx-base)';
+            wrap.style.opacity = '0.3';
             wrap.style.filter = 'none';
             delete wrap.dataset.active;
             delete wrap.dataset.shiftX;
@@ -545,9 +548,8 @@ export const FloatingBackground: React.FC = () => {
         if (dist < 200) {
           wrap.dataset.active = 'true';
 
-          // Smooth falloff: the closer the cursor, the stronger the effect (intensity = 1 - distance/200, eased)
+          // Smooth falloff: the closer the cursor, the stronger the effect
           const linear = 1 - dist / 200;
-          // Smoothstep easing: linear^2 * (3 - 2 * linear)
           const intensity = linear * linear * (3 - 2 * linear);
 
           // Gently repel up to ~16px away from cursor
@@ -559,20 +561,20 @@ export const FloatingBackground: React.FC = () => {
           // Scale up to ~1.25
           const scale = 1 + intensity * 0.25;
 
-          // Opacity goes from base (~0.2) up to ~0.9
-          const opacity = 0.2 + intensity * 0.7;
+          // Opacity goes from base (~0.3) up to ~1.0 near cursor
+          const opacity = 0.3 + intensity * 0.7;
 
           wrap.dataset.shiftX = shiftX.toFixed(2);
           wrap.dataset.shiftY = shiftY.toFixed(2);
 
           wrap.style.transform = `translate3d(${shiftX.toFixed(1)}px, ${shiftY.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-          wrap.style.color = 'var(--text)';
+          wrap.style.color = 'var(--bg-fx-hover)';
           wrap.style.opacity = opacity.toFixed(2);
           wrap.style.filter = 'drop-shadow(0 0 8px currentColor)';
         } else if (wrap.dataset.active === 'true') {
           wrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
-          wrap.style.color = 'var(--text-muted)';
-          wrap.style.opacity = '0.2';
+          wrap.style.color = 'var(--bg-fx-base)';
+          wrap.style.opacity = '0.3';
           wrap.style.filter = 'none';
           delete wrap.dataset.active;
           delete wrap.dataset.shiftX;
@@ -598,6 +600,10 @@ export const FloatingBackground: React.FC = () => {
       mouseState.current.x = e.clientX;
       mouseState.current.y = e.clientY;
       mouseState.current.active = true;
+      if (containerRef.current) {
+        containerRef.current.style.setProperty('--mouse-x', `${e.clientX}px`);
+        containerRef.current.style.setProperty('--mouse-y', `${e.clientY}px`);
+      }
       triggerUpdate(5);
     };
 
@@ -605,6 +611,10 @@ export const FloatingBackground: React.FC = () => {
       mouseState.current.x = -9999;
       mouseState.current.y = -9999;
       mouseState.current.active = false;
+      if (containerRef.current) {
+        containerRef.current.style.setProperty('--mouse-x', '-9999px');
+        containerRef.current.style.setProperty('--mouse-y', '-9999px');
+      }
       triggerUpdate(5);
     };
 
@@ -625,30 +635,62 @@ export const FloatingBackground: React.FC = () => {
 
   return (
     <div
+      ref={containerRef}
       className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none bg-bg"
       aria-hidden="true"
     >
       {/* Subtle Base Dotted Grid */}
       <div
-        className="absolute inset-0 opacity-40 dark:opacity-20"
+        className="absolute inset-0 opacity-50 dark:opacity-20"
         style={{
-          backgroundImage: 'radial-gradient(var(--pattern) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(var(--pattern) 1.25px, transparent 1.25px)',
           backgroundSize: '24px 24px',
         }}
       />
 
-      {/* Layer 1: Faint Connecting Constellation Lines (between nearby stable dots) */}
+      {/* Dynamic Cursor Spotlight / Reveal (Soft dark shade in light mode, soft glow in dark mode) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle 280px at var(--mouse-x, -9999px) var(--mouse-y, -9999px), var(--spot-color), transparent 70%)',
+        }}
+      />
+
+      {/* Brighter dot-grid reveal near cursor driven by --dot-hover */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(var(--dot-hover) 1.5px, transparent 1.5px)',
+          backgroundSize: '24px 24px',
+          maskImage: 'radial-gradient(circle 240px at var(--mouse-x, -9999px) var(--mouse-y, -9999px), black 0%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(circle 240px at var(--mouse-x, -9999px) var(--mouse-y, -9999px), black 0%, transparent 80%)',
+        }}
+      />
+
+      {/* Layer 1: Connecting Constellation Lines (opacity 0.25 in light mode) */}
       <svg
         viewBox="0 0 1000 1000"
         preserveAspectRatio="none"
-        className="absolute inset-0 w-full h-full opacity-20 dark:opacity-30 pointer-events-none"
+        className="absolute inset-0 w-full h-full opacity-25 dark:opacity-30 pointer-events-none"
       >
-        <line x1="70" y1="50" x2="180" y2="120" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="3 4" />
-        <line x1="880" y1="60" x2="940" y2="180" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="3 4" />
-        <line x1="50" y1="250" x2="140" y2="320" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="3 4" />
-        <line x1="850" y1="280" x2="920" y2="350" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="3 4" />
-        <line x1="90" y1="740" x2="160" y2="820" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="3 4" />
-        <line x1="800" y1="780" x2="900" y2="850" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="70" y1="50" x2="180" y2="120" stroke="var(--bg-fx-base)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="880" y1="60" x2="940" y2="180" stroke="var(--bg-fx-base)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="50" y1="250" x2="140" y2="320" stroke="var(--bg-fx-base)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="850" y1="280" x2="920" y2="350" stroke="var(--bg-fx-base)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="90" y1="740" x2="160" y2="820" stroke="var(--bg-fx-base)" strokeWidth="1" strokeDasharray="3 4" />
+        <line x1="800" y1="780" x2="900" y2="850" stroke="var(--bg-fx-base)" strokeWidth="1" strokeDasharray="3 4" />
+      </svg>
+
+      {/* Layer 1b: Floating Outline Shapes (opacity 0.35 in light mode) */}
+      <svg
+        viewBox="0 0 1000 1000"
+        preserveAspectRatio="none"
+        className="absolute inset-0 w-full h-full opacity-35 dark:opacity-30 pointer-events-none"
+      >
+        <circle cx="120" cy="180" r="16" fill="none" stroke="var(--bg-fx-base)" strokeWidth="1.5" strokeDasharray="4 4" />
+        <rect x="860" y="240" width="28" height="28" rx="6" fill="none" stroke="var(--bg-fx-base)" strokeWidth="1.5" strokeDasharray="3 3" />
+        <polygon points="140,820 155,850 125,850" fill="none" stroke="var(--bg-fx-base)" strokeWidth="1.5" />
+        <circle cx="880" cy="680" r="20" fill="none" stroke="var(--bg-fx-base)" strokeWidth="1.5" strokeDasharray="5 5" />
       </svg>
 
       {/* Dynamic Cursor Constellation Lines (faint 1px lines to nearest 3-5 particles within 140px) */}
@@ -663,7 +705,7 @@ export const FloatingBackground: React.FC = () => {
             ref={(el) => {
               cursorLinesRef.current[i] = el;
             }}
-            stroke="var(--text-muted)"
+            stroke="var(--bg-fx-hover)"
             strokeWidth="1"
             strokeDasharray="2 3"
             opacity="0"
@@ -674,7 +716,7 @@ export const FloatingBackground: React.FC = () => {
         ))}
       </svg>
 
-      {/* Layer 1: Floating Particles (48 seeded dots with gentle drift & interactive mouse repulsion/lighting) */}
+      {/* Layer 1: Floating Particles (48 seeded dots: opacity 0.55-0.8 in light mode) */}
       {STABLE_PARTICLES.map((p, idx) => {
         const wrapperStyle: React.CSSProperties = {
           top: `${p.top}%`,
@@ -683,14 +725,14 @@ export const FloatingBackground: React.FC = () => {
           height: `${p.size}px`,
           willChange: 'transform',
           transition: 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, filter 0.2s ease',
-          color: 'var(--text-muted)',
+          color: 'var(--bg-fx-base)',
         };
 
         if (isStatic) {
           return (
             <div
               key={p.id}
-              className={`absolute rounded-full bg-[var(--text-muted)] opacity-40 dark:opacity-60 ${
+              className={`absolute rounded-full ${
                 !p.isMobile ? 'hidden sm:block' : ''
               }`}
               style={{
@@ -698,6 +740,8 @@ export const FloatingBackground: React.FC = () => {
                 insetInlineStart: `${p.start}%`,
                 width: `${p.size}px`,
                 height: `${p.size}px`,
+                backgroundColor: 'var(--bg-fx-base)',
+                opacity: 0.65,
               }}
             />
           );
@@ -727,7 +771,7 @@ export const FloatingBackground: React.FC = () => {
               animate={{
                 y: [0, p.yDrift, 0],
                 x: [0, p.xDrift, 0],
-                opacity: [0.4, 0.85, 0.4],
+                opacity: [0.55, 0.8, 0.55],
               }}
               transition={{
                 duration: p.duration,
@@ -740,25 +784,25 @@ export const FloatingBackground: React.FC = () => {
         );
       })}
 
-      {/* Layer 2: "Progress Path" Winding Journey Line & Milestone Markers */}
+      {/* Layer 2: "Progress Path" Winding Journey Line & Milestone Markers (opacity 0.35 in light mode) */}
       <svg
         viewBox="0 0 1000 1000"
         preserveAspectRatio="none"
-        className="absolute inset-0 w-full h-full opacity-30 dark:opacity-35 pointer-events-none"
+        className="absolute inset-0 w-full h-full opacity-35 dark:opacity-35 pointer-events-none"
       >
         {isStatic ? (
           <path
             d="M 60,940 C 240,820 110,640 330,500 C 560,360 670,220 940,60"
-            stroke="var(--text-muted)"
-            strokeWidth="1.25"
+            stroke="var(--bg-fx-base)"
+            strokeWidth="1.5"
             strokeDasharray="6 8"
             fill="none"
           />
         ) : (
           <motion.path
             d="M 60,940 C 240,820 110,640 330,500 C 560,360 670,220 940,60"
-            stroke="var(--text-muted)"
-            strokeWidth="1.25"
+            stroke="var(--bg-fx-base)"
+            strokeWidth="1.5"
             strokeDasharray="6 8"
             fill="none"
             animate={{ strokeDashoffset: [0, -140] }}
@@ -774,11 +818,11 @@ export const FloatingBackground: React.FC = () => {
       {/* Layer 2: Outline Milestone Markers along the journey path */}
       {/* Milestone 1: Start (visible on all screens) */}
       <div
-        className="absolute flex items-center gap-1.5 opacity-40 dark:opacity-50"
+        className="absolute flex items-center gap-1.5 opacity-35 dark:opacity-50"
         style={{ top: '88%', insetInlineStart: '9%' }}
       >
         <div className="w-5 h-5 rounded-full border border-line bg-surface flex items-center justify-center shadow-xs">
-          <Flag className="w-2.5 h-2.5 text-muted" strokeWidth={1.5} />
+          <Flag className="w-2.5 h-2.5" stroke="var(--bg-fx-base)" strokeWidth={1.5} />
         </div>
       </div>
 
@@ -788,7 +832,7 @@ export const FloatingBackground: React.FC = () => {
         style={{ top: '64%', insetInlineStart: '21%' }}
       >
         <div className="w-5 h-5 rounded-full border border-line bg-surface flex items-center justify-center shadow-xs">
-          <MapPin className="w-2.5 h-2.5 text-muted" strokeWidth={1.5} />
+          <MapPin className="w-2.5 h-2.5" stroke="var(--bg-fx-base)" strokeWidth={1.5} />
         </div>
       </div>
 
@@ -798,21 +842,21 @@ export const FloatingBackground: React.FC = () => {
         style={{ top: '40%', insetInlineStart: '53%' }}
       >
         <div className="w-5 h-5 rounded-full border border-line bg-surface flex items-center justify-center shadow-xs">
-          <Milestone className="w-2.5 h-2.5 text-muted" strokeWidth={1.5} />
+          <Milestone className="w-2.5 h-2.5" stroke="var(--bg-fx-base)" strokeWidth={1.5} />
         </div>
       </div>
 
       {/* Milestone 4: Goal Summit (hidden on mobile) */}
       <div
-        className="hidden sm:flex absolute items-center gap-1.5 opacity-40 dark:opacity-50"
+        className="hidden sm:flex absolute items-center gap-1.5 opacity-35 dark:opacity-50"
         style={{ top: '12%', insetInlineStart: '89%' }}
       >
         <div className="w-5 h-5 rounded-full border border-line bg-surface flex items-center justify-center shadow-xs">
-          <Flag className="w-2.5 h-2.5 text-muted" strokeWidth={1.5} />
+          <Flag className="w-2.5 h-2.5" stroke="var(--bg-fx-base)" strokeWidth={1.5} />
         </div>
       </div>
 
-      {/* Layer 3: Floating Outline Thematic Icons (16 icons with mouse repulsion and subtle brightening) */}
+      {/* Layer 3: Floating Outline Thematic Icons (opacity 0.3, strokeWidth 1.5, near cursor ~1.0) */}
       {FLOATING_ICONS.map((item, idx) => {
         const Icon = item.icon;
         const wrapperStyle: React.CSSProperties = {
@@ -820,23 +864,25 @@ export const FloatingBackground: React.FC = () => {
           insetInlineStart: `${item.start}%`,
           willChange: 'transform, opacity, filter',
           transition: 'transform 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 400ms ease, color 400ms ease, filter 400ms ease',
-          color: 'var(--text-muted)',
-          opacity: 0.2,
+          color: 'var(--bg-fx-base)',
+          opacity: 0.3,
         };
 
         if (isStatic) {
           return (
             <div
               key={item.id}
-              className={`absolute opacity-20 select-none text-[var(--text-muted)] ${
+              className={`absolute select-none ${
                 !item.isMobile ? 'hidden sm:block' : ''
               }`}
               style={{
                 top: `${item.top}%`,
                 insetInlineStart: `${item.start}%`,
+                color: 'var(--bg-fx-base)',
+                opacity: 0.3,
               }}
             >
-              <Icon size={item.size} strokeWidth={1.25} stroke="currentColor" />
+              <Icon size={item.size} strokeWidth={1.5} stroke="currentColor" />
             </div>
           );
         }
@@ -871,7 +917,7 @@ export const FloatingBackground: React.FC = () => {
                 delay: item.delay,
               }}
             >
-              <Icon size={item.size} strokeWidth={1.25} stroke="currentColor" />
+              <Icon size={item.size} strokeWidth={1.5} stroke="currentColor" />
             </motion.div>
           </div>
         );
