@@ -12,6 +12,7 @@ import { CompetitionsView } from './components/views/CompetitionsView';
 import { HabitsView } from './components/views/HabitsView';
 import { ReviewsView } from './components/views/ReviewsView';
 import { FocusTimerView } from './components/views/FocusTimerView';
+import { HomeView } from './components/views/HomeView';
 import { ResourceLibraryView } from './components/views/ResourceLibraryView';
 import { CalendarView } from './components/views/CalendarView';
 import { GoalsView } from './components/views/GoalsView';
@@ -25,8 +26,10 @@ import { RescueModeModal } from './components/modals/RescueModeModal';
 import { AlefOpeningModal } from './components/modals/AlefOpeningModal';
 import { BottomNav } from './components/layout/BottomNav';
 import { FloatingBackground } from './components/FloatingBackground';
+import StickerSlapFooter from './components/ui/sticker-slap-footer';
 
 const TAB_TITLES: Record<NavTab, string> = {
+  home: 'صفحه اصلی — معرفی الف',
   dashboard: 'داشبورد',
   daily_planner: 'برنامه‌ریز روزانه',
   school: 'مدرسه و درس‌ها',
@@ -56,7 +59,7 @@ const MainContent: React.FC = () => {
     customization,
     resolvedTheme,
   } = useApp();
-  const [currentTab, setCurrentTab] = useState<NavTab>('dashboard');
+  const [currentTab, setCurrentTab] = useState<NavTab>('home');
   const [isOpenMobile, setIsOpenMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -212,6 +215,12 @@ const MainContent: React.FC = () => {
         />
 
         <main className="flex-1 w-full min-w-0 p-3.5 sm:p-5 md:p-6 lg:p-8 xl:px-10 2xl:px-12 relative z-10 pb-24 lg:pb-10">
+          {currentTab === 'home' && (
+            <HomeView
+              onNavigate={(tab) => setCurrentTab(tab)}
+              onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+            />
+          )}
           {currentTab === 'dashboard' && (
             <DashboardView
               onNavigate={(tab) => setCurrentTab(tab)}
@@ -233,6 +242,34 @@ const MainContent: React.FC = () => {
           {currentTab === 'analytics' && <AnalyticsView />}
           {currentTab === 'settings' && <SettingsView />}
         </main>
+
+        {/* Interactive Sticker Slap Footer for Alef */}
+        <div className="w-full mt-auto" dir="ltr">
+          <StickerSlapFooter
+            wordmark="alef"
+            homeHref="#"
+            navLabel="alef"
+            chatLabel="voice note"
+            jobsLabel="looking for a job?"
+            jobs={[
+              { title: "senior software engineer", href: "#" },
+              { title: "product designer", href: "#" },
+            ]}
+            officeLabel="alef hub"
+            address={["alef plans cloud platform", "student & professional planner"]}
+            contactLabel="contact"
+            email="support@alef.app"
+            copiedLabel="copied, talk soon!"
+            note="*alef - unified academic, skill development & goal platform"
+            height="auto"
+            wordmarkMaxHeight="26svh"
+            paper={resolvedTheme === 'dark' ? '#09090b' : '#f8fafc'}
+            panel={resolvedTheme === 'dark' ? '#18181b' : '#2563eb'}
+            ink={resolvedTheme === 'dark' ? '#fafafa' : '#0f172a'}
+            cream="#ffffff"
+            accent="#f97316"
+          />
+        </div>
       </div>
 
       {/* Mobile/Tablet Ergonomic Bottom Navigation */}

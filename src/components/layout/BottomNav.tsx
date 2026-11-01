@@ -23,6 +23,7 @@ interface BottomNavProps {
 }
 
 const TAB_ICON_ELEMENTS: Record<string, { icon: React.ReactNode; fx: NimbusFx }> = {
+  home: { icon: <Sparkles className="w-4 h-4" />, fx: 'glow' },
   dashboard: { icon: NimbusIcons.home, fx: 'glow' },
   daily_planner: { icon: NimbusIcons.drop, fx: 'drop' },
   school: { icon: <GraduationCap className="w-4 h-4" />, fx: 'pop' },

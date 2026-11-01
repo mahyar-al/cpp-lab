@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
+  Home,
   Clock,
   GraduationCap,
   Sparkles,
@@ -25,6 +26,7 @@ import { toPersianDigits } from '../../utils/jalali';
 import { getBrand } from '../../utils/brand';
 
 export type NavTab =
+  | 'home'
   | 'dashboard'
   | 'daily_planner'
   | 'school'
@@ -87,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const pendingTasksCount = todayTasks.filter((t) => !t.completed).length;
 
   // 6 Structured Groups as specified in user brief:
-  // ۱. نمای کلی: داشبورد، برنامه‌ریز روزانه
+  // ۱. نمای کلی: خانه (معرفی)، داشبورد، برنامه‌ریز روزانه
   // ۲. برنامه‌ریزی: مدرسه و درس‌ها، تقویم رویدادها، اهداف
   // ۳. رشد و فعالیت: مهارت‌ها، پروژه‌ها، مسابقات
   // ۴. تمرکز: عادت‌ها، تایمر تمرکز، مرور فاصله‌دار
@@ -98,6 +100,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       groupId: 'overview',
       groupTitle: 'نمای کلی',
       items: [
+        {
+          id: 'home',
+          label: getSectionTitle('home') || 'صفحه اصلی',
+          icon: Home,
+        },
         {
           id: 'dashboard',
           label: getSectionTitle('dashboard'),
@@ -274,17 +281,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {/* Logo & Brand Name */}
           <div
-            onClick={isCollapsed ? onToggleCollapse : undefined}
-            className={`flex items-center ${isCollapsed ? 'justify-center cursor-pointer' : 'gap-3'} overflow-hidden`}
-            title={isCollapsed ? 'برای گسترش منو کلیک کنید' : undefined}
+            onClick={() => {
+              if (isCollapsed) {
+                onToggleCollapse();
+              } else {
+                handleNavClick('home');
+              }
+            }}
+            className={`flex items-center ${isCollapsed ? 'justify-center cursor-pointer' : 'gap-3 cursor-pointer group'} overflow-hidden`}
+            title={isCollapsed ? 'برای گسترش منو کلیک کنید' : 'صفحه اصلی و معرفی الف'}
           >
-            <div className="w-8 h-8 rounded-xl bg-fg text-bg font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-fg text-bg font-bold text-sm flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
               {brand.logoLetter}
             </div>
 
             {!isCollapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm tracking-tight text-fg truncate">
+                <span className="font-bold text-sm tracking-tight text-fg truncate group-hover:text-amber-500 transition-colors">
                   {brand.name}
                 </span>
                 <span className="text-[10px] text-muted truncate">

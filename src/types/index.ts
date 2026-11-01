@@ -452,6 +452,7 @@ export interface ReminderNotification {
 }
 
 export type NavTab =
+  | 'home'
   | 'dashboard'
   | 'daily_planner'
   | 'school'

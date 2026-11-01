@@ -81,6 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
   const AvatarIcon = currentAvatar.icon;
 
   const desktopNavItems: LiquidNavItem[] = [
+    { id: 'home', label: 'معرفی', icon: <Sparkles className="w-4 h-4" />, fx: 'glow' },
     { id: 'dashboard', label: 'داشبورد', icon: NimbusIcons.home, fx: 'glow' },
     { id: 'daily_planner', label: 'برنامه‌ریز', icon: NimbusIcons.drop, fx: 'drop' },
     { id: 'school', label: 'مدرسه', icon: <GraduationCap className="w-4 h-4" />, fx: 'pop' },

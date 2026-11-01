@@ -27,6 +27,7 @@ import {
 } from '../types';
 
 export const DEFAULT_SECTION_NAMES: Record<NavTab, string> = {
+  home: 'صفحه اصلی (معرفی الف)',
   dashboard: 'داشبورد',
   daily_planner: 'برنامه‌ریز روزانه',
   school: 'مدرسه و درس‌ها',
@@ -45,6 +46,7 @@ export const DEFAULT_SECTION_NAMES: Record<NavTab, string> = {
 };
 
 export const DEFAULT_NAV_ORDER: NavTab[] = [
+  'home',
   'dashboard',
   'daily_planner',
   'school',
