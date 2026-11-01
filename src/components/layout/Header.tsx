@@ -20,6 +20,9 @@ import {
   Palette,
   LifeBuoy,
   Trophy,
+  GraduationCap,
+  Target,
+  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatJalaliFull, toPersianDigits } from '../../utils/jalali';
@@ -28,12 +31,14 @@ import { NavTab } from './Sidebar';
 import { AVATAR_OPTIONS, getAvatarOption } from '../../utils/avatars';
 import { RPGBanner } from '../common/RPGBanner';
 import { ThemeToggle } from '../../theme/ThemeToggle';
+import { LiquidNavbar, LiquidNavItem, NimbusIcons } from '../ui/liquid-glass-navbar';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
   onOpenQuickAdd: () => void;
   onOpenSearch: () => void;
   activeSectionTitle: string;
+  currentTab?: NavTab;
   onSelectTab?: (tab: NavTab) => void;
 }
 
@@ -42,6 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenQuickAdd,
   onOpenSearch,
   activeSectionTitle,
+  currentTab,
   onSelectTab,
 }) => {
   const {
@@ -73,6 +79,18 @@ export const Header: React.FC<HeaderProps> = ({
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   const currentAvatar = getAvatarOption(profile.avatarSeed);
   const AvatarIcon = currentAvatar.icon;
+
+  const desktopNavItems: LiquidNavItem[] = [
+    { id: 'dashboard', label: 'داشبورد', icon: NimbusIcons.home, fx: 'glow' },
+    { id: 'daily_planner', label: 'برنامه‌ریز', icon: NimbusIcons.drop, fx: 'drop' },
+    { id: 'school', label: 'مدرسه', icon: <GraduationCap className="w-4 h-4" />, fx: 'pop' },
+    { id: 'skills', label: 'مهارت‌ها', icon: NimbusIcons.plane, fx: 'plane' },
+    { id: 'competitions', label: 'مسابقات', icon: NimbusIcons.globe, fx: 'spin' },
+    { id: 'goals', label: 'اهداف', icon: <Target className="w-4 h-4" />, fx: 'wave' },
+  ];
+
+  const matchedIndex = desktopNavItems.findIndex((it) => it.id === currentTab);
+  const desktopActiveIndex = matchedIndex >= 0 ? matchedIndex : 0;
 
   // Close menus on outside click
   useEffect(() => {
@@ -147,8 +165,38 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
+        {/* Desktop Liquid Glass Navbar */}
+        {onSelectTab && (
+          <div className="hidden xl:flex items-center justify-center flex-1 max-w-xl mx-4">
+            <LiquidNavbar
+              items={desktopNavItems}
+              active={desktopActiveIndex}
+              onChange={(idx, item) => {
+                if (item.id) {
+                  onSelectTab(item.id as NavTab);
+                }
+              }}
+              tone={resolvedTheme === 'dark' ? 'dark' : 'light'}
+              sound={true}
+              compact={false}
+              className="border border-white/20 dark:border-white/10 shadow-lg"
+            />
+          </div>
+        )}
+
         {/* Action buttons on the left (in RTL) */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Alef Storyboard Opening Trigger */}
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open_alef_intro'))}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs btn-secondary rounded-[14px] transition-all cursor-pointer active:scale-98 text-amber-500 font-bold"
+            title="نمایش انیمیشن افتتاحیه الف (Doodle Crew)"
+            aria-label="افتتاحیه الف"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Alef</span>
+          </button>
+
           {/* Search Trigger (Secondary) */}
           <button
             onClick={onOpenSearch}

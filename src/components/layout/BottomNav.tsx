@@ -1,25 +1,20 @@
 import React from 'react';
 import {
-  LayoutDashboard,
-  Clock,
   GraduationCap,
   Sparkles,
-  FolderGit2,
   Trophy,
   Flame,
-  RotateCcw,
-  Zap,
-  BookOpen,
   CalendarDays,
   Target,
-  FileText,
-  BarChart3,
-  Settings,
   Menu,
+  Clock,
+  LayoutDashboard,
+  Zap,
 } from 'lucide-react';
 import { NavTab } from './Sidebar';
 import { useApp } from '../../context/AppContext';
 import { toPersianDigits } from '../../utils/jalali';
+import { LiquidNavbar, LiquidNavItem, NimbusIcons, NimbusFx } from '../ui/liquid-glass-navbar';
 
 interface BottomNavProps {
   currentTab: NavTab;
@@ -27,22 +22,16 @@ interface BottomNavProps {
   onOpenMenu: () => void;
 }
 
-const TAB_ICONS: Record<NavTab, React.ElementType> = {
-  dashboard: LayoutDashboard,
-  daily_planner: Clock,
-  school: GraduationCap,
-  skills: Sparkles,
-  projects: FolderGit2,
-  competitions: Trophy,
-  habits: Flame,
-  reviews: RotateCcw,
-  focus_timer: Zap,
-  resources: BookOpen,
-  calendar: CalendarDays,
-  goals: Target,
-  notes: FileText,
-  analytics: BarChart3,
-  settings: Settings,
+const TAB_ICON_ELEMENTS: Record<string, { icon: React.ReactNode; fx: NimbusFx }> = {
+  dashboard: { icon: NimbusIcons.home, fx: 'glow' },
+  daily_planner: { icon: NimbusIcons.drop, fx: 'drop' },
+  school: { icon: <GraduationCap className="w-4 h-4" />, fx: 'pop' },
+  skills: { icon: NimbusIcons.plane, fx: 'plane' },
+  competitions: { icon: NimbusIcons.globe, fx: 'spin' },
+  habits: { icon: <Flame className="w-4 h-4" />, fx: 'pop' },
+  focus_timer: { icon: <Zap className="w-4 h-4" />, fx: 'spin' },
+  goals: { icon: <Target className="w-4 h-4" />, fx: 'wave' },
+  calendar: { icon: <CalendarDays className="w-4 h-4" />, fx: 'pop' },
 };
 
 export const BottomNav: React.FC<BottomNavProps> = ({
@@ -50,7 +39,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onSelectTab,
   onOpenMenu,
 }) => {
-  const { homeworks, dayData, getSectionTitle, customization } = useApp();
+  const { homeworks, dayData, getSectionTitle, customization, resolvedTheme } = useApp();
 
   const todayIso = new Date().toISOString().slice(0, 10);
   const pendingHw = homeworks.filter((h) => !h.completed && h.dueDate <= todayIso).length;
@@ -59,8 +48,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   const todayTasks = (dayData[currentIranianDay]?.postSchoolTasks || []).filter((t) => !t.completed).length;
 
   const getBadge = (tab: NavTab) => {
-    if (tab === 'school' && pendingHw > 0) return pendingHw;
-    if (tab === 'daily_planner' && todayTasks > 0) return todayTasks;
+    if (tab === 'school' && pendingHw > 0) return toPersianDigits(pendingHw);
+    if (tab === 'daily_planner' && todayTasks > 0) return toPersianDigits(todayTasks);
     return undefined;
   };
 
@@ -69,77 +58,70 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     (tab) => !(customization.hiddenSections || []).includes(tab) && tab !== 'settings'
   );
 
-  // If currentTab is not in visible top 4, ensure it's visible by replacing 4th item if needed
   let topTabs = visibleOrder.slice(0, 4);
   if (topTabs.length === 0) {
     topTabs = ['dashboard', 'daily_planner', 'school', 'skills'];
   }
-  if (currentTab !== 'settings' && !topTabs.includes(currentTab) && !customization.hiddenSections?.includes(currentTab)) {
+  if (
+    currentTab !== 'settings' &&
+    !topTabs.includes(currentTab) &&
+    !customization.hiddenSections?.includes(currentTab)
+  ) {
     topTabs = [...topTabs.slice(0, 3), currentTab];
   }
 
-  const navItems = topTabs.map((tab) => ({
-    id: tab,
-    label: getSectionTitle(tab),
-    icon: TAB_ICONS[tab] || LayoutDashboard,
-    badge: getBadge(tab),
-  }));
+  // Build items for the Liquid Navbar
+  const navItems: LiquidNavItem[] = [
+    ...topTabs.map((tab) => {
+      const iconConfig = TAB_ICON_ELEMENTS[tab] || {
+        icon: NimbusIcons.home,
+        fx: 'pop' as NimbusFx,
+      };
+      return {
+        id: tab,
+        label: getSectionTitle(tab),
+        icon: iconConfig.icon,
+        fx: iconConfig.fx,
+        badge: getBadge(tab),
+      };
+    }),
+    {
+      id: 'menu',
+      label: 'منو',
+      icon: <Menu className="w-4 h-4" />,
+      fx: 'wave',
+    },
+  ];
+
+  // Determine active index
+  let activeIndex = navItems.findIndex((item) => item.id === currentTab);
+  if (activeIndex === -1) {
+    activeIndex = 0;
+  }
 
   return (
-    <nav
-      className="fixed bottom-0 inset-x-0 z-40 glass-nav border-t border-[var(--glass-nav-border)] lg:hidden transition-colors"
+    <div
+      className="fixed bottom-3 inset-x-0 z-40 flex justify-center items-center pointer-events-none lg:hidden px-2"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-      aria-label="ناوبری سریع موبایل"
+      aria-label="منوی ناوبری مایع شیشه‌ای"
     >
-      <div className="flex items-center justify-around h-14 max-w-md mx-auto px-2">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentTab === item.id;
-
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelectTab(item.id)}
-              className={`relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center transition-colors cursor-pointer select-none ${
-                isActive
-                  ? 'text-fg font-semibold'
-                  : 'text-muted hover:text-fg'
-              }`}
-            >
-              {isActive && (
-                <span className="absolute top-0 w-6 h-0.5 rounded-full bg-fg transition-colors" />
-              )}
-
-              <div className="relative mt-0.5">
-                <Icon className="w-4 h-4" />
-                {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1 -right-2 px-1 min-w-[14px] h-3.5 text-[8px] font-mono tabular-nums font-bold rounded-full bg-fg text-bg flex items-center justify-center">
-                    {toPersianDigits(item.badge)}
-                  </span>
-                )}
-              </div>
-
-              <span className="text-[10px] mt-1 truncate font-medium">
-                {item.label}
-              </span>
-            </button>
-          );
-        })}
-
-        {/* 5th button: Full Menu */}
-        <button
-          onClick={onOpenMenu}
-          className="relative flex flex-col items-center justify-center flex-1 h-full py-1 text-center text-muted hover:text-fg transition-colors cursor-pointer select-none font-medium"
-          aria-label="تمام بخش‌ها و امکانات"
-        >
-          <div className="relative mt-0.5">
-            <Menu className="w-4 h-4" />
-          </div>
-          <span className="text-[10px] mt-1 font-medium">
-            منو
-          </span>
-        </button>
+      <div className="pointer-events-auto filter drop-shadow-2xl">
+        <LiquidNavbar
+          items={navItems}
+          active={activeIndex}
+          onChange={(index, item) => {
+            if (item.id === 'menu') {
+              onOpenMenu();
+            } else if (item.id) {
+              onSelectTab(item.id as NavTab);
+            }
+          }}
+          tone={resolvedTheme === 'dark' ? 'dark' : 'light'}
+          sound={true}
+          compact={false}
+          className="shadow-2xl border border-white/20 dark:border-white/10"
+        />
       </div>
-    </nav>
+    </div>
   );
 };

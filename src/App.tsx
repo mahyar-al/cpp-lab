@@ -22,6 +22,7 @@ import { GlobalSearchModal } from './components/modals/GlobalSearchModal';
 import { QuickAddModal } from './components/modals/QuickAddModal';
 import { AuthModal } from './components/modals/AuthModal';
 import { RescueModeModal } from './components/modals/RescueModeModal';
+import { AlefOpeningModal } from './components/modals/AlefOpeningModal';
 import { BottomNav } from './components/layout/BottomNav';
 import { FloatingBackground } from './components/FloatingBackground';
 
@@ -60,6 +61,22 @@ const MainContent: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [isAlefIntroOpen, setIsAlefIntroOpen] = useState(() => {
+    try {
+      const dismissed = localStorage.getItem('alef_intro_dismissed_v1');
+      if (dismissed === 'true') return false;
+      return true; // Auto-opens when the site opens
+    } catch {
+      return true;
+    }
+  });
+
+  // Global listener for re-opening Alef intro anytime
+  useEffect(() => {
+    const handleOpenIntro = () => setIsAlefIntroOpen(true);
+    window.addEventListener('open_alef_intro', handleOpenIntro);
+    return () => window.removeEventListener('open_alef_intro', handleOpenIntro);
+  }, []);
 
   // Handle URL hash for quick auth routing (#login, #register, #forgot-password)
   useEffect(() => {
@@ -187,6 +204,7 @@ const MainContent: React.FC = () => {
       }`}>
         <Header
           activeSectionTitle={getSectionTitle(currentTab)}
+          currentTab={currentTab}
           onToggleSidebar={() => setIsOpenMobile((prev) => !prev)}
           onOpenQuickAdd={() => setIsQuickAddOpen(true)}
           onOpenSearch={() => setIsSearchOpen(true)}
@@ -249,6 +267,15 @@ const MainContent: React.FC = () => {
       />
 
       <RescueModeModal />
+
+      <AlefOpeningModal
+        isOpen={isAlefIntroOpen}
+        onClose={() => setIsAlefIntroOpen(false)}
+        onStartPlanning={() => {
+          setIsAlefIntroOpen(false);
+          setCurrentTab('daily_planner');
+        }}
+      />
 
       {/* Global Toast Notification */}
       {toastMessage && (

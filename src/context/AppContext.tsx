@@ -195,6 +195,7 @@ export interface AppContextType {
   // Weekly Reviews
   weeklyReviews: WeeklyReview[];
   addWeeklyReview: (review: Omit<WeeklyReview, 'id' | 'createdAt'>) => void;
+  deleteWeeklyReview: (id: string) => void;
 
   // Calendar
   calendarEvents: CalendarEvent[];
@@ -1746,6 +1747,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addActivityLog('general', 'مرور هفتگی جدید ثبت شد');
   };
 
+  const deleteWeeklyReview = (id: string) => {
+    setState((prev: any) => ({
+      ...prev,
+      weeklyReviews: (prev.weeklyReviews || []).filter((r: WeeklyReview) => r.id !== id),
+    }));
+    addActivityLog('general', 'بایگانی مرور هفتگی حذف شد');
+    showToast('بایگانی مرور هفتگی حذف شد.');
+  };
+
   const addCalendarEvent = (event: Omit<CalendarEvent, 'id'>) => {
     const newEvent: CalendarEvent = {
       ...event,
@@ -3272,6 +3282,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toggleGoalMilestone,
         addGoalMilestone,
         addWeeklyReview,
+        deleteWeeklyReview,
         addCalendarEvent,
         updateCalendarEvent,
         deleteCalendarEvent,

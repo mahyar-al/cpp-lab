@@ -162,13 +162,133 @@ export const initialStudySessions: StudySession[] = [];
 
 export const initialSkills: Skill[] = [];
 
-export const initialProjects: Project[] = [];
+export const initialProjects: Project[] = [
+  {
+    id: 'proj-1',
+    title: 'پلتفرم برنامه‌ریزی هوشمند الف',
+    description: 'سامانه یکپارچه مدیریت یادگیری، تقویم شمسی، پیگیری اهداف و بایگانی هفتگی با ری‌اکت و تایپ‌اسکریپت',
+    category: 'وب و فول‌استک',
+    startDate: '2026-10-01',
+    deadline: '2026-11-25',
+    status: 'in_progress',
+    priority: 'high',
+    targetsAndDeliverables: 'استقرار نسخه تولیدی، اتصال پایگاه داده چندکاربره و تکمیل پوشه‌های شیشه‌ای سه‌بعدی',
+    progressPercentage: 65,
+    techStack: ['React 19', 'TypeScript', 'Tailwind CSS', 'Vite', 'Express'],
+    githubUrl: 'https://github.com/mahyar-al/cpp-lab',
+    demoUrl: 'https://alefplans.local',
+    techNotes: 'معماری بر پایه کامپوننت‌های مدرن، افکت‌های شیشه‌ای و پایگاه داده چندکاربره طراحی شده است.',
+    knownBugs: [
+      { id: 'b-1', title: 'بهینه‌سازی رندر در صفحات با داده زیاد', resolved: false, severity: 'medium' },
+    ],
+    tasks: [
+      {
+        id: 'pt-1',
+        title: 'طراحی پوشه‌های شیشه‌ای سه‌بعدی برای پروژه‌ها',
+        status: 'completed',
+        priority: 'high',
+        estimatedHours: 4,
+        actualHours: 3.5,
+        subtasks: [
+          { id: 'st-1', title: 'پیاده‌سازی نویز procedural و پرسپکتیو', done: true },
+          { id: 'st-2', title: 'اتصال رویدادهای فیزیک و باز شدن برگه‌ها', done: true },
+        ],
+      },
+      {
+        id: 'pt-2',
+        title: 'یکپارچه‌سازی با برد کانبان و مدیریت تسک‌ها',
+        status: 'in_progress',
+        priority: 'high',
+        estimatedHours: 5,
+        actualHours: 2,
+        subtasks: [
+          { id: 'st-3', title: 'نمایش پوشه به عنوان کارت پروژه', done: true },
+          { id: 'st-4', title: 'جابجایی بین نمای شیشه‌ای و کانبان', done: false },
+        ],
+      },
+      {
+        id: 'pt-3',
+        title: 'تست ریسپانسیو روی تبلت و موبایل',
+        status: 'todo',
+        priority: 'medium',
+        estimatedHours: 3,
+        subtasks: [],
+      },
+    ],
+    activityLogs: [
+      { id: 'pal-1', timestamp: '2026-10-20T10:00:00Z', action: 'پروژه ایجاد شد' },
+      { id: 'pal-2', timestamp: '2026-10-25T14:30:00Z', action: 'تسک‌های فاز دوم تعریف شدند' },
+    ],
+  },
+  {
+    id: 'proj-2',
+    title: 'موتور شبیه‌سازی الگوریتم‌های المپیاد',
+    description: 'کتابخانه محاسباتی و بصری‌سازی ساختارهای داده و الگوریتم‌های گراف در ++C و وب‌اسمبلی',
+    category: 'هوش مصنوعی و الگوریتم',
+    startDate: '2026-10-10',
+    deadline: '2026-12-15',
+    status: 'in_progress',
+    priority: 'medium',
+    targetsAndDeliverables: 'حل ۵۰ مسئله تستی مرحله دوم و شبیه‌سازی گراف‌های سنگین',
+    progressPercentage: 40,
+    techStack: ['C++ 20', 'WebAssembly', 'HTML5 Canvas'],
+    githubUrl: 'https://github.com/mahyar-al/cpp-lab',
+    techNotes: 'کامپایل کدهای ++C از طریق Emscripten به ماژول WebAssembly در مرورگر.',
+    knownBugs: [],
+    tasks: [
+      {
+        id: 'pt-201',
+        title: 'پیاده‌سازی دایکسترا و سگمنت‌تری',
+        status: 'completed',
+        priority: 'high',
+        estimatedHours: 6,
+        actualHours: 5.5,
+        subtasks: [],
+      },
+      {
+        id: 'pt-202',
+        title: 'رابط تعاملی بصری‌سازی نودها و یال‌ها',
+        status: 'in_progress',
+        priority: 'medium',
+        estimatedHours: 8,
+        actualHours: 4,
+        subtasks: [],
+      },
+    ],
+    activityLogs: [
+      { id: 'pal-201', timestamp: '2026-10-12T12:00:00Z', action: 'راه‌اندازی ساختار مخزن' },
+    ],
+  },
+];
 
 export const initialCompetitions: Competition[] = [];
 
 export const initialGoals: Goal[] = [];
 
-export const initialWeeklyReviews: WeeklyReview[] = [];
+export const initialWeeklyReviews: WeeklyReview[] = [
+  {
+    id: 'wr-1',
+    weekStartDate: '2026-10-18',
+    weekEndDate: '2026-10-24',
+    totalStudyHours: 24.5,
+    completedTasksSummary: 'تحویل پروژه، مطالعه فصل ۲ هندسه، حل ۱۲۰ تست شیمی',
+    unfinishedTasksSummary: 'مرور بخش الکتریسیته ساکن فیزیک',
+    biggestWin: 'ثبت رکورد ۲۴.۵ ساعت مطالعه با تمرکز بالا و کسب نمره کامل کوئیز گسسته',
+    nextWeekPriorities: 'آمادگی برای آزمون آزمایشی المپیاد و مبحث ترکیبیات',
+    createdAt: '2026-10-24T18:30:00.000Z',
+  },
+  {
+    id: 'wr-2',
+    weekStartDate: '2026-10-11',
+    weekEndDate: '2026-10-17',
+    totalStudyHours: 19,
+    completedTasksSummary: 'تکمیل تمرین‌های حسابان، ۲ جلسه تمرین کدنویسی C++',
+    unfinishedTasksSummary: 'خلاصه‌نویسی لایتنر درس عربی',
+    biggestWin: 'حفظ زنجیره مطالعه ۷ روز متوالی بدون وقفه',
+    nextWeekPriorities: 'تمرکز بر نقاط ضعف درس زیست و اتمام ساختار دیتابیس',
+    createdAt: '2026-10-17T19:00:00.000Z',
+  },
+];
 
 export const initialCalendarEvents: CalendarEvent[] = [];
 
